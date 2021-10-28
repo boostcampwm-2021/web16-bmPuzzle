@@ -5,8 +5,29 @@
 <div align="center">
 <img src="https://user-images.githubusercontent.com/42104898/139202374-554c59b2-334e-4f0f-b1de-016042da8348.png"/>
 <div>🍀 웹에서 즐기는 퍼즐게임! 친구들과 함께 퍼즐을 완성합시다. 혼자여도 플레이할 수 있어요 :) 🍀</div>
+<div>
+  <div>
+<img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"/></a>
+<img src="https://img.shields.io/badge/node-339933?style=flat-square&logo=Node.js&logoColor=white"/></a>
+<img src="https://img.shields.io/badge/ts-3178C6?style=flat-square&logo=ts-node&logoColor=white"/></a>
+<img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=React&logoColor=white"/>
+  </div>
+  <div>
+<img src="https://img.shields.io/badge/styled-components-DB7093?style=flat-square&logo=React&logoColor=white"/>
+<img src="https://img.shields.io/badge/MySQL-4479A1?style=flat-square&logo=MySQL&logoColor=white"/>
+<img src="https://img.shields.io/badge/Nginx-009639?logo=Nginx">
+  </div>
+  <div>
+<img src="https://img.shields.io/badge/Express-000000?style=flat-square&logo=Express&logoColor=white"/>
+<img src="https://img.shields.io/badge/Sequelize-52B0E7?style=flat-square&logo=Sequelize&logoColor=white"/>
+<img src="https://img.shields.io/badge/Socket.io-010101?style=flat-square&logo=Socket.io&logoColor=white"/>
+  <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/>
+  </div>
+  <div>
+  
+  </div>
 </div>
-
+</div>
 
 ### 🚗 AUDI_PEOPLE
 
