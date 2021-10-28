@@ -1,4 +1,13 @@
 # web16-bmPuzzle
+
+
+### 🧩 BMPuzzle
+<div align="center">
+<img src="https://user-images.githubusercontent.com/42104898/139202374-554c59b2-334e-4f0f-b1de-016042da8348.png"/>
+<div>🍀 웹에서 즐기는 퍼즐게임! 친구들과 함께 퍼즐을 완성합시다. 혼자여도 플레이할 수 있어요 :) 🍀</div>
+</div>
+
+
 ### 🚗 AUDI_PEOPLE
 
 | J157_이재영 | J064_김하정 | J133_유진 | J178_장진희 |
@@ -7,12 +16,6 @@
 | 재리 | 징징 | 헬린 | 징가 |
 | **💪 Leader** | 🦑 | 🔥 | 🐈 |
 <br/>
-
-### 🧩 BMPuzzle
-<div align="center">
-<img src="https://user-images.githubusercontent.com/42104898/139202374-554c59b2-334e-4f0f-b1de-016042da8348.png"/>
-<div>🍀 웹에서 즐기는 퍼즐게임! 친구들과 함께 퍼즐을 완성합시다. 혼자여도 플레이할 수 있어요 :) 🍀</div>
-</div>
 
 ### 📁 WIKI
 | 📝 NOTION | 🎨 Design | 💻 BackLog | 🔥 Reference |
