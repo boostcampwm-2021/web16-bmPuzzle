@@ -1,12 +1,13 @@
 const puzzle = (sequelize:any, DataTypes:any) => {
   return sequelize.define('puzzle', {
-    puzzle_id: {
+    id: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
     image: {
-      type: DataTypes.STRING(300),
+      type: DataTypes.STRING(500),
       allowNull: true
     },
     keyword: {
@@ -15,22 +16,24 @@ const puzzle = (sequelize:any, DataTypes:any) => {
     },
     level: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false,
+      defaultValue: 0
     },
     public: {
-      type: DataTypes.TINYINT,
-      allowNull: true
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: 0
     },
     visit_time: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
     user_id: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
+      type: DataTypes.STRING(500),
+      allowNull: false,
       references: {
         model: 'user',
-        key: 'user_id'
+        key: 'id'
       }
     }
   }, {
@@ -43,11 +46,11 @@ const puzzle = (sequelize:any, DataTypes:any) => {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "puzzle_id" },
+          { name: "id" },
         ]
       },
       {
-        name: "user_id_idx",
+        name: "user_id",
         using: "BTREE",
         fields: [
           { name: "user_id" },

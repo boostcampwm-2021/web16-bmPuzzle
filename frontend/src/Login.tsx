@@ -8,14 +8,14 @@ const Login = (props: any) => {
     name: "",
   });
 
-  const onLoginSuccess = (res: any) => {
+  const onLoginSuccess = async (res: any) => {
     setUserObj({
       ...userObj,
       email: res.profileObj.email,
       name: res.profileObj.name,
     });
 
-    fetch("http://localhost:5000/api/login", {
+    await fetch("http://localhost:5000/api/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,11 +26,12 @@ const Login = (props: any) => {
     })
       .then((response) => response.json())
       .then((response) => {
-        if (response.token) {
-          window.sessionStorage.setItem("id", response.token);
+        if (response.code === 200) {
+          window.sessionStorage.setItem("id", res.profileObj.name);
         }
       });
   };
+
   return (
     <div>
       <GoogleLogin

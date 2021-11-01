@@ -4,6 +4,6 @@ const loginService = async (req:any, res:any, next:any) => {
     const id = req.body.id;
     const statusCode = await userService(id);
 
-    res.status(statusCode.code).send(statusCode.msg);
+    res.json(statusCode);
 }
 export default loginService;

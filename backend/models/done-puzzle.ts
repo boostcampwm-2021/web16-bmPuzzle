@@ -1,4 +1,4 @@
-const done_puzzle = (sequelize:any, DataTypes:any) => {
+export default function(sequelize:any, DataTypes:any) {
   return sequelize.define('done_puzzle', {
     id: {
       autoIncrement: true,
@@ -6,20 +6,20 @@ const done_puzzle = (sequelize:any, DataTypes:any) => {
       allowNull: false,
       primaryKey: true
     },
-    puzzle_id: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      references: {
-        model: 'puzzle',
-        key: 'puzzle_id'
-      }
-    },
     user_id: {
-      type: DataTypes.STRING(50),
-      allowNull: true,
+      type: DataTypes.STRING(500),
+      allowNull: false,
       references: {
         model: 'user',
-        key: 'user_id'
+        key: 'id'
+      }
+    },
+    puzzle_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'puzzle',
+        key: 'id'
       }
     },
     time: {
@@ -40,21 +40,19 @@ const done_puzzle = (sequelize:any, DataTypes:any) => {
         ]
       },
       {
-        name: "puzzle_id",
-        using: "BTREE",
-        fields: [
-          { name: "puzzle_id" },
-        ]
-      },
-      {
         name: "user_id",
         using: "BTREE",
         fields: [
           { name: "user_id" },
         ]
       },
+      {
+        name: "puzzle_id",
+        using: "BTREE",
+        fields: [
+          { name: "puzzle_id" },
+        ]
+      },
     ]
   });
 };
-
-export default done_puzzle;
