@@ -1,10 +1,7 @@
 import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
-import Greetings from "./Greeting";
 
 function App() {
-  return <Greetings />;
+  return <div>hello</div>;
 }
 
 export default App;
