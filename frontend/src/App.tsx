@@ -1,19 +1,13 @@
 import React, { useState, useRef, useCallback } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import "./index.css";
+// import RegPuz from "@Components/RegPuz/index";
+import Header from "./Components/Header/index";
+
 const App: React.FC = () => {
   return (
     <Router>
       <Switch>
-        <Route path="/" component={Main} exact={true} />
-        <Route path="/regpuz" component={Space} exact={true} />
-        render=
-        {({ location: any }) => (
-          <div>
-            <h1>ERROR</h1>
-            <h2>이 페이지는 존재하지 않습니다.</h2>
-          </div>
-        )}
+        <Route path="/temp_header" component={Header} exact={true} />
       </Switch>
     </Router>
   );
