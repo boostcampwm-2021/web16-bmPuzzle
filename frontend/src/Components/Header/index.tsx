@@ -8,7 +8,7 @@ const HeaderDiv = styled.div`
   margin: 0px;
   padding: 0px;
   width: 100%;
-  height: 85px;
+  height: 70px;
   background: #000000;
   display: flex;
   align-content: center;
@@ -32,18 +32,18 @@ const HeaderMyPage = styled.div`
 
 const HeaderBtn = styled.button`
   padding: 0px;
-  margin-top: 13px;
+  margin-top: 9px;
   border: none;
   background: transparent;
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   align-content: center;
   &:hover {
     cursor: pointer;
   }
   & > img {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
   }
 `;
 
