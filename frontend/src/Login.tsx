@@ -1,13 +1,14 @@
 import * as React from "react";
 import GoogleLogin from "react-google-login";
+import "dotenv/config";
 
 const Login = (props: any) => {
-  //사용자 정보를 담아둘 userObj
+  const google_id: string = process.env.REACT_APP_CLIENT_ID || "";
   const [userObj, setUserObj] = React.useState({
     email: "",
     name: "",
   });
-  //로그인 성공시 res처리
+
   const onLoginSuccess = (res: any) => {
     setUserObj({
       ...userObj,
@@ -16,13 +17,10 @@ const Login = (props: any) => {
     });
     console.log(res.profileObj.name);
   };
-
   return (
     <div>
       <GoogleLogin
-        clientId={
-          "413166234631-5sdmatteo3vq9v1gpbgktpkjmga9df7p.apps.googleusercontent.com"
-        }
+        clientId={google_id}
         buttonText="Google"
         onSuccess={(result) => onLoginSuccess(result)}
         onFailure={(result) => console.log(result)}
