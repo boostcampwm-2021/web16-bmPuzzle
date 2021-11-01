@@ -7,6 +7,11 @@
     "moduleResolution": "node",
     "strict": true,
     "skipLibCheck": true ,
-    "rootDir" : "./",
+    "baseUrl": ".",
+    "paths": {
+      "@loaders/*": ["./loaders/*"],
+      "@api/*": ["./api/*"],
+      "@models/*": ["./models/*"],
+    }
   }
 }
