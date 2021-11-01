@@ -7,11 +7,13 @@ export default (sequelize:any, DataTypes:any) => {
     },
     puzzle_complete: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      defaultValue : 0
     },
     puzzle_upload: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      defaultValue : 0
     }
   }, {
     sequelize,

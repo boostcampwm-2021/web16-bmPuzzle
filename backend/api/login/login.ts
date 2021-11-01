@@ -1,9 +1,7 @@
 import express from 'express';
-
-import login from '@api/login/login';
-
+import loginService from '@services/loginService';
 const router = express.Router();
 
-router.use('/login', login)
+router.post('/', loginService);
 
 export default router;

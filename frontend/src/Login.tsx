@@ -1,6 +1,5 @@
 import * as React from "react";
 import GoogleLogin from "react-google-login";
-import "dotenv/config";
 
 const Login = (props: any) => {
   const google_id: string = process.env.REACT_APP_CLIENT_ID || "";
@@ -15,7 +14,22 @@ const Login = (props: any) => {
       email: res.profileObj.email,
       name: res.profileObj.name,
     });
-    window.sessionStorage.setItem("id", res.profileObj.name);
+
+    fetch("http://localhost:5000/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: res.profileObj.name,
+      }),
+    })
+      .then((response) => response.json())
+      .then((response) => {
+        if (response.token) {
+          window.sessionStorage.setItem("id", response.token);
+        }
+      });
   };
   return (
     <div>
