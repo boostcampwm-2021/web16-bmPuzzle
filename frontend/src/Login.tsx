@@ -15,7 +15,7 @@ const Login = (props: any) => {
       email: res.profileObj.email,
       name: res.profileObj.name,
     });
-    console.log(res.profileObj.name);
+    window.sessionStorage.setItem("id", res.profileObj.name);
   };
   return (
     <div>
