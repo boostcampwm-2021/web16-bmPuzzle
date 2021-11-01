@@ -7,11 +7,14 @@
     "moduleResolution": "node",
     "strict": true,
     "skipLibCheck": true ,
+    "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
       "@loaders/*": ["./loaders/*"],
       "@api/*": ["./api/*"],
       "@models/*": ["./models/*"],
+      "@config/*": ["./config/*"],
+      "@services/*": ["./services/*"]
     }
   }
 }
