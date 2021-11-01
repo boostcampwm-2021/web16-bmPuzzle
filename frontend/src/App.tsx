@@ -1,10 +1,8 @@
 import React from "react";
-// eslint-disable-next-line import/extensions
-import Login from "./Components/Login/Login";
-// eslint-disable-next-line import/extensions
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-// eslint-disable-next-line import/extensions
-import RegPuz from "./Components/RegPuz/index";
+
+import Login from "@components/Login/Login";
+import RegPuz from "@components/RegPuz/index";
 
 const App: React.FC = () => {
   return (
