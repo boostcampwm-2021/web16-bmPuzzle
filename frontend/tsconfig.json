@@ -16,7 +16,13 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "typeRoots": ["./node_modules/@types", "./@types"],
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "baseUrl": "./",
+    "paths": {
+      "@components/*": ["./src/Components/*"],
+      "@src/*": ["./src/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "tsconfig.paths.json"],
+  "extends": "./tsconfig.paths.json"
 }

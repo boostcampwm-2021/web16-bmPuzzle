@@ -1,8 +1,11 @@
 import React from "react";
 import styled from "styled-components";
+// eslint-disable-next-line import/extensions
 import LevelComponent from "./Components/LevelComponent";
+// eslint-disable-next-line import/extensions
 import GlobalStyles from "../../GlobalStyles";
-import Header from "../Header";
+// eslint-disable-next-line import/extensions
+import Header from "../Header/index";
 
 const RegPuzDiv = styled.div`
   .rp__title {

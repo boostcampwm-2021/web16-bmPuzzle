@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
+// eslint-disable-next-line import/extensions
 import colors from "./styles/theme";
 
 const globalStyles = createGlobalStyle`
