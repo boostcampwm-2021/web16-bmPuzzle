@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import logo_image from "../../images/puzzle_icon.png";
-import ranking_image from "../../images/ranking_icon.png";
-import account_image from "../../images/account_icon.png";
+import logo_image from "@images/puzzle_icon.png";
+import ranking_image from "@images/ranking_icon.png";
+import account_image from "@images/account_icon.png";
 
 const HeaderDiv = styled.div`
   margin: 0px;
