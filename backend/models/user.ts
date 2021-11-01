@@ -1,19 +1,19 @@
-export default (sequelize:any, DataTypes:any) => {
+export default function(sequelize:any, DataTypes:any) {
   return sequelize.define('user', {
-    user_id: {
-      type: DataTypes.STRING(50),
+    id: {
+      type: DataTypes.STRING(500),
       allowNull: false,
       primaryKey: true
     },
-    puzzle_complete: {
+    complete: {
       type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue : 0
+      allowNull: false,
+      defaultValue: 0
     },
-    puzzle_upload: {
+    upload: {
       type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue : 0
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     sequelize,
@@ -25,7 +25,7 @@ export default (sequelize:any, DataTypes:any) => {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "user_id" },
+          { name: "id" },
         ]
       },
     ]

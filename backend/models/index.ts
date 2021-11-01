@@ -12,8 +12,13 @@ const sequelize = new Sequelize(config.sequelize.database,
 	config.sequelize.password,
 	{
 		host: config.sequelize.host,
-		dialect: config.sequelize.dialect
-	});
+		dialect: config.sequelize.dialect,
+		dialectOptions: {
+			charset: 'utf8',
+			collate: 'utf8_general_ci',
+		}
+	},
+);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
