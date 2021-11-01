@@ -4,7 +4,9 @@
     "module": "commonjs",
     "esModuleInterop": true, 
     "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
     "strict": true,
-    "skipLibCheck": true 
+    "skipLibCheck": true ,
+    "rootDir" : "./",
   }
 }
