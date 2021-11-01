@@ -49,6 +49,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.4.1",
+    "styled-reset": "^4.3.4",
     "yarn-audit-fix": "^7.1.3"
   }
 }
