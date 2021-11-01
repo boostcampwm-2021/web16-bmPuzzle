@@ -1,4 +1,6 @@
 import React from "react";
+import Login from "./Login";
+// eslint-disable-next-line import/extensions
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import RegPuz from "./Components/RegPuz/index";
 
@@ -6,6 +8,7 @@ const App: React.FC = () => {
   return (
     <Router>
       <Switch>
+        <Route path="/" component={Login} exact={true} />
         <Route path="/regpuz" component={RegPuz} exact={true} />
         render=
         {/* {({ location: any }) => (
@@ -18,4 +21,5 @@ const App: React.FC = () => {
     </Router>
   );
 };
+
 export default App;

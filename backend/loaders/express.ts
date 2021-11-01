@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
-import 'dotenv/config'
+import config from '@config/index';
 import api from '@api/index';
 
 
@@ -12,7 +12,7 @@ const expressLoader = async (app: any) => {
   app.use('/static', express.static(path.join(path.resolve(), '/public')));
   app.use('/api', api);
 
-  app.listen(process.env.PORT, (err?: Error) => {
+  app.listen(config.port, (err?: Error) => {
     if (err) {
       console.log(err);
       return;

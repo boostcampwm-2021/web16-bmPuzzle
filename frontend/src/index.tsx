@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
+// eslint-disable-next-line import/extensions
 import App from "./App";
+// eslint-disable-next-line import/extensions
 import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
