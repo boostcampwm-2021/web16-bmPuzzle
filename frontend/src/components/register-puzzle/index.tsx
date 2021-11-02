@@ -35,51 +35,53 @@ const RegPuz = () => {
     <Wrapper>
       <Header />
       <Body>
-        <div>
-          <FlexDiv>
-            <p>Title</p>
-            <input
-              type="text"
-              name="title"
-              id="Title"
-              onChange={titleHandler}
-              value={title}
-            />
-          </FlexDiv>
-          <div className="rp__upload">
-            <input
-              type="file"
-              name="img"
-              accept="image/*"
-              onChange={fileHandler}
-            />
-          </div>
+        <ComponentWrap>
           <div>
-            <div>Level</div>
             <FlexDiv>
-              <LevelComponent
-                num={1}
-                checkedLevel={checkedLevel}
-                checkFunction={setLevel}
-              ></LevelComponent>
-              <LevelComponent
-                num={2}
-                checkedLevel={checkedLevel}
-                checkFunction={setLevel}
-              ></LevelComponent>
-              <LevelComponent
-                num={3}
-                checkedLevel={checkedLevel}
-                checkFunction={setLevel}
-              ></LevelComponent>
+              <p>Title</p>
+              <input
+                type="text"
+                name="title"
+                id="Title"
+                onChange={titleHandler}
+                value={title}
+              />
             </FlexDiv>
+            <FlexDiv>
+              <input
+                type="file"
+                name="img"
+                accept="image/*"
+                onChange={fileHandler}
+              />
+            </FlexDiv>
+            <div>
+              <FlexDiv>Level</FlexDiv>
+              <FlexDiv>
+                <LevelComponent
+                  num={1}
+                  checkedLevel={checkedLevel}
+                  checkFunction={setLevel}
+                ></LevelComponent>
+                <LevelComponent
+                  num={2}
+                  checkedLevel={checkedLevel}
+                  checkFunction={setLevel}
+                ></LevelComponent>
+                <LevelComponent
+                  num={3}
+                  checkedLevel={checkedLevel}
+                  checkFunction={setLevel}
+                ></LevelComponent>
+              </FlexDiv>
+            </div>
           </div>
-        </div>
-        <div className="rp__submit">
-          <button type="submit" onClick={submitHandler}>
-            submit
-          </button>
-        </div>
+          <div className="rp__submit">
+            <button type="submit" onClick={submitHandler}>
+              submit
+            </button>
+          </div>
+        </ComponentWrap>
       </Body>
     </Wrapper>
   );
@@ -107,6 +109,14 @@ const Body = styled.div`
 
 const FlexDiv = styled.div`
   display: flex;
+  margin-bottom: 50px;
+`;
+
+const ComponentWrap = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export default RegPuz;

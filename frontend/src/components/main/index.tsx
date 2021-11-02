@@ -61,7 +61,7 @@ const Main = () => {
       <Header />
       <Container>
         <Search />
-        <ImgCard />
+        <ImageCard />
       </Container>
       <img id="avatar" src={currentImg} />
     </Wrapper>
