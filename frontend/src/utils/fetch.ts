@@ -1,9 +1,16 @@
 const fetchPost = ({ path, body }: { path: string; body: any }) => {
-  console.log(body.get("title"));
   fetch(path, {
     method: "POST",
     headers: {},
     body: body,
+  }).then((res) => {
+    if (res.status === 200) {
+      alert("Upload Succeed");
+      window.location.pathname = "/main";
+    }
+    if (res.status === 500) {
+      alert("Upload Failed...");
+    }
   });
 };
 const fetchGet = () => {};

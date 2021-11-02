@@ -19,10 +19,12 @@ const RegPuz = () => {
   };
   const submitHandler = () => {
     const formData = new FormData();
+    const id = "Jaeyoung Lee";
     if (selectedImg === null || title === "") {
       alert("양식을 다 채우세요");
       return false;
     }
+    formData.append("userId", id);
     formData.append("title", title);
     formData.append("img", selectedImg);
     formData.append("level", String(checkedLevel));
