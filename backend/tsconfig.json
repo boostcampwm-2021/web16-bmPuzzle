@@ -14,7 +14,8 @@
       "@api/*": ["./api/*"],
       "@models/*": ["./models/*"],
       "@config/*": ["./config/*"],
-      "@services/*": ["./services/*"]
+      "@services/*": ["./services/*"],
+      "@public/*": ["./public/*"]
     }
   }
 }
