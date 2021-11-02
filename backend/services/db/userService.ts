@@ -6,7 +6,6 @@ const postData = async (id: string) => {
     defaults: { complete: 0, upload: 0 },
   });
 
-  console.log(userInfo);
   if(userInfo == null) return {code: 500, msg: 'user find error'};
 
   return {code: 200, msg: 'findorcreate user'};
