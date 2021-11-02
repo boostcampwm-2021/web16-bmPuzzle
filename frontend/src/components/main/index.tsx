@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
 
 import Header from "@components/header/index";
 import Search from "@components/main/search-bar/index";
+import ImageCard from "@src/components/main/image-card/index";
 
 const Main = () => {
-  const [search, setSearch] = useState("");
   return (
     <Wrapper>
       <Header />
-      <Search setSearch={setSearch} />
-      <Container>hihello</Container>
+      <Container>
+        <Search />
+        <ImageCard />
+      </Container>
     </Wrapper>
   );
 };
@@ -26,6 +28,7 @@ const Container = styled.div`
   height: 70%;
   margin: 5% 10%;
   border: 1px solid ${colors["gray3"]};
+  overflow-y: scroll;
 `;
 
 export default Main;
