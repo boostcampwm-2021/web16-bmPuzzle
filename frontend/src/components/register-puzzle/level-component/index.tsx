@@ -27,7 +27,7 @@ const LevelComponent = (props: Props) => {
         type="checkbox"
         value={props.num}
         checked={props.num === props.checkedLevel}
-        onClick={() => {
+        onChange={() => {
           checkEvent(props.num);
         }}
       />
