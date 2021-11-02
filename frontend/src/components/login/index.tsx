@@ -1,21 +1,12 @@
 import * as React from "react";
 import GoogleLogin from "react-google-login";
+import styled from "styled-components";
 
 const Login = (props: any) => {
   const google_id: string = process.env.REACT_APP_CLIENT_ID || "";
-  const [userObj, setUserObj] = React.useState({
-    email: "",
-    name: "",
-  });
 
   const onLoginSuccess = async (res: any) => {
-    setUserObj({
-      ...userObj,
-      email: res.profileObj.email,
-      name: res.profileObj.name,
-    });
-
-    await fetch("http://localhost:5000/api/login", {
+    await fetch(`${process.env.REACT_APP_API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
