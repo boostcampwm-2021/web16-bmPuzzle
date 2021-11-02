@@ -1,9 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-// eslint-disable-next-line import/extensions
-import App from "./App";
-// eslint-disable-next-line import/extensions
-import reportWebVitals from "./reportWebVitals";
+
+import App from "@src/App";
+import reportWebVitals from "@src/reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
