@@ -11,14 +11,14 @@ type Props = {
 
 const renderStars = (num: number) => {
   let value = "⭐";
-  const res = [...Array(num).keys()].map((i) => value);
+  const res = [...Array(Number(num)).keys()].map((i) => value);
   return res;
 };
-const LevelComponent: React.FC<Props> = ({ num }) => {
+const LevelComponent = (props: Props) => {
   return (
     <LevelDiv>
-      <input type="checkbox" value={num} />
-      <div className="renderStars">{renderStars(num)}</div>
+      <input type="checkbox" value={props.num} />
+      <div className="renderStars">{renderStars(props.num)}</div>
     </LevelDiv>
   );
 };

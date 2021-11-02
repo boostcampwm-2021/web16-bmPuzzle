@@ -1,15 +1,15 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
-import Login from "@components/Login/Login";
-import RegPuz from "@components/RegPuz/index";
+import Login from "@components/login/login";
+import RegPuz from "@components/register-puzzle/index";
 
-const App: React.FC = () => {
+const App = () => {
   return (
     <Router>
       <Switch>
         <Route path="/" component={Login} exact={true} />
-        <Route path="/regpuz" component={RegPuz} exact={true} />
+        <Route path="/register" component={RegPuz} exact={true} />
         render=
         {/* {({ location: any }) => (
           <div>

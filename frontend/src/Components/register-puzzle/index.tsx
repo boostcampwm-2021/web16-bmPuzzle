@@ -1,8 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import LevelComponent from "@components/RegPuz/Components/LevelComponent";
-import GlobalStyles from "@styles/GlobalStyles";
-import Header from "@components/Header/index";
+import LevelComponent from "@components/register-puzzle/level-component";
+import GlobalStyles from "@styles/global-style";
+import Header from "@components/header/index";
 
 const RegPuzDiv = styled.div`
   .rp__title {
@@ -13,7 +13,7 @@ const RegPuzDiv = styled.div`
   }
 `;
 
-const RegPuz: React.FC = () => {
+const RegPuz = () => {
   return (
     <div id="wrapper">
       <Header></Header>
