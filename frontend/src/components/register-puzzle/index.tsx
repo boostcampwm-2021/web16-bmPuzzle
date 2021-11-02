@@ -3,51 +3,81 @@ import styled from "styled-components";
 import LevelComponent from "@components/register-puzzle/level-component";
 import Header from "@components/header/index";
 import colors from "@styles/theme";
+import { fetchPost } from "@src/utils/fetch";
 
+const registerURI = "http://localhost:5000/api/register";
 const RegPuz = () => {
   const [checkedLevel, setLevel] = useState(1);
+  const [title, setTitle] = useState("");
+  const [selectedImg, setSelectedcImg] = useState(null);
+
+  const titleHandler = (event: any) => {
+    setTitle(event?.target.value);
+  };
+  const fileHandler = (event: any) => {
+    setSelectedcImg(event.target.files[0]);
+  };
+  const submitHandler = () => {
+    const formData = new FormData();
+    if (selectedImg === null || title === "") {
+      alert("양식을 다 채우세요");
+      return false;
+    }
+    formData.append("title", title);
+    formData.append("img", selectedImg);
+    formData.append("level", String(checkedLevel));
+    fetchPost({ path: registerURI, body: formData });
+  };
+
   return (
     <Wrapper>
       <Header />
       <Body>
-        <form
-          action="http://localhost:5000/api/register"
-          accept-charset="utf-8"
-          method="post"
-        >
+        <div>
+          <FlexDiv>
+            <p>Title</p>
+            <input
+              type="text"
+              name="title"
+              id="Title"
+              onChange={titleHandler}
+              value={title}
+            />
+          </FlexDiv>
+          <div className="rp__upload">
+            <input
+              type="file"
+              name="img"
+              accept="image/*"
+              onChange={fileHandler}
+            />
+          </div>
           <div>
+            <div>Level</div>
             <FlexDiv>
-              <p>Title</p>
-              <input type="text" name="title" />
+              <LevelComponent
+                num={1}
+                checkedLevel={checkedLevel}
+                checkFunction={setLevel}
+              ></LevelComponent>
+              <LevelComponent
+                num={2}
+                checkedLevel={checkedLevel}
+                checkFunction={setLevel}
+              ></LevelComponent>
+              <LevelComponent
+                num={3}
+                checkedLevel={checkedLevel}
+                checkFunction={setLevel}
+              ></LevelComponent>
             </FlexDiv>
-            <div className="rp__upload">
-              <input type="file" name="img" accept="image/*" />
-            </div>
-            <div>
-              <div>Level</div>
-              <FlexDiv>
-                <LevelComponent
-                  num={1}
-                  checkedLevel={checkedLevel}
-                  checkFunction={setLevel}
-                ></LevelComponent>
-                <LevelComponent
-                  num={2}
-                  checkedLevel={checkedLevel}
-                  checkFunction={setLevel}
-                ></LevelComponent>
-                <LevelComponent
-                  num={3}
-                  checkedLevel={checkedLevel}
-                  checkFunction={setLevel}
-                ></LevelComponent>
-              </FlexDiv>
-            </div>
           </div>
-          <div className="rp__submit">
-            <button type="submit">submit</button>
-          </div>
-        </form>
+        </div>
+        <div className="rp__submit">
+          <button type="submit" onClick={submitHandler}>
+            submit
+          </button>
+        </div>
       </Body>
     </Wrapper>
   );
