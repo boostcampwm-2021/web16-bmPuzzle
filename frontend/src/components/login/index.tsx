@@ -4,7 +4,7 @@ import GoogleLogin from "react-google-login";
 import styled from "styled-components";
 import puzzleIcon from "@images/main-icon.png";
 
-const Login = (props: any) => {
+const Login = () => {
   const history = useHistory();
   const google_id: string = process.env.REACT_APP_CLIENT_ID || "";
 
@@ -19,11 +19,9 @@ const Login = (props: any) => {
       }),
     }).then((response) => response.json());
 
-    console.log(response);
-
     if (response.code === 200) {
       window.sessionStorage.setItem("id", res.profileObj.name);
-      history.push("/register");
+      history.push("/main");
     } else {
       window.alert("잘못된 입력입니다!");
     }
