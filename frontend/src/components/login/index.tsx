@@ -1,6 +1,7 @@
 import * as React from "react";
 import GoogleLogin from "react-google-login";
 import styled from "styled-components";
+import puzzleIcon from "@images/main-icon.png";
 
 const Login = (props: any) => {
   const google_id: string = process.env.REACT_APP_CLIENT_ID || "";
@@ -19,20 +20,33 @@ const Login = (props: any) => {
       .then((response) => {
         if (response.code === 200) {
           window.sessionStorage.setItem("id", res.profileObj.name);
+        } else {
+          window.alert("잘못된 입력입니다!");
         }
       });
   };
 
   return (
-    <div>
+    <Wrapper>
+      <Icon src={puzzleIcon} />
       <GoogleLogin
         clientId={google_id}
-        buttonText="Google"
+        icon={false}
+        buttonText="Login"
         onSuccess={(result) => onLoginSuccess(result)}
         onFailure={(result) => console.log(result)}
       />
-    </div>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  background-color: black;
+  height: 100%;
+`;
+const Icon = styled.img`
+  width: 50%;
+  height: 50%;
+`;
 
 export default Login;

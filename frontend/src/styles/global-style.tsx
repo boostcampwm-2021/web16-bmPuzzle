@@ -6,6 +6,7 @@ import colors from "@styles/theme";
 const globalStyles = createGlobalStyle`
 ${reset};
 html{
+    backgroud-color:black;
 }
 input {
     border: 0px;
