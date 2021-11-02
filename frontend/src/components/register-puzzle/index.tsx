@@ -1,45 +1,59 @@
 import React from "react";
 import styled from "styled-components";
 import LevelComponent from "@components/register-puzzle/level-component";
-import GlobalStyles from "@styles/global-style";
 import Header from "@components/header/index";
-
-const RegPuzDiv = styled.div`
-  .rp__title {
-    display: flex;
-  }
-  .rp__levelBox {
-    display: flex;
-  }
-`;
+import colors from "@styles/theme";
 
 const RegPuz = () => {
   return (
-    <div id="wrapper">
-      <Header></Header>
-      <div id="body">
-        <RegPuzDiv>
-          <GlobalStyles />
-          <div className="rp__title">
+    <Wrapper>
+      <Header />
+      <Body>
+        <div>
+          <FlexDiv>
             <p>Title</p>
             <input type="text" name="title" />
-          </div>
+          </FlexDiv>
           <div className="rp__upload">
             <input type="file" name="img" accept="image/*" />
           </div>
-          <div className="rp__level">
+          <div>
             <div>Level</div>
-            <div className="rp__levelBox">
+            <FlexDiv>
               <LevelComponent num={1}></LevelComponent>
               <LevelComponent num={2}></LevelComponent>
               <LevelComponent num={3}></LevelComponent>
-            </div>
+            </FlexDiv>
           </div>
-          <div className="rp__submit"></div>
-        </RegPuzDiv>
-      </div>
-    </div>
+        </div>
+        <div className="rp__submit" />
+      </Body>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  height: 100%;
+  width: 100%;
+`;
+const Body = styled.div`
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 80%;
+  height: 70%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -45%);
+
+  border: 1px solid ${colors["gray3"]};
+`;
+
+const FlexDiv = styled.div`
+  display: flex;
+`;
 
 export default RegPuz;
