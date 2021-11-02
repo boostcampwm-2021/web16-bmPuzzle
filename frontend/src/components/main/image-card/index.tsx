@@ -3,7 +3,7 @@ import styled from "styled-components";
 import example from "@images/example.png";
 import example2 from "@images/example2.png";
 
-const ImageCard = () => {
+const ImageCard = (props: any) => {
   const arr = [
     { keyword: "puzzle", img: example, visitTime: 10 },
     { keyword: "genie", img: example2, visitTime: 20 },
