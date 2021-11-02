@@ -7,6 +7,8 @@ const LevelDiv = styled.div`
 
 type Props = {
   num: number;
+  checkedLevel: number;
+  checkFunction: any;
 };
 
 const renderStars = (num: number) => {
@@ -14,10 +16,21 @@ const renderStars = (num: number) => {
   const res = [...Array(Number(num)).keys()].map((i) => value);
   return res;
 };
+
 const LevelComponent = (props: Props) => {
+  const checkEvent = (value: number) => {
+    props.checkFunction(value);
+  };
   return (
     <LevelDiv>
-      <input type="checkbox" value={props.num} />
+      <input
+        type="checkbox"
+        value={props.num}
+        checked={props.num === props.checkedLevel}
+        onClick={() => {
+          checkEvent(props.num);
+        }}
+      />
       <div className="renderStars">{renderStars(props.num)}</div>
     </LevelDiv>
   );
