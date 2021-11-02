@@ -1,42 +1,32 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import LevelComponent from "@components/register-puzzle/level-component";
-import GlobalStyles from "@styles/global-style";
 import Header from "@components/header/index";
-
-const RegPuzDiv = styled.div`
-  .rp-title {
-    display: flex;
-  }
-  .rp-levelbox {
-    display: flex;
-  }
-`;
+import colors from "@styles/theme";
 
 const RegPuz = () => {
   const [checkedLevel, setLevel] = useState(1);
   return (
-    <div id="wrapper">
-      <Header></Header>
-      <div id="body">
-        <RegPuzDiv>
-          <GlobalStyles />
+    <Wrapper>
+      <Header />
+      <Body>
+        <div>
           <form
             action="http://localhost:5000/api/register"
             accept-charset="utf-8"
             method="post"
           >
-            <div className="rp-title">
-              <p>Title</p>
-              <input type="text" name="title" />
-            </div>
-            <div className="rp-upload">
-              <input type="file" name="img" accept="image/*" />
-            </div>
-            <div className="rp-level">
-              <div>Level</div>
-              <div className="rp-levelbox">
-                <LevelComponent
+          <FlexDiv>
+            <p>Title</p>
+            <input type="text" name="title" />
+          </FlexDiv>
+          <div className="rp__upload">
+            <input type="file" name="img" accept="image/*" />
+          </div>
+          <div>
+            <div>Level</div>
+            <FlexDiv>
+              <LevelComponent
                   num={1}
                   checkedLevel={checkedLevel}
                   checkFunction={setLevel}
@@ -51,16 +41,40 @@ const RegPuz = () => {
                   checkedLevel={checkedLevel}
                   checkFunction={setLevel}
                 ></LevelComponent>
-              </div>
-            </div>
-            <div className="rp-submit">
-              <button type="submit">submit</button>
-            </div>
-          </form>
-        </RegPuzDiv>
-      </div>
-    </div>
+            </FlexDiv>
+          </div>
+        </div>
+        <div className="rp__submit">
+          <button type="submit">submit</button>
+        </div>
+        </form>
+      </Body>
+    </Wrapper>
   );
 };
+
+const Wrapper = styled.div`
+  height: 100%;
+  width: 100%;
+`;
+const Body = styled.div`
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 80%;
+  height: 70%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -45%);
+
+  border: 1px solid ${colors["gray3"]};
+`;
+
+const FlexDiv = styled.div`
+  display: flex;
+`;
 
 export default RegPuz;
