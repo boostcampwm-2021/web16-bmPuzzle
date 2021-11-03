@@ -76,6 +76,12 @@ class Puzzle {
         tile.opacity = 1;
         //tile.shape = shape;
         tile.position = new Point(x, y);
+        tile.onMouseDrag = (event: any) => {
+          tile.position = new Point(
+            tile.position._x + event.delta.x,
+            tile.position._y + event.delta.y
+          );
+        };
 
         tiles.push(tile);
         tileIndexes.push(tileIndexes.length);
