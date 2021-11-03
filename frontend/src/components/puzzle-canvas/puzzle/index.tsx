@@ -11,7 +11,7 @@ import {
 
 const config = {
   zoomScaleOnDrag: 1.125,
-  imgName: "http://assets.paperjs.org/images/marilyn.jpg",
+  imgName: "puzzleImage",
   tileWidth: 64,
   tilesPerRow: 10,
   tilesPerColumn: 8,
@@ -22,13 +22,11 @@ const config = {
 
 class Puzzle {
   currentZoom = 1;
+  project: any;
   zoomScaleOnDrag = config.zoomScaleOnDrag;
   imgName = config.imgName;
   shadowWidth = config.shadowWidth;
-  puzzleImage = new Raster({
-    source: config.imgName,
-    position: new Point(500, 500),
-  });
+  puzzleImage: null | any;
   tileWidth = config.tileWidth;
   tilesPerRow = Math.ceil(config.imgWidth / config.tileWidth);
   tilesPerColumn = Math.ceil(config.imgHeight / config.tileWidth);
@@ -37,15 +35,17 @@ class Puzzle {
   selectedTileIndex = undefined;
   selectionGroup = undefined;
   shadowScale = 1.5;
-  constructor() {
-    this.puzzleImage.onLoad = () => {
-      this.createTiles(this.tilesPerRow, this.tilesPerColumn);
-    };
+  constructor(project: any) {
+    this.project = project;
+    this.puzzleImage = new this.project.Raster({
+      source: config.imgName,
+      position: new Point(500, 500),
+    });
+    this.createTiles(this.tilesPerRow, this.tilesPerColumn);
+    this.puzzleImage.visible = false;
   }
 
   createTiles(xTileCount: number, yTileCount: number) {
-    this.puzzleImage.visible = false;
-
     const tiles = [];
     const tileRatio = this.tileWidth / 100.0;
 
@@ -64,20 +64,20 @@ class Puzzle {
           this.tileWidth
         ); //path return
         mask.opacity = 0.25;
-        mask.strokeColor = new Color("#fff");
+        mask.strokeColor = new this.project.Color("#fff");
 
         const cloneImg = this.puzzleImage.clone();
         const img = this.getTileRaster(
           cloneImg,
-          new Paper.Size(this.tileWidth, this.tileWidth),
-          new Paper.Point(this.tileWidth * x, this.tileWidth * y)
+          new this.project.Size(this.tileWidth, this.tileWidth),
+          new Point(this.tileWidth * x, this.tileWidth * y)
         ); //Raster 반환
 
         const border = mask.clone();
-        border.strokeColor = new Color("#ccc");
+        border.strokeColor = new this.project.Color("#ccc");
         border.strokeWidth = 5;
 
-        const tile = new Group([mask, border, img, border]);
+        const tile = new this.project.Group([mask, border, img, border]);
         tile.clipped = true;
         tile.opacity = 1;
         //tile.shape = shape;
@@ -96,10 +96,10 @@ class Puzzle {
         tileIndexes.splice(index1, 1);
 
         const position = new Point(
-          view.center.x -
+          this.project.view.center.x -
             (this.tileWidth +
               this.tileWidth * (x * 2 + (y % 2) + this.puzzleImage.size.width)),
-          view.center.y -
+          this.project.view.center.y -
             (this.tileWidth / 2 +
               this.tileWidth * y +
               this.puzzleImage.size.height / 2)
@@ -186,8 +186,8 @@ class Puzzle {
       -20, 80, -20, 62, -5, 62, -5, 60, 0, 63, 5, 63, 5, 65, 15, 100, 0,
     ];
 
-    const mask = new Path();
-    const tileCenter = view.center;
+    const mask = new this.project.Path();
+    const tileCenter = this.project.view.center;
     const topLeftEdge = new Point(-4, 4);
 
     mask.moveTo(topLeftEdge);
@@ -274,16 +274,17 @@ class Puzzle {
     return mask;
   }
   getTileRaster(sourceRaster: any, size: any, offset: any) {
-    const targetRaster = new Raster("empty");
+    const targetRaster = new this.project.Raster("empty");
     const tileWithMarginWidth = size.width + this.tileMarginWidth * 2;
     const data = sourceRaster.getData(
-      new Rectangle(
+      new this.project.Rectangle(
         offset.x - this.tileMarginWidth,
         offset.y - this.tileMarginWidth,
         tileWithMarginWidth,
         tileWithMarginWidth
       )
     );
+    // console.log(data);
     targetRaster.setImageData(data, new Point(0, 0));
     targetRaster.position = new Point(28, 36);
     return targetRaster;

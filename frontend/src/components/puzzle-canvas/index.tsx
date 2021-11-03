@@ -10,10 +10,15 @@ const PuzzleCanvas = (props: any) => {
     const canvas = canvasRef.current;
     if (canvas === null) return;
     Paper.setup(canvas);
-    const puzzle = new Puzzle();
+    const puzzle = new Puzzle(Paper);
+    // const puzzle = new Paper.Raster({
+    //   source: "puzzleImage",
+    //   position: new Point(500, 500),
+    // });
+    console.log(puzzle);
   }, []);
 
-  return <canvas ref={canvasRef} {...props} id="canvas" />;
+  return <canvas ref={canvasRef} {...props} id="canvas" resize />;
 };
 
 export default PuzzleCanvas;
