@@ -24,7 +24,7 @@ const PlayPuzzle = () => {
         height="128"
         id="empty"
         style={imgStyle}
-        src="content/images/empty.png"
+        src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
         alt="emptyImage"
       />
     </div>
