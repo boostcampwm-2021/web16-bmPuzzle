@@ -15,6 +15,7 @@ const PlayPuzzle = () => {
       <img
         ref={imgRef}
         id="puzzleImage"
+        style={imgStyle}
         src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
         alt="puzzleImage"
       />

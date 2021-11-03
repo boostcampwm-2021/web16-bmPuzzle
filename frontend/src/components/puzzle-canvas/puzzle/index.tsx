@@ -273,10 +273,10 @@ class Puzzle {
 
     return mask;
   }
-  getTileRaster(sourceRaster: any, size: any, offset: any) {
+  getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
     const targetRaster = new this.project.Raster("empty");
     const tileWithMarginWidth = size.width + this.tileMarginWidth * 2;
-    const data = sourceRaster.getData(
+    const data = sourceRaster.getImageData(
       new this.project.Rectangle(
         offset.x - this.tileMarginWidth,
         offset.y - this.tileMarginWidth,
