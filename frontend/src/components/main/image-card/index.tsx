@@ -17,13 +17,13 @@ const ImageCard = (props: any) => {
 
   return (
     <ImageGroup>
-      {arr.map((ele, idx) => {
+      {props.img.map((ele: any, idx: any) => {
         return (
           <Wrapper key={idx}>
-            <Img src={ele.img} />
+            <Img src={ele} />
             <Content>
-              <div>{ele.keyword}</div>
-              <div>{ele.visitTime}</div>
+              <div>genie</div>
+              <div>10</div>
             </Content>
           </Wrapper>
         );

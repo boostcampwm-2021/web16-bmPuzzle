@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
@@ -65,9 +66,6 @@ const Main = () => {
         <Search />
         <ImageCard img={src} />
       </Container>
-      {src.map((ele: any, idx: number) => (
-        <img key={idx} src={ele} />
-      ))}
     </Wrapper>
   );
 };
