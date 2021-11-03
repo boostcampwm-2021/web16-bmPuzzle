@@ -13,11 +13,11 @@ import {
 const config = {
   zoomScaleOnDrag: 1.125,
   imgName: "puzzleImage",
-  tileWidth: 64,
+  tileWidth: 128,
   tilesPerRow: 2,
   tilesPerColumn: 2,
-  imgWidth: 128,
-  imgHeight: 128,
+  imgWidth: 256,
+  imgHeight: 256,
   shadowWidth: 5,
 };
 
@@ -68,7 +68,7 @@ class Puzzle {
           this.tileWidth
         ); //path return
         mask.opacity = 0.25;
-        mask.strokeColor = new this.project.Color("#fff");
+        mask.strokeColor = new this.project.Color(0, 0, 0);
 
         const cloneImg = this.puzzleImage.clone();
         const img = this.getTileRaster(
@@ -78,7 +78,7 @@ class Puzzle {
         ); //Raster 반환
 
         const border = mask.clone();
-        border.strokeColor = new this.project.Color("#ccc");
+        border.strokeColor = new this.project.Color(255, 0, 0);
         border.strokeWidth = 5;
 
         const tile = new this.project.Group([mask, border, img, border]);
@@ -130,10 +130,10 @@ class Puzzle {
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        let topTab = 1;
-        let rightTab = 1;
-        let bottomTab = 1;
-        let leftTab = 1;
+        let topTab: undefined | number;
+        let rightTab: undefined | number;
+        let bottomTab: undefined | number;
+        let leftTab: undefined | number;
 
         if (y === 0) topTab = 0;
         if (y === height - 1) bottomTab = 0;
@@ -162,12 +162,14 @@ class Puzzle {
         shape.rightTab =
           x < width - 1 ? this.getRandomTabValue() : shape.rightTab;
 
-        if (shapeRight) shapeRight.leftTab = -shape.rightTab;
+        if (shapeRight && shape.rightTab !== undefined)
+          shapeRight.leftTab = -shape.rightTab;
 
         shape.bottomTab =
           y < height - 1 ? this.getRandomTabValue() : shape.bottomTab;
 
-        if (shapeBottom) shapeBottom.topTab = -shape.bottomTab;
+        if (shapeBottom && shape.bottomTab !== undefined)
+          shapeBottom.topTab = -shape.bottomTab;
       }
     }
     return shapeArray;
@@ -179,12 +181,19 @@ class Puzzle {
 
   getMask(
     tileRatio: number,
-    topTab: number,
-    rightTab: number,
-    bottomTab: number,
-    leftTab: number,
+    topTab: number | undefined,
+    rightTab: number | undefined,
+    bottomTab: number | undefined,
+    leftTab: number | undefined,
     tileWidth: number
   ) {
+    if (
+      topTab === undefined ||
+      rightTab === undefined ||
+      bottomTab === undefined ||
+      leftTab === undefined
+    )
+      return;
     const curvyCoords = [
       0, 0, 35, 15, 37, 5, 37, 5, 40, 0, 38, -5, 38, -5, 20, -20, 50, -20, 50,
       -20, 80, -20, 62, -5, 62, -5, 60, 0, 63, 5, 63, 5, 65, 15, 100, 0,
@@ -290,9 +299,10 @@ class Puzzle {
     );
     targetRaster.setImageData(data, new Point(0, 0));
     targetRaster.position = new Point(
-      offset.x - this.tileMarginWidth,
-      offset.y - this.tileMarginWidth
+      -(offset.x - config.imgWidth / 2),
+      -(offset.y - config.imgWidth / 2)
     );
+    console.log(offset);
     return targetRaster;
   }
 }
