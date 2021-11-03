@@ -36,7 +36,7 @@ const Main = () => {
       <Header />
       <Container>
         <Search setSrc={setSrc} />
-        <ImageCard img={src} />
+        <ImageCard img={src} margin={25} />
         <UploadBtn />
       </Container>
     </Wrapper>

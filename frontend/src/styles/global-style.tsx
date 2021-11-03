@@ -26,6 +26,7 @@ input:focus {
 }
 #root {
     height: 100vh;
+    overflow-y: hidden;
 }
 div {
     font-family: "roboto slab bold";

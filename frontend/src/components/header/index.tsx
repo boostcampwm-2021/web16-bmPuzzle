@@ -69,6 +69,7 @@ const Btn = styled.button`
   align-content: center;
   &:hover {
     cursor: pointer;
+    opacity: 0.5;
   }
 `;
 
