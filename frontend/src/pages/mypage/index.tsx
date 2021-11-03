@@ -11,8 +11,10 @@ import getImgfile from "@src/js/get-img-file";
 const Mypage = () => {
   let dummy_image: any[] = [];
   let dummy_user: any = undefined;
-  const [src, setSrc] = useState(dummy_image);
   const [user, setUser] = useState(dummy_user);
+  const [upSrc, setUp] = useState(dummy_image);
+  const [doneSrc, setDone] = useState(dummy_image);
+
   const myPageEnter = async () => {
     setUser(window.sessionStorage.getItem("id"));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/my`, {
@@ -26,7 +28,8 @@ const Mypage = () => {
     });
     if (response.ok) {
       let img = await response.json();
-      setSrc(await getImgfile(img.fileName, img.data));
+      setUp(await getImgfile(img.uploadName, img.uploadData));
+      setDone(await getImgfile(img.doneName, img.doneData));
     }
   };
   useEffect(() => {
@@ -38,7 +41,7 @@ const Mypage = () => {
       <Header />
       <Container>
         <AccountBar user={user} />
-        <ImageCard img={src} />
+        <ImageCard img={upSrc} />
       </Container>
     </Wrapper>
   );

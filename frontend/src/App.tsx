@@ -8,8 +8,6 @@ import Main from "@pages/main/index";
 import Mypage from "@src/pages/mypage/index";
 import PlayPuzzle from "@pages/play-puzzle/index";
 
-
-
 const App = () => {
   return (
     <Router>
@@ -20,7 +18,6 @@ const App = () => {
         <Route path="/main" component={Main} exact={true} />
         <Route path="/mypage" component={Mypage} exact={true} />
         <Route path="/room" component={PlayPuzzle} exact={true} />
-        <Route path="/mypage" component={My} exact={true} />
       </Switch>
     </Router>
   );

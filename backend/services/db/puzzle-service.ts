@@ -36,4 +36,8 @@ const myPuzzle =async (id: string) => {
   if (puzzle == null) return { code: 500, msg: 'no puzzle found' };
   return { code: 200, msg: 'puzzle return', data: puzzle };
 };
-export default { createPuzzle, getPuzzle, filterPuzzle, myPuzzle};
+const donePuzzle =async (puzzle_id: any) => {
+  const puzzle = await db.Puzzle.findAll({ where: { id:puzzle_id}});
+  return puzzle;
+};
+export default { createPuzzle, getPuzzle, filterPuzzle, myPuzzle, donePuzzle};
