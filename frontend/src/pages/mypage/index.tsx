@@ -4,13 +4,17 @@ import colors from "@styles/theme";
 
 import Header from "@components/header/index";
 import ImageCard from "@components/image-card/index";
+import AccountBar from "@components/account-bar/index";
 
 import getImgfile from "@src/js/get-img-file";
 
-const My = () => {
+const Mypage = () => {
   let dummy_image: any[] = [];
+  let dummy_user: any = undefined;
   const [src, setSrc] = useState(dummy_image);
+  const [user, setUser] = useState(dummy_user);
   const myPageEnter = async () => {
+    setUser(window.sessionStorage.getItem("id"));
     const response = await fetch(`${process.env.REACT_APP_API_URL}/my`, {
       method: "POST",
       headers: {
@@ -33,6 +37,7 @@ const My = () => {
     <Wrapper>
       <Header />
       <Container>
+        <AccountBar user={user} />
         <ImageCard img={src} />
       </Container>
     </Wrapper>
@@ -52,4 +57,4 @@ const Container = styled.div`
   overflow-y: scroll;
 `;
 
-export default My;
+export default Mypage;
