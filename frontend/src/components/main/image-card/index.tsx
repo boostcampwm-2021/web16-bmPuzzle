@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import example from "@images/example.png";
 import example2 from "@images/example2.png";
+const image_arr: string[] = [];
+const ImageCard = (input: any) => {
+  if (typeof input === "string" && input[5] === "i") {
+    image_arr.push(input);
+  }
+  console.log(image_arr);
 
-const ImageCard = () => {
   const arr = [
     { keyword: "puzzle", img: example, visitTime: 10 },
     { keyword: "genie", img: example2, visitTime: 20 },
@@ -14,16 +19,16 @@ const ImageCard = () => {
     { keyword: "puzzle", img: example, visitTime: 10 },
     { keyword: "genie", img: example2, visitTime: 20 },
   ];
-
   return (
     <ImageGroup>
-      {arr.map((ele, idx) => {
+      {image_arr.length}
+      {image_arr.map((ele: any, idx: any) => {
         return (
           <Wrapper key={idx}>
-            <Img src={ele.img} />
+            <Img src={ele} />
             <Content>
-              <div>{ele.keyword}</div>
-              <div>{ele.visitTime}</div>
+              <div>안녕</div>
+              <div>반가워</div>
             </Content>
           </Wrapper>
         );
