@@ -14,17 +14,17 @@ const AccountBar = (props: any) => {
 const Wrapper = styled.div`
   display: flex;
   margin-left: 10%;
-  margin: 2% 10% 0 10%;
+  margin: 3% 12% 0 12%;
 `;
 
 const Img = styled.img`
-  width: 50px;
-  height: 50px;
-  margin-right: 50px;
+  width: 40px;
+  height: 40px;
+  margin-right: 40px;
 `;
 
 const Name = styled.div`
-  font-size: 30px;
+  font-size: 20px;
   padding: 10px 0;
   font-weight: 900;
 `;
