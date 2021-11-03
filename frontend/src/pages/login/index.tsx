@@ -18,6 +18,7 @@ const Login = () => {
         id: res.profileObj.name,
       }),
     }).then((response) => response.json());
+
     if (response.code === 200) {
       window.sessionStorage.setItem("id", res.profileObj.name);
       history.push("/main");

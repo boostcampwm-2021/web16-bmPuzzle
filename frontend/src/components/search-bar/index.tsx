@@ -16,12 +16,13 @@ const SearchBar = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title: search,
+        keyword: search,
       }),
-    }).then((response) => response.json());
+    });
 
-    if (response.code !== 200) {
-      window.alert("검색한 키워드에 해당하는 퍼즐이 없습니다!");
+    if (response.ok) {
+      let img = await response.json();
+      console.log(img);
     }
   };
 
