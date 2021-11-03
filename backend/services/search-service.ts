@@ -1,4 +1,4 @@
-import puzzle from '@models/puzzle';
+import searchService from '@services/db/puzzle-service';
 import puzzleService from '@services/db/puzzle-service';
 import path from 'path';
 import fs from 'fs';
@@ -10,24 +10,28 @@ const search = (req: any, res: any, next: any) => {
 };
 
 const sendImgUrl = async (req: any, res: any) => {
-  const puzzles = await puzzleService.getPuzzle();
-  let return_data: any[] = [];
-  let name_data: any[] = [];
-  req.files.map((file: any) => {
-    const now_puzzle = puzzles.info.filter(
-      (puzzle: any) => puzzle.image == file,
-    )[0];
-    if(now_puzzle!=undefined){
-
-        return_data.push(now_puzzle);
-        name_data.push(now_puzzle.image);
-    }
+  const puzzles =await searchService.getData()
+  const returnData = req.files.map((file: any) => {
+    return puzzles.info.filter((puzzle: any) => puzzle.image == file)[0];
   });
+
   res.status(200).json({
-    code: 1000,
-    message: 'Welldone.',
-    data: return_data,
-    file_name: name_data,
+    data: returnData,
+    file_name: req.files,
   });
 };
-export default { search, sendImgUrl };
+
+const filterImgUrl = async (req: any, res: any) => {
+    const puzzle = await searchService.filterData(req.body.keyword);
+    const filterInfo:any = [];
+    const fileName:any = [];
+    req.files.forEach((file:any) => {
+        const puzzleInfo = puzzle.info.filter((puzzle:any) => puzzle.image == file)[0];
+        puzzleInfo !== undefined ? (filterInfo.push(puzzleInfo), fileName.push(puzzleInfo.image)) : '';
+    })
+    res.status(200).json({
+        data: filterInfo,
+        fileName: fileName
+    })
+}
+export default { search, sendImgUrl, filterImgUrl };
