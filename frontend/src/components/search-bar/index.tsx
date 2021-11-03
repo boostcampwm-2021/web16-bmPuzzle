@@ -47,6 +47,7 @@ const Wrapper = styled.div`
   justify-content: space-between;
   padding: 0.5% 1% 0.5% 2%;
   display: flex;
+  z-index: 1;
 `;
 
 const Input = styled.input`

@@ -21,22 +21,26 @@ const Main = () => {
     });
     if (response.ok) {
       const img = (await response.json()).data;
-      loadingImg(img);
+      getImgfile(img);
     }
   };
   const getImgfile = async (imgurl: any) => {
     const img = imgurl.map(async (ele: any) => {
       return await fetch(`${process.env.REACT_APP_STATIC_URL}/${ele}`)
         .then((res) => res.blob())
-        .then((imgBlob) => imgBlob);
+        .then((imgBlob) => URL.createObjectURL(imgBlob));
     });
 
+    console.log(img);
+
     const imgBlob = await Promise.all(img.map((ele: any) => ele));
-    return imgBlob;
+    setSrc(imgBlob);
   };
 
+  /*
   const loadingImg = async (imgurl: any) => {
     const blob = await getImgfile(imgurl);
+    console.log(blob);
     const readerResultArr = getFileData(blob);
     const imgSrc = await Promise.all(readerResultArr.map((ele: any) => ele));
     setSrc(imgSrc);
@@ -54,6 +58,7 @@ const Main = () => {
     });
     return ret;
   };
+  */
 
   useEffect(() => {
     getImgUrl();
