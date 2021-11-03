@@ -1,4 +1,3 @@
-import searchService from '@services/db/puzzle-service';
 import puzzleService from '@services/db/puzzle-service';
 import path from 'path';
 import fs from 'fs';
@@ -10,7 +9,7 @@ const search = (req: any, res: any, next: any) => {
 };
 
 const sendImgUrl = async (req: any, res: any) => {
-  const puzzles =await searchService.getData()
+  const puzzles =await puzzleService.getPuzzle()
   const returnData = req.files.map((file: any) => {
     return puzzles.info.filter((puzzle: any) => puzzle.image == file)[0];
   });
@@ -22,7 +21,7 @@ const sendImgUrl = async (req: any, res: any) => {
 };
 
 const filterImgUrl = async (req: any, res: any) => {
-    const puzzle = await searchService.filterData(req.body.keyword);
+    const puzzle = await puzzleService.filterPuzzle(req.body.keyword);
     const filterInfo:any = [];
     const fileName:any = [];
     req.files.forEach((file:any) => {

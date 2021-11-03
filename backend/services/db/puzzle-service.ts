@@ -1,12 +1,5 @@
 import db from '@models/index';
 
-const getPuzzle = async () => {
-  const puzzleInfo = await db.Puzzle.findAll();
-  if (puzzleInfo == null) return { code: 500, msg: 'no puzzle found' };
-
-  return { code: 200, msg: 'puzzle return', info: puzzleInfo };
-};
-
 const filterPuzzle = async (keyword: string) => {
   const puzzleInfo = await db.Puzzle.findAll({
     where: { title: keyword, public: 1 },
@@ -22,11 +15,10 @@ const createPuzzle = async (data: object) => {
   else return false;
 };
 const getPuzzle = async () => {
-  const puzzleInfo = await db.Puzzle.findAll({where:{public:1}});
-  if(puzzleInfo == null) return {code: 500, msg: 'no puzzle found'};
+  const puzzleInfo = await db.Puzzle.findAll({ where: { public: 1 } });
+  if (puzzleInfo == null) return { code: 500, msg: 'no puzzle found' };
 
-  return {code: 200, msg: 'puzzle return', info: puzzleInfo};
+  return { code: 200, msg: 'puzzle return', info: puzzleInfo };
 };
 
-export default {createPuzzle,getPuzzle, filterPuzzle};
-
+export default { createPuzzle, getPuzzle, filterPuzzle };
