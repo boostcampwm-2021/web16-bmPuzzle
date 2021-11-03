@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import searchIcon from "@images/search-icon.png";
 
-const SearchBar = () => {
+import getImgfile from "@src/js/get-img-file";
+
+const SearchBar = (props: any) => {
   const [search, setSearch] = useState("");
 
   const handleChange = (e: any) => {
@@ -22,7 +24,7 @@ const SearchBar = () => {
 
     if (response.ok) {
       let img = await response.json();
-      console.log(img);
+      props.setSrc(await getImgfile(img.fileName, img.data));
     }
   };
 
