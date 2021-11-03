@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import LevelComponent from "@components/register-puzzle/level-component";
+import LevelComponent from "@components/level-component";
 import Header from "@components/header/index";
 import colors from "@styles/theme";
 import { fetchPost } from "@src/utils/fetch";

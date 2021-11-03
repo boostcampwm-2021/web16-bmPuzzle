@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import example from "@images/example.png";
 import example2 from "@images/example2.png";
-
-const image_arr: string[] = [];
 
 const ImageCard = (props: any) => {
   const arr = [
