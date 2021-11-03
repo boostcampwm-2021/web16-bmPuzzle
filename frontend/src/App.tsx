@@ -2,9 +2,10 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import GlobalStyles from "@styles/global-style";
-import Login from "@components/login";
-import RegPuz from "@components/register-puzzle/index";
-import Main from "@components/main/index";
+import Login from "@pages/login";
+import RegPuz from "@pages/register-puzzle/index";
+import Main from "@pages/main/index";
+import PlayPuzzle from "@pages/play-puzzle/index";
 
 const App = () => {
   return (
@@ -14,6 +15,7 @@ const App = () => {
         <Route path="/" component={Login} exact={true} />
         <Route path="/register" component={RegPuz} exact={true} />
         <Route path="/main" component={Main} exact={true} />
+        <Route path="/room" component={PlayPuzzle} exact={true} />
       </Switch>
     </Router>
   );

@@ -3,7 +3,7 @@ import styled from "styled-components";
 import example from "@images/example.png";
 import example2 from "@images/example2.png";
 
-const ImageCard = () => {
+const ImageCard = (props: any) => {
   const arr = [
     { keyword: "puzzle", img: example, visitTime: 10 },
     { keyword: "genie", img: example2, visitTime: 20 },
@@ -14,16 +14,15 @@ const ImageCard = () => {
     { keyword: "puzzle", img: example, visitTime: 10 },
     { keyword: "genie", img: example2, visitTime: 20 },
   ];
-
   return (
     <ImageGroup>
-      {arr.map((ele, idx) => {
+      {props.img.map((ele: any, idx: any) => {
         return (
           <Wrapper key={idx}>
-            <Img src={ele.img} />
+            <Img src={ele} />
             <Content>
-              <div>{ele.keyword}</div>
-              <div>{ele.visitTime}</div>
+              <div>genie</div>
+              <div>10</div>
             </Content>
           </Wrapper>
         );
@@ -65,5 +64,4 @@ const Img = styled.img`
   margin-bottom: 15px;
   object-fit: contain;
 `;
-
 export default ImageCard;
