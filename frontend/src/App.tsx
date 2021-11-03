@@ -2,9 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import GlobalStyles from "@styles/global-style";
-import Login from "@components/login";
-import RegPuz from "@components/register-puzzle/index";
-import Main from "@components/main/index";
+import Login from "@src/pages/login";
+import RegPuz from "@src/pages/register-puzzle/index";
+import Main from "@src/pages/main/index";
 
 const App = () => {
   return (

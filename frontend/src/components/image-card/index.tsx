@@ -2,13 +2,10 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import example from "@images/example.png";
 import example2 from "@images/example2.png";
-const image_arr: string[] = [];
-const ImageCard = (input: any) => {
-  if (typeof input === "string" && input[5] === "i") {
-    image_arr.push(input);
-  }
-  console.log(image_arr);
 
+const image_arr: string[] = [];
+
+const ImageCard = (props: any) => {
   const arr = [
     { keyword: "puzzle", img: example, visitTime: 10 },
     { keyword: "genie", img: example2, visitTime: 20 },
@@ -70,5 +67,4 @@ const Img = styled.img`
   margin-bottom: 15px;
   object-fit: contain;
 `;
-
 export default ImageCard;
