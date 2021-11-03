@@ -18,6 +18,7 @@ const Login = () => {
         id: res.profileObj.name,
       }),
     }).then((response) => response.json());
+
     if (response.code === 200) {
       window.sessionStorage.setItem("id", res.profileObj.name);
       history.push("/main");
@@ -30,8 +31,16 @@ const Login = () => {
     <Wrapper>
       <Title>BM PUZZLE</Title>
       <Icon src={puzzleIcon} />
-      <GoogleLoginBtn
+      <GoogleLogin
         clientId={google_id}
+        render={(renderProps) => (
+          <GoogleButton
+            onClick={renderProps.onClick}
+            disabled={renderProps.disabled}
+          >
+            <span>Login</span>
+          </GoogleButton>
+        )}
         icon={false}
         buttonText="Login"
         onSuccess={(result) => onLoginSuccess(result)}
@@ -53,7 +62,7 @@ const Title = styled.div`
   color: white;
   font-size: 60px;
   font-weight: 900;
-  margin-top: 125px;
+  margin-top: 75px;
 `;
 const Icon = styled.img`
   width: 200px;
@@ -61,14 +70,22 @@ const Icon = styled.img`
   margin: 80px 0;
 `;
 
-const GoogleLoginBtn = styled(GoogleLogin)`
+const GoogleButton = styled.button`
   justify-content: center;
-  border-radius: 40px;
-  height: 53px;
+  border-radius: 50px;
+  height: 45px;
   width: 300px;
   span {
-    font-size: 35px;
+    font-size: 30px;
     color: black;
+    padding: 1%;
+    font-weight: 900;
+  }
+  border: none;
+
+  &:hover {
+    opacity: 0.5;
+    cursor: pointer;
   }
 `;
 

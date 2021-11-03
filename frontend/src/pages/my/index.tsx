@@ -1,43 +1,42 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
 
 import Header from "@components/header/index";
-import Search from "@components/search-bar/index";
 import ImageCard from "@components/image-card/index";
-import UploadBtn from "@components/upload-button/index";
 
 import getImgfile from "@src/js/get-img-file";
 
-const Main = () => {
+const My = () => {
   let dummy_image: any[] = [];
-  const [src, setSrc] = useState(dummy_image);
-  const getImgUrl = async () => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
-      method: "GET",
+  const [upSrc, setUp] = useState(dummy_image);
+  const [doneSrc, setDone] = useState(dummy_image);
+  const myPageEnter = async () => {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/my`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
       },
+      body: JSON.stringify({
+        id: window.sessionStorage.getItem("id"),
+      }),
     });
     if (response.ok) {
       let img = await response.json();
-      setSrc(await getImgfile(img.fileName, img.data));
+      console.log(img);
+      setUp(await getImgfile(img.uploadName, img.uploadData));
+      setDone(await getImgfile(img.doneName, img.doneData));
     }
   };
-
   useEffect(() => {
-    getImgUrl();
+    myPageEnter();
   }, []);
 
   return (
     <Wrapper>
       <Header />
       <Container>
-        <Search setSrc={setSrc} />
-        <ImageCard img={src} />
-        <UploadBtn />
+        <ImageCard img={doneSrc} />
       </Container>
     </Wrapper>
   );
@@ -56,4 +55,4 @@ const Container = styled.div`
   overflow-y: scroll;
 `;
 
-export default Main;
+export default My;

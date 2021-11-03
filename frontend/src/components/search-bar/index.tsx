@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import searchIcon from "@images/search-icon.png";
+import colors from "@styles/theme";
 
-const SearchBar = () => {
+import getImgfile from "@src/js/get-img-file";
+
+const SearchBar = (props: any) => {
   const [search, setSearch] = useState("");
 
   const handleChange = (e: any) => {
@@ -16,12 +19,13 @@ const SearchBar = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        title: search,
+        keyword: search,
       }),
-    }).then((response) => response.json());
+    });
 
-    if (response.code !== 200) {
-      window.alert("검색한 키워드에 해당하는 퍼즐이 없습니다!");
+    if (response.ok) {
+      let img = await response.json();
+      props.setSrc(await getImgfile(img.fileName, img.data));
     }
   };
 
@@ -38,25 +42,26 @@ const SearchBar = () => {
 const Wrapper = styled.div`
   width: 77%;
   margin: auto;
-  border: 1.5px solid black;
+  border: 1px solid ${colors["gray3"]};
   border-radius: 40px;
-  height: 40px;
+  height: 20px;
   position: absolute;
-  top: 115px;
+  top: 85px;
   background-color: white;
   justify-content: space-between;
   padding: 0.5% 1% 0.5% 2%;
   display: flex;
+  z-index: 1;
 `;
 
 const Input = styled.input`
   width: 100%;
-  font-size: 25px;
+  font-size: 14px;
 `;
 
 const Img = styled.img`
-  width: 60px;
-  height: 40px;
+  width: 30px;
+  height: 20px;
 `;
 
 const Btn = styled.button`
