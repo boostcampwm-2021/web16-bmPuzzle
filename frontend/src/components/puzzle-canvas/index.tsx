@@ -7,14 +7,12 @@ const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas: any = canvasRef.current;
     if (canvas === null) return;
+    canvas.width = `1000`;
+    canvas.height = 1000;
     Paper.setup(canvas);
     const puzzle = new Puzzle(Paper);
-    // const puzzle = new Paper.Raster({
-    //   source: "puzzleImage",
-    //   position: new Point(500, 500),
-    // });
     console.log(puzzle);
   }, []);
 

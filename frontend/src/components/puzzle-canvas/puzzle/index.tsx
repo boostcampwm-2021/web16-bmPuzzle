@@ -7,17 +7,18 @@ import {
   Path,
   Color,
   Rectangle,
+  Size,
 } from "paper/dist/paper-core";
 
 const config = {
   zoomScaleOnDrag: 1.125,
   imgName: "puzzleImage",
   tileWidth: 64,
-  tilesPerRow: 10,
-  tilesPerColumn: 8,
-  imgWidth: 500,
-  imgHeight: 500,
-  shadowWidth: 120,
+  tilesPerRow: 2,
+  tilesPerColumn: 2,
+  imgWidth: 128,
+  imgHeight: 128,
+  shadowWidth: 5,
 };
 
 class Puzzle {
@@ -39,10 +40,13 @@ class Puzzle {
     this.project = project;
     this.puzzleImage = new this.project.Raster({
       source: config.imgName,
-      position: new Point(500, 500),
+      position: new Point(100, 100),
     });
+    // this.puzzleImage.onLoad = () => {
+    //   this.createTiles(this.tilesPerRow, this.tilesPerColumn);
+    // };
     this.createTiles(this.tilesPerRow, this.tilesPerColumn);
-    this.puzzleImage.visible = false;
+    //this.puzzleImage.visible = false;
   }
 
   createTiles(xTileCount: number, yTileCount: number) {
@@ -69,7 +73,7 @@ class Puzzle {
         const cloneImg = this.puzzleImage.clone();
         const img = this.getTileRaster(
           cloneImg,
-          new this.project.Size(this.tileWidth, this.tileWidth),
+          new Size(this.tileWidth, this.tileWidth),
           new Point(this.tileWidth * x, this.tileWidth * y)
         ); //Raster 반환
 
@@ -275,18 +279,20 @@ class Puzzle {
   }
   getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
     const targetRaster = new this.project.Raster("empty");
-    const tileWithMarginWidth = size.width + this.tileMarginWidth * 2;
+    const tileWithMarginWidth = size.width + this.tileMarginWidth;
     const data = sourceRaster.getImageData(
-      new this.project.Rectangle(
+      new Rectangle(
         offset.x - this.tileMarginWidth,
         offset.y - this.tileMarginWidth,
         tileWithMarginWidth,
         tileWithMarginWidth
       )
     );
-    // console.log(data);
     targetRaster.setImageData(data, new Point(0, 0));
-    targetRaster.position = new Point(28, 36);
+    targetRaster.position = new Point(
+      offset.x - this.tileMarginWidth,
+      offset.y - this.tileMarginWidth
+    );
     return targetRaster;
   }
 }
