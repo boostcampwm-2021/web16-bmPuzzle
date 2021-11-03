@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import searchIcon from "@images/search-icon.png";
+import colors from "@styles/theme";
 
 import getImgfile from "@src/js/get-img-file";
 
@@ -41,11 +42,11 @@ const SearchBar = (props: any) => {
 const Wrapper = styled.div`
   width: 77%;
   margin: auto;
-  border: 1.5px solid black;
+  border: 1px solid ${colors["gray3"]};
   border-radius: 40px;
-  height: 40px;
+  height: 20px;
   position: absolute;
-  top: 115px;
+  top: 85px;
   background-color: white;
   justify-content: space-between;
   padding: 0.5% 1% 0.5% 2%;
@@ -55,12 +56,12 @@ const Wrapper = styled.div`
 
 const Input = styled.input`
   width: 100%;
-  font-size: 25px;
+  font-size: 14px;
 `;
 
 const Img = styled.img`
-  width: 60px;
-  height: 40px;
+  width: 30px;
+  height: 20px;
 `;
 
 const Btn = styled.button`

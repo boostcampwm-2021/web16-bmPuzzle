@@ -41,14 +41,14 @@ const Content = styled.div`
   display: flex;
   justify-content: space-between;
   width: 80%;
-  font-size: 18px;
+  font-size: 12px;
   color: gray;
 `;
 
 const Img = styled.img`
   width: 85%;
   height: 85%;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   object-fit: contain;
 `;
 export default ImageCard;
