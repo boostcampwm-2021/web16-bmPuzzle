@@ -19,7 +19,6 @@ const App = () => {
         <Route path="/main" component={Main} exact={true} />
         <Route path="/room" component={PlayPuzzle} exact={true} />
         <Route path="/mypage" component={My} exact={true} />
-
       </Switch>
     </Router>
   );
