@@ -21,13 +21,12 @@ const ImageCard = (props: any) => {
           <Wrapper key={idx}>
             <Img src={ele} />
             <Content>
-              <div>genie</div>
+              <div>d</div>
               <div>10</div>
             </Content>
           </Wrapper>
         );
       })}
-      ;
     </ImageGroup>
   );
 };

@@ -21,12 +21,9 @@ const Main = () => {
     });
     if (response.ok) {
       let img = await response.json();
-      img = img.file_name;
       const img_info = img.data;
-      console.log(img_info);
+      img = img.file_name;
       setInfo(img_info);
-      loadingImg(img);
-      const img = (await response.json()).data;
       getImgfile(img);
     }
   };
@@ -36,8 +33,6 @@ const Main = () => {
         .then((res) => res.blob())
         .then((imgBlob) => URL.createObjectURL(imgBlob));
     });
-
-    console.log(img);
 
     const imgBlob = await Promise.all(img.map((ele: any) => ele));
     setSrc(imgBlob);

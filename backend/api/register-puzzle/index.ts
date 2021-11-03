@@ -1,6 +1,6 @@
 import express from 'express';
 import multer from 'multer';
-import postData from '@services/db/register-puzzle-service';
+import puzzleService from '@services/db/puzzle-service';
 
 const router = express.Router();
 const newPuzzle = { user_id: '', image: '', title: '', level: 1 };
@@ -22,7 +22,7 @@ router.post('/', upload.single('img'), (req, res) => {
   newPuzzle.user_id = req.body.userId;
   newPuzzle.title = req.body.title;
   newPuzzle.level = Number(req.body.level);
-  postData(newPuzzle).then(result => {
+  puzzleService.createPuzzle(newPuzzle).then(result => {
     if (result) res.status(200).send();
     else res.status(500).send();
   });
