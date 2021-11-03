@@ -18,6 +18,7 @@ const createPuzzle = async (data: object) => {
   if (res !== null) return true;
   else return false;
 };
+
 const getPuzzle = async () => {
   const puzzleInfo = await db.Puzzle.findAll({ where: { public: 1 },
     order:[
@@ -27,4 +28,12 @@ const getPuzzle = async () => {
   return { code: 200, msg: 'puzzle return', info: puzzleInfo };
 };
 
-export default { createPuzzle, getPuzzle, filterPuzzle };
+const myPuzzle =async (id: string) => {
+  const puzzle = await db.Puzzle.findAll({ where: { public: 1,  user_id:id},
+    order:[
+      ['visit_time','DESC']
+    ],});
+  if (puzzle == null) return { code: 500, msg: 'no puzzle found' };
+  return { code: 200, msg: 'puzzle return', data: puzzle };
+};
+export default { createPuzzle, getPuzzle, filterPuzzle, myPuzzle};
