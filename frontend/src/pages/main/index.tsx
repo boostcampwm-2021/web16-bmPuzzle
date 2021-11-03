@@ -7,6 +7,8 @@ import Header from "@components/header/index";
 import Search from "@components/search-bar/index";
 import ImageCard from "@components/image-card/index";
 
+import getImgfile from "@src/js/get-img-file";
+
 const Main = () => {
   let dummy_image: any[] = [];
   const [src, setSrc] = useState(dummy_image);
@@ -20,21 +22,8 @@ const Main = () => {
     });
     if (response.ok) {
       let img = await response.json();
-      getImgfile(img.file_name, img.data);
+      setSrc(await getImgfile(img.fileName, img.data));
     }
-  };
-  const getImgfile = async (imgurl: any, imgInfo: any) => {
-    const img = imgurl.map(async (ele: any) => {
-      return await fetch(`${process.env.REACT_APP_STATIC_URL}/${ele}`)
-        .then((res) => res.blob())
-        .then((imgBlob) => URL.createObjectURL(imgBlob));
-    });
-
-    const imgBlob = await Promise.all(img.map((ele: any) => ele));
-    imgInfo.forEach((ele: any, idx: number) => {
-      ele.image = imgBlob[idx];
-    });
-    setSrc(imgInfo);
   };
 
   useEffect(() => {
@@ -45,7 +34,7 @@ const Main = () => {
     <Wrapper>
       <Header />
       <Container>
-        <Search />
+        <Search setSrc={setSrc} />
         <ImageCard img={src} />
       </Container>
     </Wrapper>
