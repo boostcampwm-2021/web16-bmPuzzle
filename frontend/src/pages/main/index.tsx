@@ -10,7 +10,7 @@ import ImageCard from "@components/image-card/index";
 const Main = () => {
   let dummy_image: any[] = [];
   const [src, setSrc] = useState(dummy_image);
-
+  const [imgInfo, setInfo] = useState(dummy_image);
   const getImgUrl = async () => {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
       method: "GET",
@@ -20,7 +20,11 @@ const Main = () => {
       },
     });
     if (response.ok) {
-      const img = (await response.json()).data;
+      let img = await response.json();
+      img = img.file_name;
+      const img_info = img.data;
+      console.log(img_info);
+      setInfo(img_info);
       loadingImg(img);
     }
   };
@@ -64,7 +68,7 @@ const Main = () => {
       <Header />
       <Container>
         <Search />
-        <ImageCard img={src} />
+        <ImageCard img={src} img_info={imgInfo} />
       </Container>
     </Wrapper>
   );
