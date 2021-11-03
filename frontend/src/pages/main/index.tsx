@@ -10,7 +10,6 @@ import ImageCard from "@components/image-card/index";
 const Main = () => {
   let dummy_image: any[] = [];
   const [src, setSrc] = useState(dummy_image);
-  const [imgInfo, setInfo] = useState(dummy_image);
   const getImgUrl = async () => {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
       method: "GET",
@@ -21,13 +20,10 @@ const Main = () => {
     });
     if (response.ok) {
       let img = await response.json();
-      const img_info = img.data;
-      img = img.file_name;
-      setInfo(img_info);
-      getImgfile(img);
+      getImgfile(img.file_name, img.data);
     }
   };
-  const getImgfile = async (imgurl: any) => {
+  const getImgfile = async (imgurl: any, imgInfo: any) => {
     const img = imgurl.map(async (ele: any) => {
       return await fetch(`${process.env.REACT_APP_STATIC_URL}/${ele}`)
         .then((res) => res.blob())
@@ -35,31 +31,11 @@ const Main = () => {
     });
 
     const imgBlob = await Promise.all(img.map((ele: any) => ele));
-    setSrc(imgBlob);
-  };
-
-  /*
-  const loadingImg = async (imgurl: any) => {
-    const blob = await getImgfile(imgurl);
-    console.log(blob);
-    const readerResultArr = getFileData(blob);
-    const imgSrc = await Promise.all(readerResultArr.map((ele: any) => ele));
-    setSrc(imgSrc);
-  };
-
-  const getFileData = (file: any) => {
-    const ret = file.map(async (ele: any) => {
-      return await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          resolve(reader.result);
-        };
-        reader.readAsDataURL(ele);
-      });
+    imgInfo.forEach((ele: any, idx: number) => {
+      ele.image = imgBlob[idx];
     });
-    return ret;
+    setSrc(imgInfo);
   };
-  */
 
   useEffect(() => {
     getImgUrl();
@@ -70,7 +46,7 @@ const Main = () => {
       <Header />
       <Container>
         <Search />
-        <ImageCard img={src} img_info={imgInfo} />
+        <ImageCard img={src} />
       </Container>
     </Wrapper>
   );

@@ -18,6 +18,7 @@ const sendImgUrl = async (req: any, res: any) => {
       (puzzle: any) => puzzle.image == file,
     )[0];
     if(now_puzzle!=undefined){
+
         return_data.push(now_puzzle);
         name_data.push(now_puzzle.image);
     }
