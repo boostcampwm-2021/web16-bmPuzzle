@@ -1,4 +1,4 @@
-import { Point, Rectangle, Size } from "paper/dist/paper-core";
+import { Point, Rectangle, Size, Matrix } from "paper/dist/paper-core";
 
 const config = {
   zoomScaleOnDrag: 1.125,
@@ -76,6 +76,13 @@ class Puzzle {
         tile.opacity = 1;
         //tile.shape = shape;
         tile.position = new Point(x, y);
+        console.log(tile);
+        tile.onMouseEnter = (event: any) => {
+          tile.scale(this.zoomScaleOnDrag);
+        };
+        tile.onMouseLeave = (event: any) => {
+          tile.scale(1 / this.zoomScaleOnDrag);
+        };
         tile.onMouseDrag = (event: any) => {
           tile.position = new Point(
             tile.position._x + event.delta.x,
