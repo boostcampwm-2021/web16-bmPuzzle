@@ -18,14 +18,13 @@ const ImageCard = (props: any) => {
   ];
   return (
     <ImageGroup>
-      {image_arr.length}
-      {image_arr.map((ele: any, idx: any) => {
+      {props.img.map((ele: any, idx: any) => {
         return (
           <Wrapper key={idx}>
             <Img src={ele} />
             <Content>
-              <div>안녕</div>
-              <div>반가워</div>
+              <div>genie</div>
+              <div>10</div>
             </Content>
           </Wrapper>
         );
