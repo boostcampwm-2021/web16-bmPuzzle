@@ -1,4 +1,5 @@
 import searchService from '@services/db/puzzle-service';
+import puzzleService from '@services/db/puzzle-service';
 import path from 'path';
 import fs from 'fs';
 
