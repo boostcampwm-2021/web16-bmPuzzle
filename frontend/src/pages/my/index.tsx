@@ -36,7 +36,7 @@ const My = () => {
     <Wrapper>
       <Header />
       <Container>
-        <ImageCard img={doneSrc} />
+        <ImageCard img={upSrc} />
       </Container>
     </Wrapper>
   );
