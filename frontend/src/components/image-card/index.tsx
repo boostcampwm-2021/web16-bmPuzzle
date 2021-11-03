@@ -1,33 +1,20 @@
 import React from "react";
 import styled from "styled-components";
-import example from "@images/example.png";
-import example2 from "@images/example2.png";
 
 const ImageCard = (props: any) => {
-  const arr = [
-    { keyword: "puzzle", img: example, visitTime: 10 },
-    { keyword: "genie", img: example2, visitTime: 20 },
-    { keyword: "puzzle", img: example, visitTime: 10 },
-    { keyword: "genie", img: example2, visitTime: 20 },
-    { keyword: "puzzle", img: example, visitTime: 10 },
-    { keyword: "genie", img: example2, visitTime: 20 },
-    { keyword: "puzzle", img: example, visitTime: 10 },
-    { keyword: "genie", img: example2, visitTime: 20 },
-  ];
   return (
     <ImageGroup>
       {props.img.map((ele: any, idx: any) => {
         return (
           <Wrapper key={idx}>
-            <Img src={ele} />
+            <Img src={ele.image} />
             <Content>
-              <div>genie</div>
-              <div>10</div>
+              <div>{ele.title}</div>
+              <div>{ele.visit_time}</div>
             </Content>
           </Wrapper>
         );
       })}
-      ;
     </ImageGroup>
   );
 };

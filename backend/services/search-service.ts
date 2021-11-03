@@ -13,7 +13,7 @@ const sendImgUrl =  async (req:any, res:any) => {
     const puzzles = await searchService();
     let return_data: any[] = [];
     req.files.map((file: any)=>{
-        const now_puzzle=puzzles.info.filter((puzzle: any) =>puzzle.image==file);
+        const now_puzzle=puzzles.info.filter((puzzle: any) =>puzzle.image==file)[0];
         return_data.push(now_puzzle);
     })
     res.status(200).json({
