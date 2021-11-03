@@ -20,8 +20,6 @@ const PlayPuzzle = () => {
         alt="puzzleImage"
       />
       <img
-        width="128"
-        height="128"
         id="empty"
         style={imgStyle}
         src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"

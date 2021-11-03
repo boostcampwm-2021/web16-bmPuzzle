@@ -1,9 +1,11 @@
 import React, { useRef, useEffect } from "react";
 import Paper from "paper";
 import Puzzle from "@components/puzzle-canvas/puzzle/index";
+import { preProcessFile } from "typescript";
 
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
+  const levelTemp = 3;
 
   useEffect(() => {
     const canvas: any = canvasRef.current;
@@ -11,7 +13,7 @@ const PuzzleCanvas = (props: any) => {
     canvas.width = `1000`;
     canvas.height = 1000;
     Paper.setup(canvas);
-    const puzzle = new Puzzle(Paper);
+    const puzzle = new Puzzle(Paper, props.puzzleImg, levelTemp);
     console.log(puzzle);
   }, []);
 
