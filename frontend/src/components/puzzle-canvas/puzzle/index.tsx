@@ -8,15 +8,29 @@ const config = {
   tilesPerColumn: 2,
   imgWidth: 256,
   imgHeight: 256,
-  shadowWidth: 5,
+  updateConfig: function (
+    imgName: string,
+    tileWidth: number,
+    tilesPerRow: number,
+    tilesPerColumn: number,
+    imgWidth: number,
+    imgHeight: number
+  ) {
+    this.imgName = imgName;
+    this.tileWidth = tileWidth;
+    this.tilesPerRow = tilesPerRow;
+    this.tilesPerColumn = tilesPerColumn;
+    this.imgWidth = imgWidth;
+    this.imgHeight = imgHeight;
+  },
 };
 
 class Puzzle {
   currentZoom = 1;
   project: any;
+  level: number;
   zoomScaleOnDrag = config.zoomScaleOnDrag;
   imgName = config.imgName;
-  shadowWidth = config.shadowWidth;
   puzzleImage: null | any;
   tileWidth = config.tileWidth;
   tilesPerRow = Math.ceil(config.imgWidth / config.tileWidth);
@@ -25,18 +39,30 @@ class Puzzle {
   selectedTile = undefined;
   selectedTileIndex = undefined;
   selectionGroup = undefined;
-  shadowScale = 1.5;
-  constructor(project: any) {
+  constructor(project: any, img: any, level: number) {
     this.project = project;
+    this.level = level;
+    const imgId = img.current.id;
+    const imgHeight = img.current.height;
+    const imgWidth = img.current.width;
+    const tileWidth = 100;
+    const tilesPerRow = Math.floor(imgWidth / tileWidth);
+    const tilesPerColumn = Math.floor(imgHeight / tileWidth);
+    console.log(imgWidth, imgHeight, tileWidth, tilesPerRow, tilesPerColumn);
+    config.updateConfig(
+      imgId,
+      tileWidth,
+      tilesPerRow,
+      tilesPerColumn,
+      imgWidth,
+      imgHeight
+    );
+    console.log(config);
     this.puzzleImage = new this.project.Raster({
       source: config.imgName,
       position: new Point(100, 100),
     });
-    // this.puzzleImage.onLoad = () => {
-    //   this.createTiles(this.tilesPerRow, this.tilesPerColumn);
-    // };
-    this.createTiles(this.tilesPerRow, this.tilesPerColumn);
-    //this.puzzleImage.visible = false;
+    this.createTiles(config.tilesPerRow, config.tilesPerColumn);
   }
 
   createTiles(xTileCount: number, yTileCount: number) {
@@ -76,7 +102,6 @@ class Puzzle {
         tile.opacity = 1;
         //tile.shape = shape;
         tile.position = new Point(x, y);
-        console.log(tile);
         tile.onMouseEnter = (event: any) => {
           tile.scale(this.zoomScaleOnDrag);
         };
@@ -302,10 +327,9 @@ class Puzzle {
     );
     targetRaster.setImageData(data, new Point(0, 0));
     targetRaster.position = new Point(
-      -(offset.x - config.imgWidth / 2),
-      -(offset.y - config.imgWidth / 2)
+      -(offset.x - config.imgWidth / config.tilesPerRow),
+      -(offset.y - config.imgHeight / config.tilesPerColumn)
     );
-    console.log(offset);
     return targetRaster;
   }
 }
