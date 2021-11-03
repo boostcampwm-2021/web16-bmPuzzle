@@ -1,7 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect } from "react";
 import Paper from "paper";
 import Puzzle from "@components/puzzle-canvas/puzzle/index";
-import { view, Raster, Point } from "paper/dist/paper-core";
 
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);

@@ -1,14 +1,4 @@
-import Paper from "paper";
-import {
-  Group,
-  Raster,
-  view,
-  Point,
-  Path,
-  Color,
-  Rectangle,
-  Size,
-} from "paper/dist/paper-core";
+import { Point, Rectangle, Size } from "paper/dist/paper-core";
 
 const config = {
   zoomScaleOnDrag: 1.125,
@@ -200,7 +190,7 @@ class Puzzle {
     ];
 
     const mask = new this.project.Path();
-    const tileCenter = this.project.view.center;
+    // const tileCenter = this.project.view.center;
     const topLeftEdge = new Point(-4, 4);
 
     mask.moveTo(topLeftEdge);
