@@ -9,7 +9,8 @@ import getImgfile from "@src/js/get-img-file";
 
 const My = () => {
   let dummy_image: any[] = [];
-  const [src, setSrc] = useState(dummy_image);
+  const [upSrc, setUp] = useState(dummy_image);
+  const [doneSrc, setDone] = useState(dummy_image);
   const myPageEnter = async () => {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/my`, {
       method: "POST",
@@ -22,7 +23,9 @@ const My = () => {
     });
     if (response.ok) {
       let img = await response.json();
-      setSrc(await getImgfile(img.fileName, img.data));
+      console.log(img);
+      setUp(await getImgfile(img.uploadName, img.uploadData));
+      setDone(await getImgfile(img.doneName, img.doneData));
     }
   };
   useEffect(() => {
@@ -33,7 +36,7 @@ const My = () => {
     <Wrapper>
       <Header />
       <Container>
-        <ImageCard img={src} />
+        <ImageCard img={doneSrc} />
       </Container>
     </Wrapper>
   );
