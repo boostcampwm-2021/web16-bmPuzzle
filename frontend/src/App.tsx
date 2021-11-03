@@ -5,7 +5,7 @@ import GlobalStyles from "@styles/global-style";
 import Login from "@pages/login";
 import RegPuz from "@pages/register-puzzle/index";
 import Main from "@pages/main/index";
-import My from "@pages/my/index";
+import Mypage from "@src/pages/mypage/index";
 
 const App = () => {
   return (
@@ -15,7 +15,7 @@ const App = () => {
         <Route path="/" component={Login} exact={true} />
         <Route path="/register" component={RegPuz} exact={true} />
         <Route path="/main" component={Main} exact={true} />
-        <Route path="/my" component={My} exact={true} />
+        <Route path="/mypage" component={Mypage} exact={true} />
       </Switch>
     </Router>
   );
