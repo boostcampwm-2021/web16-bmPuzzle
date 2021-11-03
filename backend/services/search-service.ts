@@ -1,5 +1,4 @@
 import searchService from '@services/db/puzzle-service';
-import puzzleService from '@services/db/puzzle-service';
 import path from 'path';
 import fs from 'fs';
 
@@ -16,13 +15,11 @@ const sendImgUrl = async (req: any, res: any) => {
       : await searchService.getPuzzle();
   const filterInfo: any = [];
   const fileName: any = [];
-  req.files.forEach((file: any) => {
-    const puzzleInfo = puzzle.info.filter(
-      (puzzle: any) => puzzle.image == file,
-    )[0];
-    puzzleInfo !== undefined
-      ? (filterInfo.push(puzzleInfo), fileName.push(puzzleInfo.image))
-      : '';
+  puzzle.info.forEach((file: any) => {
+    if(req.files.includes(file.image)){
+      filterInfo.push(file);
+      fileName.push(file.image);
+    }
   });
   res.status(200).json({
     data: filterInfo,
