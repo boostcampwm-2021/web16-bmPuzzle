@@ -5,7 +5,7 @@ import Header from "@components/header/index";
 import colors from "@styles/theme";
 import { fetchPost } from "@src/utils/fetch";
 
-const registerURI = "http://localhost:5000/api/register";
+const registerURI = `${process.env.REACT_APP_API_URL}/register`;
 const RegPuz = () => {
   const [checkedLevel, setLevel] = useState(1);
   const [title, setTitle] = useState("");
