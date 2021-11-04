@@ -27,7 +27,6 @@ const filter = async (req: any, res: any, next: any) => {
   done.data.forEach((file: any) => {
     if(req.files.includes(file.image)){
       file.dataValues=Object.assign(file.dataValues, { time: done.time[idx++] });
-      console.log(file);
       doneInfo.push(file);
       doneName.push(file.image);
     }

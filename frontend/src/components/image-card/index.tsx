@@ -61,7 +61,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   width: 40%;
-  padding: 3% 5% 1% 5%;
+  margin: 3% 5% 1% 5%;
   align-items: center;
   &: hover {
     opacity: 0.5;

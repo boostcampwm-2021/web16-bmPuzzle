@@ -74,7 +74,7 @@ const Wrapper = styled.div`
 
 const Container = styled.div`
   width: 80%;
-  height: 510px;
+  height: 80%;
   margin: 0% 10% 5% 10%;
   border: 1px solid ${colors["gray3"]};
   overflow-y: auto;
