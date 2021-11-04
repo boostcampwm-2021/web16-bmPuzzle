@@ -29,7 +29,7 @@ const getPuzzle = async () => {
 };
 
 const myPuzzle =async (id: string) => {
-  const puzzle = await db.Puzzle.findAll({ where: { public: 1,  user_id:id},
+  const puzzle = await db.Puzzle.findAll({ where: { public: 0,  user_id:id},
     order:[
       ['visit_time','DESC']
     ],});

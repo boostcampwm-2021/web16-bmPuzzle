@@ -19,7 +19,7 @@ const RegPuz = () => {
   };
   const submitHandler = () => {
     const formData = new FormData();
-    const id = "Jaeyoung Lee";
+    const id: any = window.sessionStorage.getItem("id");
     if (selectedImg === null || title === "") {
       alert("양식을 다 채우세요");
       return false;
