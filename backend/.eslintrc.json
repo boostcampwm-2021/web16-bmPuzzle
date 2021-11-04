@@ -13,8 +13,24 @@
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaVersion": 2015,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json",
   },
   "plugins": ["@typescript-eslint"],
-  "rules": { "no-unused-vars": "warn" }
+  "rules": { "no-unused-vars": "warn",
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+   ] },
+  "settings": {
+    "import/resolver": {
+      "typescript": {}
+    }
+  }
 }
