@@ -1,6 +1,6 @@
 const getImgfile = async (imgurl: any, imgInfo: any) => {
   const img = imgurl.map(async (ele: any) => {
-    return await fetch(`${process.env.REACT_APP_STATIC_URL}/${ele}`)
+    return fetch(`${process.env.REACT_APP_STATIC_URL}/${ele}`)
       .then((res) => res.blob())
       .then((imgBlob) => URL.createObjectURL(imgBlob));
   });
