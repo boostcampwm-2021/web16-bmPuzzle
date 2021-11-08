@@ -17,7 +17,7 @@ const PuzzleCanvas = (props: any) => {
     console.log(puzzle);
   }, []);
 
-  return <canvas ref={canvasRef} {...props} id="canvas" resize />;
+  return <canvas ref={canvasRef} id="canvas" />;
 };
 
 export default PuzzleCanvas;
