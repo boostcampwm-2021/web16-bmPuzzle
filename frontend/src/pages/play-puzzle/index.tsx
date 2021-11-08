@@ -9,7 +9,9 @@ const imgStyle = {
 const PlayPuzzle = () => {
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef(null);
-  const onLoad = () => setLoaded(true);
+  const onLoad = useCallback(() => {
+    setLoaded(true);
+  }, []);
   return (
     <div>
       <Header />
@@ -17,14 +19,14 @@ const PlayPuzzle = () => {
         ref={imgRef}
         style={imgStyle}
         id="puzzleImage"
-        src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
+        src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
         alt="puzzleImage"
         onLoad={onLoad}
       />
       <img
         id="empty"
         style={imgStyle}
-        src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
+        src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
         alt="emptyImage"
       />
       {loaded && <PuzzleCanvas puzzleImg={imgRef} />}
