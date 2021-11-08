@@ -3,7 +3,7 @@ import { Point, Rectangle, Size, Matrix } from "paper/dist/paper-core";
 const config = {
   zoomScaleOnDrag: 1.125,
   imgName: "puzzleImage",
-  tileWidth: 128,
+  tileWidth: 100,
   tilesPerRow: 2,
   tilesPerColumn: 2,
   imgWidth: 256,
@@ -32,7 +32,7 @@ class Puzzle {
   zoomScaleOnDrag = config.zoomScaleOnDrag;
   imgName = config.imgName;
   puzzleImage: null | any;
-  tileWidth = config.tileWidth;
+  tileWidth = 100;
   tilesPerRow = Math.ceil(config.imgWidth / config.tileWidth);
   tilesPerColumn = Math.ceil(config.imgHeight / config.tileWidth);
   tileMarginWidth = this.tileWidth * 0.203125;
@@ -60,8 +60,10 @@ class Puzzle {
     console.log(config);
     this.puzzleImage = new this.project.Raster({
       source: config.imgName,
-      position: new Point(100, 100),
+      position: new Point(500, 500),
     });
+    this.puzzleImage.size = this.project.view.size;
+    this.puzzleImage.scale(1);
     this.createTiles(config.tilesPerRow, config.tilesPerColumn);
   }
 
@@ -101,13 +103,14 @@ class Puzzle {
         tile.clipped = true;
         tile.opacity = 1;
         //tile.shape = shape;
-        tile.position = new Point(x, y);
+        tile.position = new Point(100, 100);
+        /*
         tile.onMouseEnter = (event: any) => {
           tile.scale(this.zoomScaleOnDrag);
         };
         tile.onMouseLeave = (event: any) => {
           tile.scale(1 / this.zoomScaleOnDrag);
-        };
+        };*/
         tile.onMouseDrag = (event: any) => {
           tile.position = new Point(
             tile.position._x + event.delta.x,
@@ -142,10 +145,7 @@ class Puzzle {
           Math.round(position.y / this.tileWidth) + 1
         );
 
-        tile.position = new Point(
-          cellPosition.x * this.tileWidth,
-          cellPosition.y * this.tileWidth
-        );
+        tile.position = new Point(100, 100);
         //tile.cellPosition = cellPosition;
       }
     }
@@ -176,6 +176,13 @@ class Puzzle {
         });
       }
     }
+    /*
+    shape는 현재 퍼즐 조각, shapeRight는 오른쪽에 위치한 퍼즐조각
+    shape가 맨 오른쪽이라면, shapeRight = undefined
+    shape가 맨 오른쪽이 아니면, random으로 모양 생성 / 맨 오른쪽이면, 원래 가지고 있는 모양 (0) 적용
+    shape가 맨 오른쪽이 아니면, shapeRight의 왼쪽면을 shape의 오른쪽면과 맞게 *(-1) 해줌
+    이하 아래쪽도 마찬가지로 생성
+    */
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -200,6 +207,7 @@ class Puzzle {
           shapeBottom.topTab = -shape.bottomTab;
       }
     }
+
     return shapeArray;
   }
 
@@ -222,14 +230,15 @@ class Puzzle {
       leftTab === undefined
     )
       return;
+
     const curvyCoords = [
       0, 0, 35, 15, 37, 5, 37, 5, 40, 0, 38, -5, 38, -5, 20, -20, 50, -20, 50,
       -20, 80, -20, 62, -5, 62, -5, 60, 0, 63, 5, 63, 5, 65, 15, 100, 0,
     ];
 
     const mask = new this.project.Path();
-    // const tileCenter = this.project.view.center;
-    const topLeftEdge = new Point(-4, 4);
+    //const tileCenter = this.project.view.center;
+    const topLeftEdge = new Point(-150, -150);
 
     mask.moveTo(topLeftEdge);
     //Top
@@ -249,8 +258,9 @@ class Puzzle {
         topLeftEdge.y + topTab * curvyCoords[i * 6 + 5] * tileRatio
       );
 
-      mask.cubicCurveTo(p1, p2, p3);
+      mask.cubicCurveTo(p1, p2, p3); // 곡선의 첫점, 중앙점, 끝점
     }
+
     //Right
     const topRightEdge = new Point(topLeftEdge.x + tileWidth, topLeftEdge.y);
     for (let i = 0; i < curvyCoords.length / 6; i++) {
@@ -269,6 +279,7 @@ class Puzzle {
 
       mask.cubicCurveTo(p1, p2, p3);
     }
+
     //Bottom
     const bottomRightEdge = new Point(
       topRightEdge.x,
@@ -290,6 +301,7 @@ class Puzzle {
 
       mask.cubicCurveTo(p1, p2, p3);
     }
+
     //Left
     const bottomLeftEdge = new Point(
       bottomRightEdge.x - tileWidth,
@@ -314,18 +326,9 @@ class Puzzle {
 
     return mask;
   }
+
   getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
     const targetRaster = new this.project.Raster("empty");
-    const tileWithMarginWidth = size.width + this.tileMarginWidth;
-    const data = sourceRaster.getImageData(
-      new Rectangle(
-        offset.x - this.tileMarginWidth,
-        offset.y - this.tileMarginWidth,
-        tileWithMarginWidth,
-        tileWithMarginWidth
-      )
-    );
-    targetRaster.setImageData(data, new Point(0, 0));
     targetRaster.position = new Point(
       -(offset.x - config.imgWidth / config.tilesPerRow),
       -(offset.y - config.imgHeight / config.tilesPerColumn)

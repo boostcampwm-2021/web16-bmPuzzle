@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import Header from "@components/header/index";
 import PuzzleCanvas from "@components/puzzle-canvas/index";
@@ -17,14 +17,14 @@ const PlayPuzzle = () => {
         ref={imgRef}
         style={imgStyle}
         id="puzzleImage"
-        src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
+        src="http://assets.paperjs.org/images/marilyn.jpg"
         alt="puzzleImage"
         onLoad={onLoad}
       />
       <img
         id="empty"
         style={imgStyle}
-        src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
+        src="http://assets.paperjs.org/images/marilyn.jpg"
         alt="emptyImage"
       />
       {loaded && <PuzzleCanvas puzzleImg={imgRef} />}
