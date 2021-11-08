@@ -31,6 +31,8 @@ class Puzzle {
   level: number;
   zoomScaleOnDrag = config.zoomScaleOnDrag;
   imgName = config.imgName;
+  imgWidth: any;
+  imgHeight: any;
   puzzleImage: null | any;
   tileWidth = 100;
   tilesPerRow = Math.ceil(config.imgWidth / config.tileWidth);
@@ -45,6 +47,8 @@ class Puzzle {
     const imgId = img.current.id;
     const imgHeight = img.current.height;
     const imgWidth = img.current.width;
+    this.imgWidth = imgWidth;
+    this.imgHeight = imgHeight;
     const tileWidth = 100;
     const tilesPerRow = Math.floor(imgWidth / tileWidth);
     const tilesPerColumn = Math.floor(imgHeight / tileWidth);
@@ -60,7 +64,7 @@ class Puzzle {
     console.log(config);
     this.puzzleImage = new this.project.Raster({
       source: config.imgName,
-      position: new Point(500, 500),
+      position: this.project.view.center,
     });
     this.puzzleImage.size = this.project.view.size;
     this.puzzleImage.scale(1);
@@ -238,7 +242,7 @@ class Puzzle {
 
     const mask = new this.project.Path();
     //const tileCenter = this.project.view.center;
-    const topLeftEdge = new Point(-150, -150);
+    const topLeftEdge = new Point(-config.imgWidth / 2, -config.imgHeight / 2);
 
     mask.moveTo(topLeftEdge);
     //Top
@@ -329,10 +333,8 @@ class Puzzle {
 
   getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
     const targetRaster = new this.project.Raster("empty");
-    targetRaster.position = new Point(
-      -(offset.x - config.imgWidth / config.tilesPerRow),
-      -(offset.y - config.imgHeight / config.tilesPerColumn)
-    );
+    targetRaster.position = new Point(-offset.x, -offset.y);
+
     return targetRaster;
   }
 }
