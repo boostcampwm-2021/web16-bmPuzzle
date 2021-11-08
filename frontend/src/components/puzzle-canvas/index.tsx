@@ -1,24 +1,23 @@
 import React, { useRef, useEffect } from "react";
 import Paper from "paper";
 import Puzzle from "@components/puzzle-canvas/puzzle/index";
+import { preProcessFile } from "typescript";
 
-const Canvas = (callback: any) => {
+const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
+  const levelTemp = 3;
 
   useEffect(() => {
     const canvas: any = canvasRef.current;
+    if (canvas === null) return;
+    canvas.width = `1000`;
+    canvas.height = 1000;
     Paper.setup(canvas);
-    callback(Paper);
+    const puzzle = new Puzzle(Paper, props.puzzleImg, levelTemp);
+    console.log(puzzle);
   }, []);
 
-  return canvasRef;
+  return <canvas ref={canvasRef} id="canvas" />;
 };
 
-const PuzzleCanvas = (props: any) => {
-  const levelTemp = 3;
-  const canvasRef = Canvas(async (Paper: any) => {
-    const puzzle = await new Puzzle(Paper, props.puzzleImg, levelTemp);
-  });
-  return <canvas ref={canvasRef} height={1000} width={1000} id="canvas" />;
-};
 export default PuzzleCanvas;
