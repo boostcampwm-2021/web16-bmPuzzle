@@ -1,13 +1,10 @@
-const getImgfile = async (imgurl: any, imgInfo: any) => {
-  const img = imgurl.map(async (ele: any) => {
-    return fetch(`${process.env.REACT_APP_STATIC_URL}/${ele}`)
-      .then((res) => res.blob())
-      .then((imgBlob) => URL.createObjectURL(imgBlob));
-  });
+const getImgfile = (imgurl: any, imgInfo: any) => {
+  const img = imgurl.map(
+    (ele: any) => `${process.env.REACT_APP_STATIC_URL}/${ele}`
+  );
 
-  const imgBlob = await Promise.all(img.map((ele: any) => ele));
   imgInfo.forEach((ele: any, idx: number) => {
-    ele.image = imgBlob[idx];
+    ele.image = img[idx];
   });
   return imgInfo;
 };

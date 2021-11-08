@@ -25,7 +25,7 @@ const SearchBar = (props: any) => {
 
     if (response.ok) {
       let img = await response.json();
-      props.setSrc(await getImgfile(img.fileName, img.data));
+      props.setImg(await getImgfile(img.fileName, img.data));
     }
   };
 
