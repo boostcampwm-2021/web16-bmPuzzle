@@ -12,7 +12,7 @@ import getImgfile from "@src/js/get-img-file";
 
 const Main = () => {
   let dummy_image: any[] = [];
-  const [src, setSrc] = useState(dummy_image);
+  const [img, setImg] = useState(dummy_image);
   const getImgUrl = async () => {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
       method: "GET",
@@ -23,7 +23,7 @@ const Main = () => {
     });
     if (response.ok) {
       let img = await response.json();
-      setSrc(await getImgfile(img.fileName, img.data));
+      setImg(getImgfile(img.fileName, img.data));
     }
   };
 
@@ -35,8 +35,8 @@ const Main = () => {
     <Wrapper>
       <Header />
       <Container>
-        <Search setSrc={setSrc} />
-        <ImageCard img={src} margin={25} />
+        <Search setImg={setImg} />
+        <ImageCard img={img} margin={25} />
         <UploadBtn />
       </Container>
     </Wrapper>
