@@ -4,7 +4,9 @@ import colors from "@styles/theme";
 
 import Header from "@components/header/index";
 import ImageCard from "@components/image-card/index";
-import AccountBar from "@components/account-bar/index";
+import TitleBar from "@components/title-bar/index";
+
+import accountImg from "@images/account-black-icon.png";
 
 import getImgfile from "@src/js/get-img-file";
 
@@ -54,7 +56,7 @@ const Mypage = () => {
           </Btn>
         </BtnWrapper>
         <Container>
-          <AccountBar user={user} />
+          <TitleBar text={`Hello, ${user} :)`} img={accountImg} />
           <ImageCard img={current === "upload" ? upload : done} />
         </Container>
       </ContainerWrapper>
