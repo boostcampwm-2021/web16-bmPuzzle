@@ -30,7 +30,7 @@ const setConfig = (img: any, level: Levels) => {
 
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
-  const levelTemp = 3;
+  const levelTemp = 1;
 
   useEffect(() => {
     const canvas: any = canvasRef.current;
