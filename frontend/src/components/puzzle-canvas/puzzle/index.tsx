@@ -1,79 +1,82 @@
 import { Point, Rectangle, Size, Matrix } from "paper/dist/paper-core";
 
 const config = {
-  zoomScaleOnDrag: 1.125,
   imgName: "puzzleImage",
+  level: 1,
   tileWidth: 100,
   tilesPerRow: 2,
   tilesPerColumn: 2,
   imgWidth: 256,
   imgHeight: 256,
+  originWidth: 100,
+  originHeight: 100,
+  tileMarginWidth: 1,
   updateConfig: function (
     imgName: string,
+    level: number,
     tileWidth: number,
     tilesPerRow: number,
     tilesPerColumn: number,
     imgWidth: number,
-    imgHeight: number
+    imgHeight: number,
+    originWidth: number,
+    originHeight: number,
+    tileMarginWidth: number
   ) {
     this.imgName = imgName;
-    this.tileWidth = tileWidth;
+    this.level = level;
+    config.tileWidth = tileWidth;
     this.tilesPerRow = tilesPerRow;
     this.tilesPerColumn = tilesPerColumn;
     this.imgWidth = imgWidth;
     this.imgHeight = imgHeight;
+    config.originWidth = originWidth;
+    this.originHeight = originHeight;
+    this.tileMarginWidth = tileMarginWidth;
   },
 };
 
 class Puzzle {
-  currentZoom = 1;
   project: any;
-  level: number;
-  zoomScaleOnDrag = config.zoomScaleOnDrag;
-  imgName = config.imgName;
-  imgWidth: any;
-  imgHeight: any;
   puzzleImage: null | any;
-  tileWidth = 100;
-  tilesPerRow = Math.ceil(config.imgWidth / config.tileWidth);
-  tilesPerColumn = Math.ceil(config.imgHeight / config.tileWidth);
-  tileMarginWidth = this.tileWidth * 0.203125;
   selectedTile = undefined;
   selectedTileIndex = undefined;
   selectionGroup = undefined;
+  tiles: any[];
   constructor(project: any, img: any, level: number) {
     this.project = project;
-    this.level = level;
+    this.puzzleImage = new this.project.Raster({
+      source: "puzzleImage",
+      position: this.project.view.center,
+    });
     const imgId = img.current.id;
-    const imgHeight = img.current.height;
-    const imgWidth = img.current.width;
-    this.imgWidth = imgWidth;
-    this.imgHeight = imgHeight;
+    const originHeight = img.current.height;
+    const originWidth = img.current.width;
+    const imgWidth = 500;
+    const imgHeight =
+      Math.round((500 * originHeight) / originWidth / 100) * 100;
     const tileWidth = 100;
     const tilesPerRow = Math.floor(imgWidth / tileWidth);
     const tilesPerColumn = Math.floor(imgHeight / tileWidth);
-    console.log(imgWidth, imgHeight, tileWidth, tilesPerRow, tilesPerColumn);
+    const tileMarginWidth = tileWidth * 0.203125;
     config.updateConfig(
       imgId,
+      level,
       tileWidth,
       tilesPerRow,
       tilesPerColumn,
       imgWidth,
-      imgHeight
+      imgHeight,
+      originWidth,
+      originHeight,
+      tileMarginWidth
     );
-    console.log(config);
-    this.puzzleImage = new this.project.Raster({
-      source: config.imgName,
-      position: this.project.view.center,
-    });
-    this.puzzleImage.size = this.project.view.size;
-    this.puzzleImage.scale(1);
-    this.createTiles(config.tilesPerRow, config.tilesPerColumn);
+    this.tiles = this.createTiles(config.tilesPerRow, config.tilesPerColumn);
   }
 
   createTiles(xTileCount: number, yTileCount: number) {
     const tiles = [];
-    const tileRatio = this.tileWidth / 100.0;
+    const tileRatio = config.tileWidth / 100.0;
 
     const shapeArray = this.getRandomShapes(xTileCount, yTileCount);
     const tileIndexes = [];
@@ -87,34 +90,27 @@ class Puzzle {
           shape.rightTab,
           shape.bottomTab,
           shape.leftTab,
-          this.tileWidth
-        ); //path return
+          config.tileWidth
+        );
         mask.opacity = 0.25;
         mask.strokeColor = new this.project.Color(0, 0, 0);
 
         const cloneImg = this.puzzleImage.clone();
         const img = this.getTileRaster(
           cloneImg,
-          new Size(this.tileWidth, this.tileWidth),
-          new Point(this.tileWidth * x, this.tileWidth * y)
-        ); //Raster 반환
+          new Size(config.tileWidth, config.tileWidth),
+          new Point(config.tileWidth * x, config.tileWidth * y)
+        );
 
         const border = mask.clone();
         border.strokeColor = new this.project.Color(255, 0, 0);
         border.strokeWidth = 5;
 
-        const tile = new this.project.Group([mask, border, img, border]);
+        const tile = new this.project.Group([mask, img, border]);
         tile.clipped = true;
         tile.opacity = 1;
-        //tile.shape = shape;
         tile.position = new Point(100, 100);
-        /*
-        tile.onMouseEnter = (event: any) => {
-          tile.scale(this.zoomScaleOnDrag);
-        };
-        tile.onMouseLeave = (event: any) => {
-          tile.scale(1 / this.zoomScaleOnDrag);
-        };*/
+
         tile.onMouseDrag = (event: any) => {
           tile.position = new Point(
             tile.position._x + event.delta.x,
@@ -136,21 +132,24 @@ class Puzzle {
 
         const position = new Point(
           this.project.view.center.x -
-            (this.tileWidth +
-              this.tileWidth * (x * 2 + (y % 2) + this.puzzleImage.size.width)),
+            config.tileWidth +
+            config.tileWidth * (x * 2 + (y % 2)) -
+            config.imgWidth,
           this.project.view.center.y -
-            (this.tileWidth / 2 +
-              this.tileWidth * y +
-              this.puzzleImage.size.height / 2)
+            config.tileWidth / 2 +
+            config.tileWidth * y -
+            config.imgHeight / 2
         );
 
         const cellPosition = new Point(
-          Math.round(position.x / this.tileWidth) + 1,
-          Math.round(position.y / this.tileWidth) + 1
+          Math.round(position.x / config.tileWidth) + 1,
+          Math.round(position.y / config.tileWidth) + 1
         );
 
-        tile.position = new Point(100, 100);
-        //tile.cellPosition = cellPosition;
+        tile.position = new Point(
+          cellPosition.x * config.tileWidth + 50,
+          cellPosition.y * config.tileWidth - 30
+        );
       }
     }
 
@@ -180,13 +179,6 @@ class Puzzle {
         });
       }
     }
-    /*
-    shape는 현재 퍼즐 조각, shapeRight는 오른쪽에 위치한 퍼즐조각
-    shape가 맨 오른쪽이라면, shapeRight = undefined
-    shape가 맨 오른쪽이 아니면, random으로 모양 생성 / 맨 오른쪽이면, 원래 가지고 있는 모양 (0) 적용
-    shape가 맨 오른쪽이 아니면, shapeRight의 왼쪽면을 shape의 오른쪽면과 맞게 *(-1) 해줌
-    이하 아래쪽도 마찬가지로 생성
-    */
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -333,6 +325,7 @@ class Puzzle {
 
   getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
     const targetRaster = new this.project.Raster("empty");
+    targetRaster.scale(500 / config.originWidth);
     targetRaster.position = new Point(-offset.x, -offset.y);
 
     return targetRaster;
