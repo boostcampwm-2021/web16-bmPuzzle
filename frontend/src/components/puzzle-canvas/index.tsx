@@ -7,6 +7,26 @@ const canvasStyle = {
   marginLeft: "100px",
 };
 
+const setConfig = (img: any, level: number) => {
+  const originHeight = img.current.height;
+  const originWidth = img.current.width;
+  const imgWidth = 500;
+  const imgHeight = Math.round((500 * originHeight) / originWidth / 100) * 100;
+  const tileWidth = 100;
+  return {
+    originHeight: originHeight,
+    originWidth: originWidth,
+    imgWidth: 500,
+    imgHeight: Math.round((500 * originHeight) / originWidth / 100) * 100,
+    tilesPerRow: Math.floor(imgWidth / tileWidth),
+    tilesPerColumn: Math.floor(imgHeight / tileWidth),
+    tileWidth: 100,
+    tileMarginWidth: tileWidth * 0.203125,
+    level: level,
+    imgName: "puzzleImage",
+  };
+};
+
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
   const levelTemp = 3;
@@ -15,7 +35,8 @@ const PuzzleCanvas = (props: any) => {
     const canvas: any = canvasRef.current;
     if (canvas === null) return;
     Paper.setup(canvas);
-    const puzzle = new Puzzle(Paper, props.puzzleImg, levelTemp);
+    const config = setConfig(props.puzzleImg, levelTemp);
+    const puzzle = new Puzzle(Paper, config);
     console.log(puzzle);
   }, []);
 
