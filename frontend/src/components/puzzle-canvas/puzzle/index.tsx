@@ -3,7 +3,7 @@ import { Point, Rectangle, Size, Matrix } from "paper/dist/paper-core";
 const config = {
   zoomScaleOnDrag: 1.125,
   imgName: "puzzleImage",
-  tileWidth: 128,
+  tileWidth: 100,
   tilesPerRow: 2,
   tilesPerColumn: 2,
   imgWidth: 256,
@@ -31,7 +31,10 @@ class Puzzle {
   level: number;
   zoomScaleOnDrag = config.zoomScaleOnDrag;
   imgName = config.imgName;
+  imgWidth: any;
+  imgHeight: any;
   puzzleImage: null | any;
+  tileWidth = 100;
   tilesPerRow = Math.ceil(config.imgWidth / config.tileWidth);
   tilesPerColumn = Math.ceil(config.imgHeight / config.tileWidth);
   tileMarginWidth = 100 * 0.203125;
@@ -44,6 +47,8 @@ class Puzzle {
     const imgId = img.current.id;
     const imgHeight = img.current.height;
     const imgWidth = img.current.width;
+    this.imgWidth = imgWidth;
+    this.imgHeight = imgHeight;
     const tileWidth = 100;
     const tilesPerRow = Math.floor(imgWidth / tileWidth);
     const tilesPerColumn = Math.floor(imgHeight / tileWidth);
@@ -61,7 +66,8 @@ class Puzzle {
       source: config.imgName,
       position: this.project.view.center,
     });
-
+    this.puzzleImage.size = this.project.view.size;
+    this.puzzleImage.scale(1);
     this.createTiles(config.tilesPerRow, config.tilesPerColumn);
   }
 
