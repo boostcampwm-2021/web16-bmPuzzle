@@ -1,16 +1,20 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import Header from "@components/header/index";
 import PuzzleCanvas from "@components/puzzle-canvas/index";
+import Chat from "@src/components/chat/index";
+import io from "socket.io-client";
 
 const PlayPuzzle = () => {
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
+  const socket = io("http://localhost:5000/");
   return (
     <Wrapper>
       <Header />
       <Body>
+        <Chat socket={socket} />
         <ComponentImg
           ref={imgRef}
           id="puzzleImage"

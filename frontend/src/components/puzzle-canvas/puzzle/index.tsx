@@ -1,4 +1,4 @@
-import { Point, Rectangle, Size, Matrix } from "paper/dist/paper-core";
+import { Point, Size } from "paper/dist/paper-core";
 
 type Config = {
   originHeight: number | undefined;
@@ -37,7 +37,7 @@ class Puzzle {
   }
 
   createTiles(xTileCount: number, yTileCount: number) {
-    const tiles = [];
+    const tiles: any[] = [];
     const tileRatio = this.config.tileWidth / 100.0;
 
     const shapeArray = this.getRandomShapes(xTileCount, yTileCount);
@@ -310,7 +310,7 @@ class Puzzle {
 
   getTileRaster(offset: any) {
     const targetRaster = new this.project.Raster("empty");
-    targetRaster.scale(500 / this.config.originWidth);
+    targetRaster.scale(this.config.imgWidth / this.config.originWidth);
     targetRaster.position = new Point(-offset.x, -offset.y);
     return targetRaster;
   }

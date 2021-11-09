@@ -3,24 +3,25 @@ import Paper from "paper";
 import Puzzle from "@components/puzzle-canvas/puzzle/index";
 import styled from "styled-components";
 
-const canvasStyle = {
-  marginLeft: "100px",
-};
+type LevelSizeType = { 1: number; 2: number; 3: number };
+type Levels = 1 | 2 | 3;
+const levelSize: LevelSizeType = { 1: 300, 2: 500, 3: 800 };
 
-const setConfig = (img: any, level: number) => {
+const setConfig = (img: any, level: Levels) => {
   const originHeight = img.current.height;
   const originWidth = img.current.width;
-  const imgWidth = 500;
-  const imgHeight = Math.round((500 * originHeight) / originWidth / 100) * 100;
+  const imgWidth = levelSize[level];
+  const imgHeight =
+    Math.round((imgWidth * originHeight) / originWidth / 100) * 100;
   const tileWidth = 100;
   return {
     originHeight: originHeight,
     originWidth: originWidth,
-    imgWidth: 500,
-    imgHeight: Math.round((500 * originHeight) / originWidth / 100) * 100,
+    imgWidth: imgWidth,
+    imgHeight: imgHeight,
     tilesPerRow: Math.floor(imgWidth / tileWidth),
     tilesPerColumn: Math.floor(imgHeight / tileWidth),
-    tileWidth: 100,
+    tileWidth: tileWidth,
     tileMarginWidth: tileWidth * 0.203125,
     level: level,
     imgName: "puzzleImage",
@@ -38,7 +39,7 @@ const PuzzleCanvas = (props: any) => {
     const config = setConfig(props.puzzleImg, levelTemp);
     const puzzle = new Puzzle(Paper, config);
     console.log(puzzle);
-  }, []);
+  }, [props.puzzleImg]);
 
   return (
     <Wrapper>
