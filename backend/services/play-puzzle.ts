@@ -1,6 +1,8 @@
 const joinPlayRoom = async (req: any, res: any, next: any) => {
-  const roomNumber = req.params.roomNumber;
-  res.status(200).send();
+  const roomID = req.params.roomID;
+  res.status(200).json({
+    roomID: roomID,
+  });
 };
 
 export default joinPlayRoom;

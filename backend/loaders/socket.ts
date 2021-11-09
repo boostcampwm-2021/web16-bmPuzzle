@@ -3,7 +3,6 @@ import socket from '@services/socket-service';
 
 const socketLoader = async (app: any, http: any) => {
   const io = require('socket.io')(http, {
-    path: '/room',
     cors: {
       origin: '*',
       credentials: true,
