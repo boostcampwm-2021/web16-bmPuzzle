@@ -1,39 +1,16 @@
 import { Point, Rectangle, Size, Matrix } from "paper/dist/paper-core";
 
-const config = {
-  imgName: "puzzleImage",
-  level: 1,
-  tileWidth: 100,
-  tilesPerRow: 2,
-  tilesPerColumn: 2,
-  imgWidth: 256,
-  imgHeight: 256,
-  originWidth: 100,
-  originHeight: 100,
-  tileMarginWidth: 1,
-  updateConfig: function (
-    imgName: string,
-    level: number,
-    tileWidth: number,
-    tilesPerRow: number,
-    tilesPerColumn: number,
-    imgWidth: number,
-    imgHeight: number,
-    originWidth: number,
-    originHeight: number,
-    tileMarginWidth: number
-  ) {
-    this.imgName = imgName;
-    this.level = level;
-    config.tileWidth = tileWidth;
-    this.tilesPerRow = tilesPerRow;
-    this.tilesPerColumn = tilesPerColumn;
-    this.imgWidth = imgWidth;
-    this.imgHeight = imgHeight;
-    config.originWidth = originWidth;
-    this.originHeight = originHeight;
-    this.tileMarginWidth = tileMarginWidth;
-  },
+type Config = {
+  originHeight: number | undefined;
+  originWidth: number;
+  imgWidth: number;
+  imgHeight: number;
+  tilesPerRow: number;
+  tilesPerColumn: number;
+  tileWidth: number;
+  tileMarginWidth: number;
+  level: number;
+  imgName: String;
 };
 
 class Puzzle {
@@ -43,40 +20,25 @@ class Puzzle {
   selectedTileIndex = undefined;
   selectionGroup = undefined;
   tiles: any[];
-  constructor(project: any, img: any, level: number) {
+  config: Config;
+  constructor(project: any, config: Config) {
+    this.config = {
+      ...config,
+    };
     this.project = project;
     this.puzzleImage = new this.project.Raster({
       source: "puzzleImage",
       position: this.project.view.center,
     });
-    const imgId = img.current.id;
-    const originHeight = img.current.height;
-    const originWidth = img.current.width;
-    const imgWidth = 500;
-    const imgHeight =
-      Math.round((500 * originHeight) / originWidth / 100) * 100;
-    const tileWidth = 100;
-    const tilesPerRow = Math.floor(imgWidth / tileWidth);
-    const tilesPerColumn = Math.floor(imgHeight / tileWidth);
-    const tileMarginWidth = tileWidth * 0.203125;
-    config.updateConfig(
-      imgId,
-      level,
-      tileWidth,
-      tilesPerRow,
-      tilesPerColumn,
-      imgWidth,
-      imgHeight,
-      originWidth,
-      originHeight,
-      tileMarginWidth
+    this.tiles = this.createTiles(
+      this.config.tilesPerRow,
+      this.config.tilesPerColumn
     );
-    this.tiles = this.createTiles(config.tilesPerRow, config.tilesPerColumn);
   }
 
   createTiles(xTileCount: number, yTileCount: number) {
     const tiles = [];
-    const tileRatio = config.tileWidth / 100.0;
+    const tileRatio = this.config.tileWidth / 100.0;
 
     const shapeArray = this.getRandomShapes(xTileCount, yTileCount);
     const tileIndexes = [];
@@ -90,7 +52,7 @@ class Puzzle {
           shape.rightTab,
           shape.bottomTab,
           shape.leftTab,
-          config.tileWidth
+          this.config.tileWidth
         );
         mask.opacity = 0.25;
         mask.strokeColor = new this.project.Color(0, 0, 0);
@@ -98,8 +60,8 @@ class Puzzle {
         const cloneImg = this.puzzleImage.clone();
         const img = this.getTileRaster(
           cloneImg,
-          new Size(config.tileWidth, config.tileWidth),
-          new Point(config.tileWidth * x, config.tileWidth * y)
+          new Size(this.config.tileWidth, this.config.tileWidth),
+          new Point(this.config.tileWidth * x, this.config.tileWidth * y)
         );
 
         const border = mask.clone();
@@ -132,23 +94,23 @@ class Puzzle {
 
         const position = new Point(
           this.project.view.center.x -
-            config.tileWidth +
-            config.tileWidth * (x * 2 + (y % 2)) -
-            config.imgWidth,
+            this.config.tileWidth +
+            this.config.tileWidth * (x * 2 + (y % 2)) -
+            this.config.imgWidth,
           this.project.view.center.y -
-            config.tileWidth / 2 +
-            config.tileWidth * y -
-            config.imgHeight / 2
+            this.config.tileWidth / 2 +
+            this.config.tileWidth * y -
+            this.config.imgHeight / 2
         );
 
         const cellPosition = new Point(
-          Math.round(position.x / config.tileWidth) + 1,
-          Math.round(position.y / config.tileWidth) + 1
+          Math.round(position.x / this.config.tileWidth) + 1,
+          Math.round(position.y / this.config.tileWidth) + 1
         );
 
         tile.position = new Point(
-          cellPosition.x * config.tileWidth + 50,
-          cellPosition.y * config.tileWidth - 30
+          cellPosition.x * this.config.tileWidth + 50,
+          cellPosition.y * this.config.tileWidth - 30
         );
       }
     }
@@ -234,7 +196,10 @@ class Puzzle {
 
     const mask = new this.project.Path();
     //const tileCenter = this.project.view.center;
-    const topLeftEdge = new Point(-config.imgWidth / 2, -config.imgHeight / 2);
+    const topLeftEdge = new Point(
+      -this.config.imgWidth / 2,
+      -this.config.imgHeight / 2
+    );
 
     mask.moveTo(topLeftEdge);
     //Top
@@ -325,7 +290,7 @@ class Puzzle {
 
   getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
     const targetRaster = new this.project.Raster("empty");
-    targetRaster.scale(500 / config.originWidth);
+    targetRaster.scale(500 / this.config.originWidth);
     targetRaster.position = new Point(-offset.x, -offset.y);
 
     return targetRaster;
