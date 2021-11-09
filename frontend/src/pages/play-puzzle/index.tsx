@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import Header from "@components/header/index";
 import PuzzleCanvas from "@components/puzzle-canvas/index";

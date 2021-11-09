@@ -1,4 +1,4 @@
-import { Point, Rectangle, Size, Matrix } from "paper/dist/paper-core";
+import { Point, Size } from "paper/dist/paper-core";
 
 type Config = {
   originHeight: number | undefined;

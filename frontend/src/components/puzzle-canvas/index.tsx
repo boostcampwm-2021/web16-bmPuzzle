@@ -3,10 +3,6 @@ import Paper from "paper";
 import Puzzle from "@components/puzzle-canvas/puzzle/index";
 import styled from "styled-components";
 
-const canvasStyle = {
-  marginLeft: "100px",
-};
-
 const setConfig = (img: any, level: number) => {
   const originHeight = img.current.height;
   const originWidth = img.current.width;
@@ -38,7 +34,7 @@ const PuzzleCanvas = (props: any) => {
     const config = setConfig(props.puzzleImg, levelTemp);
     const puzzle = new Puzzle(Paper, config);
     console.log(puzzle);
-  }, []);
+  }, [props.puzzleImg]);
 
   return (
     <Wrapper>
