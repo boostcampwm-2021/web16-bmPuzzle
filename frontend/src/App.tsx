@@ -18,7 +18,7 @@ const App = () => {
         <Route path="/register" component={RegPuz} exact={true} />
         <Route path="/main" component={Main} exact={true} />
         <Route path="/mypage" component={Mypage} exact={true} />
-        <Route path="/room" component={PlayPuzzle} exact={true} />
+        <Route path="/room/:roomID" component={PlayPuzzle} exact={true} />
         <Route path="/ranking" component={Ranking} exact={true} />
       </Switch>
     </Router>
