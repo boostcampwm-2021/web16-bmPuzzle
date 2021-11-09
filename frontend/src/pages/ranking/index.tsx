@@ -30,7 +30,7 @@ const Ranking = () => {
       const myRank = rankInfo.rank.filter(
         (ele: any) => ele.id === window.sessionStorage.id
       )[0];
-      console.log(rankInfo.rank);
+      console.log(myRank);
       setRankInfo(rankInfo.rank);
       setUserRank(myRank);
     }

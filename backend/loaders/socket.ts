@@ -1,16 +1,15 @@
 import cors from 'cors';
+import socket from '@services/socket-service';
 
-const socketLoader = async (app: any) => {
-  const server = require('http').createServer(app);
-  app.unsubscribe(cors());
-  const io = require('socket.io')(server, {
+const socketLoader = async (app: any, http: any) => {
+  const io = require('socket.io')(http, {
+    path: '/room',
     cors: {
       origin: '*',
       credentials: true,
     },
   });
-  const socket = require('./socketAction.ts')(io);
-  return server;
+  socket(io);
 };
 
 export default socketLoader;
