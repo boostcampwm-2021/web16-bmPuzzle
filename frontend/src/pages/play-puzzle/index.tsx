@@ -1,20 +1,23 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import Header from "@components/header/index";
 import PuzzleCanvas from "@components/puzzle-canvas/index";
 import Chat from "@src/components/chat/index";
 import io from "socket.io-client";
+import { fetchPost } from "@src/utils/fetch";
 
-const PlayPuzzle = () => {
+const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
+  const { params } = props.match;
   const socket = io("http://localhost:5000/");
+  socket.emit("joinRoom", { roomID: params.roomID });
   return (
     <Wrapper>
       <Header />
       <Body>
-        <Chat socket={socket} />
+        <Chat socket={socket} roomID={params.roomID} />
         <ComponentImg
           ref={imgRef}
           id="puzzleImage"

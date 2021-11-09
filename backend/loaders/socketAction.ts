@@ -1,8 +1,10 @@
 module.exports = (io: any) => {
   io.on('connection', (socket: any) => {
-    console.log('연결성공');
-    socket.on('message', (state: { name: string; message: string }) => {
-      console.log(state);
+    socket.on('joinRoom', (data: any) => {
+      socket.join(data.roomID);
+    });
+    socket.on('message', (res: { roomID: number; message: object }) => {
+      io.sockets.in(res.roomID).emit('message', res.message);
     });
   });
 };
