@@ -10,7 +10,7 @@ const PuzzleCanvas = (props: any) => {
   useEffect(() => {
     const canvas: any = canvasRef.current;
     if (canvas === null) return;
-    canvas.width = `1000`;
+    canvas.width = 1000;
     canvas.height = 1000;
     Paper.setup(canvas);
     const puzzle = new Puzzle(Paper, props.puzzleImg, levelTemp);
