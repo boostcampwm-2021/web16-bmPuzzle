@@ -9,7 +9,7 @@ const PlayPuzzle = () => {
   const [loaded, setLoaded] = useState(false);
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
-  const socket = io("http://localhost:5000/");
+  const socket = io("http://localhost:5000", { path: "/room" });
   return (
     <Wrapper>
       <Header />
