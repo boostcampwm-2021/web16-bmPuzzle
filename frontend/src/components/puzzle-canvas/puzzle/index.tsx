@@ -52,7 +52,6 @@ class Puzzle {
     const tileWidth = 100;
     const tilesPerRow = Math.floor(imgWidth / tileWidth);
     const tilesPerColumn = Math.floor(imgHeight / tileWidth);
-    console.log(imgWidth, imgHeight, tileWidth, tilesPerRow, tilesPerColumn);
     config.updateConfig(
       imgId,
       tileWidth,
@@ -61,7 +60,6 @@ class Puzzle {
       imgWidth,
       imgHeight
     );
-    console.log(config);
     this.puzzleImage = new this.project.Raster({
       source: config.imgName,
       position: this.project.view.center,
@@ -72,7 +70,7 @@ class Puzzle {
   }
 
   createTiles(xTileCount: number, yTileCount: number) {
-    const tiles = [];
+    const tiles: any[] = [];
     const tileRatio = config.tileWidth / 100.0;
 
     const shapeArray = this.getRandomShapes(xTileCount, yTileCount);
@@ -92,10 +90,7 @@ class Puzzle {
         mask.opacity = 0.25;
         mask.strokeColor = new this.project.Color(0, 0, 0);
 
-        const cloneImg = this.puzzleImage.clone();
         const img = this.getTileRaster(
-          cloneImg,
-          new Size(config.tileWidth, config.tileWidth),
           new Point(config.tileWidth * x, config.tileWidth * y)
         ); //Raster 반환
 
@@ -112,14 +107,34 @@ class Puzzle {
         tile.onMouseEnter = (event: any) => {
           tile.scale(this.zoomScaleOnDrag);
         };
-        tile.onMouseLeave = (event: any) => {
-          tile.scale(1 / this.zoomScaleOnDrag);
-        };*/
+                tile.onMouseLeave = (event: any) => {
+          
+        };
+        */
+
         tile.onMouseDrag = (event: any) => {
           tile.position = new Point(
             tile.position._x + event.delta.x,
             tile.position._y + event.delta.y
           );
+          let nowIndex = tile.index - 1;
+          console.log(tile.index + " " + tile.position);
+          const leftTile = tiles[nowIndex - 1];
+          const rightTile = tiles[nowIndex + 1];
+          const upTile = tiles[nowIndex - config.tileWidth];
+          const bottomTile = tiles[nowIndex - config.tileWidth];
+          console.log(leftTile.index + " " + leftTile.position);
+          if (leftTile != undefined) {
+            if (
+              tile.position._x - leftTile.position._x < 110 &&
+              Math.abs(tile.position._y - leftTile.position._y) < 10
+            ) {
+              tile.position = new Point(
+                leftTile.position._x + 90,
+                leftTile.position._y - 6
+              );
+            }
+          }
         };
 
         tiles.push(tile);
@@ -335,7 +350,7 @@ class Puzzle {
     return mask;
   }
 
-  getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
+  getTileRaster(offset: any) {
     const targetRaster = new this.project.Raster("empty");
     targetRaster.position = new Point(-offset.x, -offset.y);
     return targetRaster;

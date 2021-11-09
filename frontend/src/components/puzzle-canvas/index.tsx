@@ -1,9 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import Paper from "paper";
 import Puzzle from "@components/puzzle-canvas/puzzle/index";
-const canvasStyle = {
-  marginLeft: "100px",
-};
 
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
@@ -16,7 +13,6 @@ const PuzzleCanvas = (props: any) => {
     canvas.height = 1000;
     Paper.setup(canvas);
     const puzzle = new Puzzle(Paper, props.puzzleImg, levelTemp);
-    console.log(puzzle);
   }, []);
 
   return <canvas ref={canvasRef} id="canvas" />;

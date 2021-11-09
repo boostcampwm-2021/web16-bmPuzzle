@@ -19,22 +19,14 @@ const PlayPuzzle = () => {
         ref={imgRef}
         style={imgStyle}
         id="puzzleImage"
-<<<<<<< HEAD
-        src="http://localhost:5000/static/1635993192293.jpeg"
-=======
         src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
->>>>>>> 246311005e8fb598ecbac4bcd1aca0f8c3d5f60f
         alt="puzzleImage"
         onLoad={onLoad}
       />
       <img
         id="empty"
         style={imgStyle}
-<<<<<<< HEAD
-        src="http://localhost:5000/static/1635993192293.jpeg"
-=======
         src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
->>>>>>> 246311005e8fb598ecbac4bcd1aca0f8c3d5f60f
         alt="emptyImage"
       />
       {loaded && <PuzzleCanvas puzzleImg={imgRef} />}
