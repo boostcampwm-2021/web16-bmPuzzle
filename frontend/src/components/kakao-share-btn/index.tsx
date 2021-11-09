@@ -1,4 +1,7 @@
 import React, { useEffect } from "react";
+import styled from "styled-components";
+
+import kakao_share_btn_img from "@images/ic_kakao.svg";
 
 const KakaoShareBtn = () => {
   useEffect(() => {
@@ -36,11 +39,18 @@ const KakaoShareBtn = () => {
   };
   return (
     <div className="kakao-share-btn">
-      <button id="kakao-link-btn">
-        <img src="/icons/kakao.png" alt="kakao-share" />
-      </button>
+      <Button id="kakao-link-btn">
+        <img src={kakao_share_btn_img} alt="kakao-share" />
+      </Button>
     </div>
   );
 };
 
+const Button = styled.button`
+  background: none;
+  border: none;
+  &: hover {
+    cursor: pointer;
+  }
+`;
 export default KakaoShareBtn;
