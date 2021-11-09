@@ -41,6 +41,7 @@ class Puzzle {
     const tileRatio = this.config.tileWidth / 100.0;
 
     const shapeArray = this.getRandomShapes(xTileCount, yTileCount);
+
     const tileIndexes = [];
     for (let y = 0; y < yTileCount; y++) {
       for (let x = 0; x < xTileCount; x++) {
@@ -57,6 +58,7 @@ class Puzzle {
         mask.opacity = 0.25;
         mask.strokeColor = new this.project.Color(0, 0, 0);
 
+        const cloneImg = this.puzzleImage.clone();
         const img = this.getTileRaster(
           cloneImg,
           new Size(this.config.tileWidth, this.config.tileWidth),
@@ -71,37 +73,11 @@ class Puzzle {
         tile.clipped = true;
         tile.opacity = 1;
         tile.position = new Point(100, 100);
-
-        tile.onMouseDrag = (event: any) => {
-          tile.position = new Point(
-            tile.position._x + event.delta.x,
-            tile.position._y + event.delta.y
-          );
-          let nowIndex = tile.index - 1;
-          console.log(tile.index + " " + tile.position);
-          const leftTile = tiles[nowIndex - 1];
-          const rightTile = tiles[nowIndex + 1];
-          const upTile = tiles[nowIndex - config.tileWidth];
-          const bottomTile = tiles[nowIndex - config.tileWidth];
-          console.log(leftTile.index + " " + leftTile.position);
-          if (leftTile != undefined) {
-            if (
-              tile.position._x - leftTile.position._x < 110 &&
-              Math.abs(tile.position._y - leftTile.position._y) < 10
-            ) {
-              tile.position = new Point(
-                leftTile.position._x + 90,
-                leftTile.position._y - 6
-              );
-            }
-          }
-        };
-
         tiles.push(tile);
         tileIndexes.push(tileIndexes.length);
       }
     }
-
+    this.fitTile(shapeArray, tiles, xTileCount, yTileCount);
     for (let y = 0; y < yTileCount; y++) {
       for (let x = 0; x < xTileCount; x++) {
         const index1 = Math.floor(Math.random() * tileIndexes.length);
@@ -135,6 +111,157 @@ class Puzzle {
     return tiles;
   }
 
+  fitTile(shapes: any[], tiles: any[], xTileCount: number, yTileCount: number) {
+    tiles.forEach((tile) => {
+      //console.log(tile);
+      tile.onMouseDrag = (event: any) => {
+        tile.position = new Point(
+          tile.position._x + event.delta.x,
+          tile.position._y + event.delta.y
+        );
+      };
+      tile.onMouseUp = (event: any) => {
+        let nowIndex = tile.index - (xTileCount * yTileCount + 1);
+        let leftTile, rightTile, upTile, downTile;
+        let leftShape, rightShape, upShape, downShape;
+        const nowShape = shapes[nowIndex];
+        if (nowIndex % xTileCount == 0) {
+          leftTile = undefined;
+        } else {
+          leftTile = tiles[nowIndex - 1];
+          leftShape = shapes[nowIndex - 1];
+        }
+        if (nowIndex % xTileCount == 2) {
+          rightTile = undefined;
+        } else {
+          rightTile = tiles[nowIndex + 1];
+          rightShape = shapes[nowIndex + 1];
+        }
+        if (nowIndex < xTileCount) {
+          upTile = undefined;
+        } else {
+          upTile = tiles[nowIndex - xTileCount];
+          upShape = shapes[nowIndex - xTileCount];
+        }
+        if (nowIndex >= xTileCount * (yTileCount - 1)) {
+          downTile = undefined;
+        } else {
+          downTile = tiles[nowIndex + xTileCount];
+          downShape = shapes[nowIndex + xTileCount];
+        }
+        if (upTile !== undefined) {
+          this.moveTiles(tile, upTile, nowShape, upShape, 0);
+        }
+        if (downTile !== undefined) {
+          this.moveTiles(tile, downTile, nowShape, downShape, 1);
+        }
+        if (leftTile !== undefined) {
+          this.moveTiles(tile, leftTile, nowShape, leftShape, 2);
+        }
+        if (rightTile !== undefined) {
+          this.moveTiles(tile, rightTile, nowShape, rightShape, 3);
+        }
+      };
+    });
+  }
+  moveTiles(
+    nowTile: any,
+    preTile: any,
+    _nowShape: any,
+    _preShape: any,
+    dir: number
+  ) {
+    const range = this.config.tileWidth;
+    const yChange = this.findYChange(_nowShape, _preShape);
+    switch (dir) {
+      case 0: //상
+        if (
+          preTile.position._y - nowTile.position._y < range &&
+          preTile.position._y - nowTile.position._y > -range &&
+          Math.abs(nowTile.position._x - preTile.position._x) < 10
+        ) {
+          nowTile.position = new Point(
+            preTile.position._x,
+            preTile.position._y + 90
+          );
+        }
+        break;
+      case 1: //하
+        if (
+          nowTile.position._y - preTile.position._y < range &&
+          nowTile.position._y - preTile.position._y > -range &&
+          Math.abs(nowTile.position._x - preTile.position._x) < 10
+        ) {
+          nowTile.position = new Point(
+            preTile.position._x,
+            preTile.position._y - 90
+          );
+        }
+        break;
+      case 2: //좌
+        if (
+          nowTile.position._x - preTile.position._x < range &&
+          nowTile.position._x - preTile.position._x > -range &&
+          Math.abs(nowTile.position._y - preTile.position._y) < 10
+        ) {
+          nowTile.position = new Point(
+            preTile.position._x + 90,
+            preTile.position._y + yChange
+          );
+        }
+        break;
+      case 3: //우
+        if (
+          nowTile.position._x - preTile.position._x < range &&
+          nowTile.position._x - preTile.position._x > -range &&
+          Math.abs(nowTile.position._y - preTile.position._y) < 10
+        ) {
+          nowTile.position = new Point(
+            preTile.position._x - 90,
+            preTile.position._y + yChange
+          );
+        }
+        break;
+    }
+  }
+  findYChange(_nowShape: any, _preShape: any) {
+    let yChange = 0;
+    if (
+      _nowShape.topTab !== _preShape.topTab ||
+      _nowShape.bottomTab !== _preShape.bottomTab
+    ) {
+      if (_nowShape.topTab === 0 && _preShape.topTab === 0) {
+        if (_nowShape.bottomTab > _preShape.bottomTab) {
+          yChange = 5;
+        } else {
+          yChange = -5;
+        }
+      } else if (_nowShape.bottomTab === 0 && _preShape.bottomTab === 0) {
+        if (_nowShape.topTab < _preShape.topTab) {
+          yChange = 5;
+        } else {
+          yChange = -5;
+        }
+      } else if (_nowShape.bottomTab === 1 && _preShape.bottomTab === 1) {
+        if (_nowShape.topTab < _preShape.topTab) {
+          yChange = 5;
+        } else {
+          yChange = -5;
+        }
+      } else if (_nowShape.bottomTab === -1 && _preShape.bottomTab === -1) {
+        if (_nowShape.topTab < _preShape.topTab) {
+          yChange = 5;
+        } else {
+          yChange = -5;
+        }
+      } else if (_nowShape.bottomTab === -1 && _preShape.bottomTab === 1) {
+        yChange = -5;
+      } else if (_nowShape.bottomTab === 1 && _preShape.bottomTab === -1) {
+        yChange = 5;
+      }
+    }
+    return yChange;
+  }
   getRandomShapes(width: number, height: number) {
     const shapeArray = [];
 
@@ -240,10 +367,7 @@ class Puzzle {
     }
 
     //Right
-    const topRightEdge = new Point(
-      topLeftEdge.x + config.tileWidth,
-      topLeftEdge.y
-    );
+    const topRightEdge = new Point(topLeftEdge.x + tileWidth, topLeftEdge.y);
     for (let i = 0; i < curvyCoords.length / 6; i++) {
       const p1 = new Point(
         topRightEdge.x - rightTab * curvyCoords[i * 6 + 1] * tileRatio,
@@ -264,7 +388,7 @@ class Puzzle {
     //Bottom
     const bottomRightEdge = new Point(
       topRightEdge.x,
-      topRightEdge.y + config.tileWidth
+      topRightEdge.y + tileWidth
     );
     for (let i = 0; i < curvyCoords.length / 6; i++) {
       const p1 = new Point(
@@ -285,7 +409,7 @@ class Puzzle {
 
     //Left
     const bottomLeftEdge = new Point(
-      bottomRightEdge.x - config.tileWidth,
+      bottomRightEdge.x - tileWidth,
       bottomRightEdge.y
     );
     for (let i = 0; i < curvyCoords.length / 6; i++) {
@@ -308,10 +432,11 @@ class Puzzle {
     return mask;
   }
 
-  getTileRaster(offset: any) {
+  getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
     const targetRaster = new this.project.Raster("empty");
     targetRaster.scale(this.config.imgWidth / this.config.originWidth);
     targetRaster.position = new Point(-offset.x, -offset.y);
+
     return targetRaster;
   }
 }
