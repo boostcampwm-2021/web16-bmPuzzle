@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet";
 import styled from "styled-components";
 import colors from "@styles/theme";
 
 import Header from "@components/header/index";
 import ImageCard from "@components/image-card/index";
 import AccountBar from "@components/account-bar/index";
+import KakaoShareBtn from "@src/components/kakao-share-btn/index";
 
 import getImgfile from "@src/js/get-img-file";
 
@@ -56,6 +58,7 @@ const Mypage = () => {
         <Container>
           <AccountBar user={user} />
           <ImageCard img={current === "upload" ? upload : done} />
+          <KakaoShareBtn></KakaoShareBtn>
         </Container>
       </ContainerWrapper>
     </Wrapper>
