@@ -17,7 +17,15 @@ const updateUploadData = async (id: string) => {
     where: { id: id },
   });
 
-  console.log(userInfo);
+  if (userInfo == null) return { code: 500, msg: 'user not find' };
 };
 
-export default {postData, updateUploadData};
+const getCompleteData = async () => {
+  const userInfo = await db.User.findAll({ order: [['complete', 'DESC']] });
+
+  if (userInfo == null) return { code: 500, msg: 'user not find' };
+
+  return userInfo;
+};
+
+export default { postData, updateUploadData, getCompleteData };
