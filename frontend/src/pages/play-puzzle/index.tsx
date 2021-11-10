@@ -17,7 +17,7 @@ const PlayPuzzle = (props: any) => {
   socket.emit("joinRoom", { roomID: params.roomID });
   return (
     <Wrapper>
-      <Header />
+      <Header isPlayRoom={true} />
       <Body>
         <Chat socket={socket} roomID={params.roomID} />
         <PlayroomMenuBtn></PlayroomMenuBtn>
