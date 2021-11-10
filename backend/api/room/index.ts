@@ -1,7 +1,8 @@
 import express from 'express';
-import joinPlayRoom from '@services/play-puzzle';
+import { getPuzzleInfo, checkURL } from '@services/play-puzzle';
 const router = express.Router();
 
-router.post('/:roomID', joinPlayRoom);
+router.post('/urlcheck', checkURL);
+router.post('/:puzzleID', getPuzzleInfo);
 
 export default router;
