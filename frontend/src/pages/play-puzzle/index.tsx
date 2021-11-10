@@ -1,11 +1,10 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import Header from "@components/header/index";
 import PuzzleCanvas from "@components/puzzle-canvas/index";
 import Chat from "@src/components/chat/index";
 import io from "socket.io-client";
 import { useHistory } from "react-router";
-import { inherits } from "util";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
@@ -53,18 +52,6 @@ const PlayPuzzle = (props: any) => {
         <ComponentImg
           ref={imgRef}
           id="puzzleImage"
-<<<<<<< HEAD
-          src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
-          alt="puzzleImage"
-          onLoad={onLoad}
-        />
-        <ComponentImg
-          id="empty"
-          src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
-          alt="emptyImage"
-        />
-        {loaded && <PuzzleCanvas puzzleImg={imgRef} />}
-=======
           src={puzzleInfo.img}
           alt="puzzleImage"
           onLoad={onLoad}
@@ -73,7 +60,6 @@ const PlayPuzzle = (props: any) => {
         {loaded && (
           <PuzzleCanvas puzzleImg={imgRef} level={puzzleInfo.level + 1} />
         )}
->>>>>>> 1aa614101c42e5040da01a894271d1cf4c47e951
       </Body>
     </Wrapper>
   );

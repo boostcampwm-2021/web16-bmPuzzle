@@ -1,4 +1,3 @@
-import { group } from "console";
 import { Point, Size } from "paper/dist/paper-core";
 
 type Config = {
@@ -191,7 +190,6 @@ class Puzzle {
   ) {
     const range = this.config.tileWidth;
     const yChange = this.findYChange(_nowShape, _preShape);
-    const xChange = this.findXChange(_nowShape, _preShape);
     switch (dir) {
       case 0: //상
         if (
@@ -247,10 +245,6 @@ class Puzzle {
         break;
     }
   }
-<<<<<<< HEAD
-  findXChange(_nowShape: any, _preShape: any) {
-    let xChange = 0;
-=======
   uniteTiles(nowTile: any, preTile: any) {
     let nowIndex =
       nowTile.index -
@@ -291,7 +285,6 @@ class Puzzle {
       }
     });
     return flag;
->>>>>>> 1aa614101c42e5040da01a894271d1cf4c47e951
   }
   findYChange(_nowShape: any, _preShape: any) {
     let yChange = 0;
