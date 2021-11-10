@@ -1,3 +1,4 @@
+import { group } from "console";
 import { Point, Size } from "paper/dist/paper-core";
 
 type Config = {
@@ -20,6 +21,7 @@ class Puzzle {
   selectedTileIndex = undefined;
   selectionGroup = undefined;
   tiles: any[];
+  groupTiles: any[];
   config: Config;
   constructor(project: any, config: Config) {
     this.config = {
@@ -30,6 +32,7 @@ class Puzzle {
       source: "puzzleImage",
       position: this.project.view.center,
     });
+    this.groupTiles = [];
     this.tiles = this.createTiles(
       this.config.tilesPerRow,
       this.config.tilesPerColumn
@@ -113,25 +116,36 @@ class Puzzle {
 
   fitTile(shapes: any[], tiles: any[], xTileCount: number, yTileCount: number) {
     tiles.forEach((tile) => {
-      //console.log(tile);
       tile.onMouseDrag = (event: any) => {
-        tile.position = new Point(
-          tile.position._x + event.delta.x,
-          tile.position._y + event.delta.y
-        );
+        if (!this.groupTiles.includes(tile.index)) {
+          tile.position = new Point(
+            tile.position._x + event.delta.x,
+            tile.position._y + event.delta.y
+          );
+        } else {
+          this.groupTiles.forEach((gtile) => {
+            let nowIndex = gtile - (xTileCount * yTileCount + 1);
+            tiles[nowIndex].position = new Point(
+              tiles[nowIndex].position._x + event.delta.x,
+              tiles[nowIndex].position._y + event.delta.y
+            );
+          });
+        }
       };
+    });
+    tiles.forEach((tile) => {
       tile.onMouseUp = (event: any) => {
         let nowIndex = tile.index - (xTileCount * yTileCount + 1);
         let leftTile, rightTile, upTile, downTile;
         let leftShape, rightShape, upShape, downShape;
         const nowShape = shapes[nowIndex];
-        if (nowIndex % xTileCount == 0) {
+        if (nowIndex % xTileCount === 0) {
           leftTile = undefined;
         } else {
           leftTile = tiles[nowIndex - 1];
           leftShape = shapes[nowIndex - 1];
         }
-        if (nowIndex % xTileCount == 2) {
+        if (nowIndex % xTileCount === 2) {
           rightTile = undefined;
         } else {
           rightTile = tiles[nowIndex + 1];
@@ -184,6 +198,12 @@ class Puzzle {
             preTile.position._x,
             preTile.position._y + 90
           );
+          if (!this.groupTiles.includes(nowTile.index)) {
+            this.groupTiles.push(nowTile.index);
+          }
+          if (!this.groupTiles.includes(preTile.index)) {
+            this.groupTiles.push(preTile.index);
+          }
         }
         break;
       case 1: //하
@@ -196,6 +216,12 @@ class Puzzle {
             preTile.position._x,
             preTile.position._y - 90
           );
+          if (!this.groupTiles.includes(nowTile.index)) {
+            this.groupTiles.push(nowTile.index);
+          }
+          if (!this.groupTiles.includes(preTile.index)) {
+            this.groupTiles.push(preTile.index);
+          }
         }
         break;
       case 2: //좌
@@ -208,6 +234,12 @@ class Puzzle {
             preTile.position._x + 90,
             preTile.position._y + yChange
           );
+          if (!this.groupTiles.includes(nowTile.index)) {
+            this.groupTiles.push(nowTile.index);
+          }
+          if (!this.groupTiles.includes(preTile.index)) {
+            this.groupTiles.push(preTile.index);
+          }
         }
         break;
       case 3: //우
@@ -220,6 +252,12 @@ class Puzzle {
             preTile.position._x - 90,
             preTile.position._y + yChange
           );
+          if (!this.groupTiles.includes(nowTile.index)) {
+            this.groupTiles.push(nowTile.index);
+          }
+          if (!this.groupTiles.includes(preTile.index)) {
+            this.groupTiles.push(preTile.index);
+          }
         }
         break;
     }
