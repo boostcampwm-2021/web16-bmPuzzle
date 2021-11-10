@@ -33,6 +33,8 @@ const PlayPuzzle = (props: any) => {
     if (res === undefined) history.go(-1);
     res.image = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
     if (res.level !== puzzleInfo.level || res.image !== puzzleInfo.img) {
+      if (res.level < 1) res.level = 1;
+      else if (res.level > 3) res.level = 3;
       setPuzzleInfo({ img: res.image, level: res.level });
     }
   };
@@ -57,9 +59,7 @@ const PlayPuzzle = (props: any) => {
           onLoad={onLoad}
         />
         <ComponentImg id="empty" src={puzzleInfo.img} alt="emptyImage" />
-        {loaded && (
-          <PuzzleCanvas puzzleImg={imgRef} level={puzzleInfo.level + 1} />
-        )}
+        {loaded && <PuzzleCanvas puzzleImg={imgRef} level={puzzleInfo.level} />}
       </Body>
     </Wrapper>
   );
