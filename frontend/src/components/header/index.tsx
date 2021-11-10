@@ -8,13 +8,16 @@ import chat_image from "@images/chat-icon.png";
 
 const Header = (props: any) => {
   const history = useHistory();
-  const { isPlayRoom } = props;
+  const { isPlayRoom, chatVisible, setChatVisible } = props;
   const handleMove = (e: any) => {
     const url =
       e.target.id === "" ? e.target.closest("button").id : e.target.id;
     history.push(`/${url}`);
   };
-  const toggleChat = (e: any) => {};
+  const toggleChat = (e: any) => {
+    const toggle = chatVisible === true ? false : true;
+    setChatVisible(toggle);
+  };
 
   return (
     <Wrapper>
@@ -68,7 +71,9 @@ const RightIconWrapper = styled.div`
   }
 `;
 
-const ChatWrapper = styled.div``;
+const ChatWrapper = styled.div`
+  position: absolute;
+`;
 
 const Btn = styled.button`
   padding: 0px;
