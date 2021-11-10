@@ -5,7 +5,6 @@ import Header from "@components/header/index";
 import colors from "@styles/theme";
 import { useHistory } from "react-router-dom";
 
-const registerURI = `${process.env.REACT_APP_API_URL}/register`;
 const RegPuz = () => {
   const [checkedLevel, setLevel] = useState(1);
   const [title, setTitle] = useState("");
@@ -29,9 +28,10 @@ const RegPuz = () => {
     formData.append("title", title);
     formData.append("img", selectedImg);
     formData.append("level", String(checkedLevel));
-    const response = await fetch(registerURI, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/register`, {
       method: "POST",
       headers: {},
+      body: formData,
     });
     if (response.status === 200) {
       history.push("/main");
