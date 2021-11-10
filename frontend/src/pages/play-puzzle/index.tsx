@@ -21,13 +21,13 @@ const PlayPuzzle = (props: any) => {
         <ComponentImg
           ref={imgRef}
           id="puzzleImage"
-          src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
+          src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
           alt="puzzleImage"
           onLoad={onLoad}
         />
         <ComponentImg
           id="empty"
-          src="https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg"
+          src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
           alt="emptyImage"
         />
         {loaded && <PuzzleCanvas puzzleImg={imgRef} />}
