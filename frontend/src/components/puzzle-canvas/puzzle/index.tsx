@@ -189,6 +189,7 @@ class Puzzle {
     const range = this.config.tileWidth;
     const yChange = this.findYChange(_nowShape, _preShape);
     const xChange = this.findXChange(_nowShape, _preShape);
+    const xUp = this.findXUp(_nowShape, _preShape);
     switch (dir) {
       case 0: //상
         if (
@@ -197,8 +198,8 @@ class Puzzle {
           Math.abs(nowTile.position._x - preTile.position._x) < 10
         ) {
           nowTile.position = new Point(
-            preTile.position._x + xChange,
-            preTile.position._y + this.config.tileWidth + yChange
+            preTile.position._x + xUp,
+            preTile.position._y + this.config.tileWidth
           );
           this.uniteTiles(nowTile, preTile);
         }
@@ -210,7 +211,7 @@ class Puzzle {
           Math.abs(nowTile.position._x - preTile.position._x) < 10
         ) {
           nowTile.position = new Point(
-            preTile.position._x + xChange,
+            preTile.position._x + xUp,
             preTile.position._y - (this.config.tileWidth + yChange)
           );
           this.uniteTiles(nowTile, preTile);
@@ -243,6 +244,47 @@ class Puzzle {
         }
         break;
     }
+  }
+  findXUp(_nowShape: any, _preShape: any) {
+    let xUP = 0;
+    const nL = _nowShape.leftTab;
+    const nR = _nowShape.rightTab;
+    const pL = _preShape.leftTab;
+    const pR = _preShape.rightTab;
+    if (nL !== pL || nR !== pR) {
+      if (nR === 0) {
+        if (nL === -1) {
+          xUP = 5;
+        } else {
+          xUP = -5;
+        }
+      } else if (nR === 1 && pR === 1) {
+        if (nL === -1) {
+          xUP = 5;
+        } else {
+          xUP = -5;
+        }
+      } else if (nR === 1 && pR === -1) {
+        if (nL === pL) {
+          xUP = 5;
+        } else {
+          xUP = 10;
+        }
+      } else if (nR === -1 && pR === 1) {
+        if (nL === pL) {
+          xUP = -5;
+        } else {
+          xUP = -10;
+        }
+      } else {
+        if (nL < pL) {
+          xUP = 5;
+        } else {
+          xUP = -5;
+        }
+      }
+    }
+    return xUP;
   }
   findYChange(_nowShape: any, _preShape: any) {
     let yChange = 0;
