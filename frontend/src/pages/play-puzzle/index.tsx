@@ -4,33 +4,63 @@ import Header from "@components/header/index";
 import PuzzleCanvas from "@components/puzzle-canvas/index";
 import Chat from "@src/components/chat/index";
 import io from "socket.io-client";
-import { fetchPost } from "@src/utils/fetch";
+import { useHistory } from "react-router";
+import { inherits } from "util";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
+  const [puzzleInfo, setPuzzleInfo] = useState({ img: "", level: 1 });
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
-  const { params } = props.match;
-  const socket = io("http://localhost:5000/");
-  socket.emit("joinRoom", { roomID: params.roomID });
+  const { puzzleID, roomID } = props.match.params;
+  const history = useHistory();
+  const getPuzzleInfo = async () => {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/room/${puzzleID}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.status === 500) return undefined;
+    const resJSON = await response.json();
+    return { img: resJSON.img, level: resJSON.level };
+  };
+
+  const setPuzzle = async () => {
+    const res: any = await getPuzzleInfo();
+    if (res === undefined) history.go(-1);
+    res.image = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
+    if (res.level !== puzzleInfo.level || res.image !== puzzleInfo.img) {
+      setPuzzleInfo({ img: res.image, level: res.level });
+    }
+  };
+  const setSocket = () => {
+    const socket = io("http://localhost:5000/");
+    socket.emit("joinRoom", { roomID: roomID });
+    return socket;
+  };
+  setPuzzle();
+  console.log(puzzleInfo);
+  const socket = setSocket();
   return (
     <Wrapper>
       <Header />
       <Body>
-        <Chat socket={socket} roomID={params.roomID} />
+        <Chat socket={socket} roomID={roomID} />
         <ComponentImg
           ref={imgRef}
           id="puzzleImage"
-          src="https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v1026-08-ktdpo2hf.jpg?w=800&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=762649fdf7d66f68f0d5fc1c694ce3ac"
+          src={puzzleInfo.img}
           alt="puzzleImage"
           onLoad={onLoad}
         />
-        <ComponentImg
-          id="empty"
-          src="https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/v1026-08-ktdpo2hf.jpg?w=800&dpr=1&fit=default&crop=default&q=65&vib=3&con=3&usm=15&bg=F4F4F3&ixlib=js-2.2.1&s=762649fdf7d66f68f0d5fc1c694ce3ac"
-          alt="emptyImage"
-        />
-        {loaded && <PuzzleCanvas puzzleImg={imgRef} />}
+        <ComponentImg id="empty" src={puzzleInfo.img} alt="emptyImage" />
+        {loaded && (
+          <PuzzleCanvas puzzleImg={imgRef} level={puzzleInfo.level + 1} />
+        )}
       </Body>
     </Wrapper>
   );

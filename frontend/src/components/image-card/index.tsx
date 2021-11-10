@@ -1,7 +1,28 @@
 import React from "react";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 
 const ImageCard = (props: any) => {
+  const history = useHistory();
+  const getValidURL = async () => {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/room/urlcheck`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const resJSON = await response.json();
+    return resJSON.validURL;
+  };
+
+  const moveHandler = async (event: any, imgID: any) => {
+    const validURL = await getValidURL();
+    history.push(`/room/${imgID}/${validURL}`);
+  };
+
   const convertTime = (time: number) => {
     let hour, minute, second;
     if (time >= 3600) {
@@ -33,7 +54,12 @@ const ImageCard = (props: any) => {
         const time =
           ele.time === undefined ? ele.visit_time : convertTime(ele.time);
         return (
-          <Wrapper key={idx}>
+          <Wrapper
+            key={idx}
+            onClick={(event: any) => {
+              moveHandler(event, ele.id);
+            }}
+          >
             <Img src={ele.image} />
             <Content>
               <div>{ele.title}</div>
