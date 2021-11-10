@@ -14,7 +14,6 @@ const Chat = (props: any) => {
     socket.on("message", (msg: { name: string; message: string }) => {
       const newMsg = { name: msg.name, message: msg.message };
       setChat([...chat, newMsg]);
-      console.log(chat);
     });
   }, [chat, socket]);
   const onMessageSubmit = (e: any) => {

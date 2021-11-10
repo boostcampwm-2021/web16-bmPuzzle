@@ -11,12 +11,10 @@ interface HintBtnProps {
 
 const HintBtn = ({ hintFunc, hintState }: HintBtnProps) => {
   const hintShow = () => {
-    console.log("a");
     if (hintState) return;
     hintFunc(true);
   };
   const hintHide = () => {
-    console.log("b");
     if (!hintState) return;
     hintFunc(false);
   };

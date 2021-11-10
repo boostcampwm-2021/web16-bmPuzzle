@@ -50,7 +50,6 @@ const PlayPuzzle = (props: any) => {
     return socket;
   };
   setPuzzle();
-  console.log(puzzleInfo);
   const socket = setSocket();
   return (
     <Wrapper>
@@ -60,13 +59,8 @@ const PlayPuzzle = (props: any) => {
         setChatVisible={setChatVisible}
       />
       <Body>
-
         {loaded && (
-          <Chat
-            socket={socket}
-            roomID={params.roomID}
-            chatVisible={chatVisible}
-          />
+          <Chat socket={socket} roomID={roomID} chatVisible={chatVisible} />
         )}
         <PlayroomMenuBtn
           hintFunc={setHintShow}
@@ -88,7 +82,6 @@ const PlayPuzzle = (props: any) => {
           show={hintShow}
         />
         {loaded && <PuzzleCanvas puzzleImg={imgRef} level={puzzleInfo.level} />}
-
       </Body>
     </Wrapper>
   );
