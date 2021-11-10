@@ -47,6 +47,7 @@ const PlayPuzzle = (props: any) => {
     }
   };
   const setSocket = () => {
+    if (!loaded) return;
     const socket = io("http://localhost:5000/");
     socket.emit("joinRoom", { roomID: roomID });
     return socket;
