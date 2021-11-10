@@ -2,7 +2,7 @@ import { group } from "console";
 import { Point, Size } from "paper/dist/paper-core";
 
 type Config = {
-  originHeight: number | undefined;
+  originHeight: number;
   originWidth: number;
   imgWidth: number;
   imgHeight: number;
@@ -37,6 +37,7 @@ class Puzzle {
       this.config.tilesPerRow,
       this.config.tilesPerColumn
     );
+    console.log(this.config.imgHeight, this.config.imgWidth);
   }
 
   createTiles(xTileCount: number, yTileCount: number) {
@@ -187,6 +188,7 @@ class Puzzle {
   ) {
     const range = this.config.tileWidth;
     const yChange = this.findYChange(_nowShape, _preShape);
+    const xChange = this.findXChange(_nowShape, _preShape);
     switch (dir) {
       case 0: //상
         if (
@@ -231,7 +233,7 @@ class Puzzle {
           Math.abs(nowTile.position._y - preTile.position._y) < 10
         ) {
           nowTile.position = new Point(
-            preTile.position._x + 90,
+            preTile.position._x + 85,
             preTile.position._y + yChange
           );
           if (!this.groupTiles.includes(nowTile.index)) {
@@ -249,7 +251,7 @@ class Puzzle {
           Math.abs(nowTile.position._y - preTile.position._y) < 10
         ) {
           nowTile.position = new Point(
-            preTile.position._x - 90,
+            preTile.position._x - 100,
             preTile.position._y + yChange
           );
           if (!this.groupTiles.includes(nowTile.index)) {
@@ -261,6 +263,9 @@ class Puzzle {
         }
         break;
     }
+  }
+  findXChange(_nowShape: any, _preShape: any) {
+    let xChange = 0;
   }
   findYChange(_nowShape: any, _preShape: any) {
     let yChange = 0;
@@ -472,7 +477,7 @@ class Puzzle {
 
   getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
     const targetRaster = new this.project.Raster("empty");
-    targetRaster.scale(this.config.imgWidth / this.config.originWidth);
+    targetRaster.scale(this.config.imgWidth / this.config.originWidth + 0.1);
     targetRaster.position = new Point(-offset.x, -offset.y);
 
     return targetRaster;
