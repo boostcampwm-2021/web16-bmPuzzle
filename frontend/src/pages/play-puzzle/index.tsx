@@ -4,23 +4,56 @@ import Header from "@components/header/index";
 import PuzzleCanvas from "@components/puzzle-canvas/index";
 import Chat from "@src/components/chat/index";
 import io from "socket.io-client";
-import { fetchPost } from "@src/utils/fetch";
+import { useHistory } from "react-router";
+import { inherits } from "util";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
+  const [puzzleInfo, setPuzzleInfo] = useState({ img: "", level: 1 });
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
-  const { params } = props.match;
-  const socket = io("http://localhost:5000/");
-  socket.emit("joinRoom", { roomID: params.roomID });
+  const { puzzleID, roomID } = props.match.params;
+  const history = useHistory();
+  const getPuzzleInfo = async () => {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/room/${puzzleID}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (response.status === 500) return undefined;
+    const resJSON = await response.json();
+    return { img: resJSON.img, level: resJSON.level };
+  };
+
+  const setPuzzle = async () => {
+    const res: any = await getPuzzleInfo();
+    if (res === undefined) history.go(-1);
+    res.image = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
+    if (res.level !== puzzleInfo.level || res.image !== puzzleInfo.img) {
+      setPuzzleInfo({ img: res.image, level: res.level });
+    }
+  };
+  const setSocket = () => {
+    const socket = io("http://localhost:5000/");
+    socket.emit("joinRoom", { roomID: roomID });
+    return socket;
+  };
+  setPuzzle();
+  console.log(puzzleInfo);
+  const socket = setSocket();
   return (
     <Wrapper>
       <Header />
       <Body>
-        <Chat socket={socket} roomID={params.roomID} />
+        <Chat socket={socket} roomID={roomID} />
         <ComponentImg
           ref={imgRef}
           id="puzzleImage"
+<<<<<<< HEAD
           src="https://cphoto.asiae.co.kr/listimglink/6/2019110809333471277_1573173214.png"
           alt="puzzleImage"
           onLoad={onLoad}
@@ -31,6 +64,16 @@ const PlayPuzzle = (props: any) => {
           alt="emptyImage"
         />
         {loaded && <PuzzleCanvas puzzleImg={imgRef} />}
+=======
+          src={puzzleInfo.img}
+          alt="puzzleImage"
+          onLoad={onLoad}
+        />
+        <ComponentImg id="empty" src={puzzleInfo.img} alt="emptyImage" />
+        {loaded && (
+          <PuzzleCanvas puzzleImg={imgRef} level={puzzleInfo.level + 1} />
+        )}
+>>>>>>> 1aa614101c42e5040da01a894271d1cf4c47e951
       </Body>
     </Wrapper>
   );

@@ -22,6 +22,7 @@ class Puzzle {
   selectionGroup = undefined;
   tiles: any[];
   groupTiles: any[];
+  groupTileIndex = 0;
   config: Config;
   constructor(project: any, config: Config) {
     this.config = {
@@ -78,6 +79,7 @@ class Puzzle {
         tile.opacity = 1;
         tile.position = new Point(100, 100);
         tiles.push(tile);
+        this.groupTiles.push([tile, undefined]);
         tileIndexes.push(tileIndexes.length);
       }
     }
@@ -116,20 +118,21 @@ class Puzzle {
   }
 
   fitTile(shapes: any[], tiles: any[], xTileCount: number, yTileCount: number) {
-    tiles.forEach((tile) => {
-      tile.onMouseDrag = (event: any) => {
-        if (!this.groupTiles.includes(tile.index)) {
-          tile.position = new Point(
-            tile.position._x + event.delta.x,
-            tile.position._y + event.delta.y
+    this.groupTiles.forEach((gtile) => {
+      gtile[0].onMouseDrag = (event: any) => {
+        if (gtile[1] === undefined) {
+          gtile[0].position = new Point(
+            gtile[0].position._x + event.delta.x,
+            gtile[0].position._y + event.delta.y
           );
         } else {
-          this.groupTiles.forEach((gtile) => {
-            let nowIndex = gtile - (xTileCount * yTileCount + 1);
-            tiles[nowIndex].position = new Point(
-              tiles[nowIndex].position._x + event.delta.x,
-              tiles[nowIndex].position._y + event.delta.y
-            );
+          this.groupTiles.forEach((gtile_now) => {
+            if (gtile[1] === gtile_now[1]) {
+              gtile_now[0].position = new Point(
+                gtile_now[0].position._x + event.delta.x,
+                gtile_now[0].position._y + event.delta.y
+              );
+            }
           });
         }
       };
@@ -200,12 +203,7 @@ class Puzzle {
             preTile.position._x,
             preTile.position._y + 90
           );
-          if (!this.groupTiles.includes(nowTile.index)) {
-            this.groupTiles.push(nowTile.index);
-          }
-          if (!this.groupTiles.includes(preTile.index)) {
-            this.groupTiles.push(preTile.index);
-          }
+          this.uniteTiles(nowTile, preTile);
         }
         break;
       case 1: //하
@@ -218,12 +216,7 @@ class Puzzle {
             preTile.position._x,
             preTile.position._y - 90
           );
-          if (!this.groupTiles.includes(nowTile.index)) {
-            this.groupTiles.push(nowTile.index);
-          }
-          if (!this.groupTiles.includes(preTile.index)) {
-            this.groupTiles.push(preTile.index);
-          }
+          this.uniteTiles(nowTile, preTile);
         }
         break;
       case 2: //좌
@@ -236,36 +229,69 @@ class Puzzle {
             preTile.position._x + 85,
             preTile.position._y + yChange
           );
-          if (!this.groupTiles.includes(nowTile.index)) {
-            this.groupTiles.push(nowTile.index);
-          }
-          if (!this.groupTiles.includes(preTile.index)) {
-            this.groupTiles.push(preTile.index);
-          }
+          this.uniteTiles(nowTile, preTile);
         }
         break;
       case 3: //우
         if (
-          nowTile.position._x - preTile.position._x < range &&
-          nowTile.position._x - preTile.position._x > -range &&
+          preTile.position._x - nowTile.position._x < range &&
+          preTile.position._x - nowTile.position._x > -range &&
           Math.abs(nowTile.position._y - preTile.position._y) < 10
         ) {
           nowTile.position = new Point(
             preTile.position._x - 100,
             preTile.position._y + yChange
           );
-          if (!this.groupTiles.includes(nowTile.index)) {
-            this.groupTiles.push(nowTile.index);
-          }
-          if (!this.groupTiles.includes(preTile.index)) {
-            this.groupTiles.push(preTile.index);
-          }
+          this.uniteTiles(nowTile, preTile);
         }
         break;
     }
   }
+<<<<<<< HEAD
   findXChange(_nowShape: any, _preShape: any) {
     let xChange = 0;
+=======
+  uniteTiles(nowTile: any, preTile: any) {
+    let nowIndex =
+      nowTile.index -
+      (this.config.tilesPerRow * this.config.tilesPerColumn + 1);
+    let preIndex =
+      preTile.index -
+      (this.config.tilesPerRow * this.config.tilesPerColumn + 1);
+    let nowGroup = this.groupTiles[nowIndex][1];
+    let preGroup = this.groupTiles[preIndex][1];
+    if (nowGroup !== undefined) {
+      if (preGroup === undefined) {
+        this.groupTiles[preIndex][1] = nowGroup;
+      } else {
+        this.groupTiles.forEach((gtile) => {
+          if (gtile[1] === nowGroup) {
+            gtile[1] = preGroup;
+          }
+        });
+      }
+    } else {
+      if (preGroup !== undefined) {
+        this.groupTiles[nowIndex][1] = preGroup;
+      } else {
+        this.groupTiles[nowIndex][1] = this.groupTileIndex;
+        this.groupTiles[preIndex][1] = this.groupTileIndex;
+        this.groupTileIndex++;
+      }
+    }
+    if (this.checkComplete()) {
+      console.log("퍼즐 완성");
+    }
+  }
+  checkComplete() {
+    let flag = true;
+    this.groupTiles.forEach((gtile) => {
+      if (gtile[1] === undefined) {
+        flag = false;
+      }
+    });
+    return flag;
+>>>>>>> 1aa614101c42e5040da01a894271d1cf4c47e951
   }
   findYChange(_nowShape: any, _preShape: any) {
     let yChange = 0;
