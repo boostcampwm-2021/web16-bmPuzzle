@@ -16,9 +16,6 @@ type Config = {
 class Puzzle {
   project: any;
   puzzleImage: null | any;
-  selectedTile = undefined;
-  selectedTileIndex = undefined;
-  selectionGroup = undefined;
   tiles: any[];
   groupTiles: any[];
   groupTileIndex = 0;
@@ -33,19 +30,16 @@ class Puzzle {
       position: this.project.view.center,
     });
     this.groupTiles = [];
-    this.tiles = this.createTiles(
-      this.config.tilesPerRow,
-      this.config.tilesPerColumn
-    );
-    console.log(this.config.imgHeight, this.config.imgWidth);
+
+    this.tiles = [];
+    this.createTiles();
   }
 
-  createTiles(xTileCount: number, yTileCount: number) {
-    const tiles: any[] = [];
+  createTiles() {
+    const xTileCount = this.config.tilesPerRow;
+    const yTileCount = this.config.tilesPerColumn;
     const tileRatio = this.config.tileWidth / 100.0;
-
-    const shapeArray = this.getRandomShapes(xTileCount, yTileCount);
-
+    const shapeArray = this.getRandomShapes();
     const tileIndexes = [];
     for (let y = 0; y < yTileCount; y++) {
       for (let x = 0; x < xTileCount; x++) {
@@ -77,17 +71,17 @@ class Puzzle {
         tile.clipped = true;
         tile.opacity = 1;
         tile.position = new Point(100, 100);
-        tiles.push(tile);
+        this.tiles.push(tile);
         this.groupTiles.push([tile, undefined]);
         tileIndexes.push(tileIndexes.length);
       }
     }
-    this.fitTile(shapeArray, tiles, xTileCount, yTileCount);
+
     for (let y = 0; y < yTileCount; y++) {
       for (let x = 0; x < xTileCount; x++) {
         const index1 = Math.floor(Math.random() * tileIndexes.length);
         const index2 = tileIndexes[index1];
-        const tile = tiles[index2];
+        const tile = this.tiles[index2];
         tileIndexes.splice(index1, 1);
 
         const position = new Point(
@@ -112,11 +106,10 @@ class Puzzle {
         );
       }
     }
-
-    return tiles;
+    this.moveTile();
+    this.findNearTile(shapeArray);
   }
-
-  fitTile(shapes: any[], tiles: any[], xTileCount: number, yTileCount: number) {
+  moveTile() {
     this.groupTiles.forEach((gtile) => {
       gtile[0].onMouseDrag = (event: any) => {
         if (gtile[1] === undefined) {
@@ -136,7 +129,12 @@ class Puzzle {
         }
       };
     });
-    tiles.forEach((tile) => {
+  }
+  findNearTile(shapes: any[]) {
+    const xTileCount = this.config.tilesPerRow;
+    const yTileCount = this.config.tilesPerColumn;
+
+    this.tiles.forEach((tile) => {
       tile.onMouseUp = (event: any) => {
         let nowIndex = tile.index - (xTileCount * yTileCount + 1);
         let leftTile, rightTile, upTile, downTile;
@@ -145,43 +143,43 @@ class Puzzle {
         if (nowIndex % xTileCount === 0) {
           leftTile = undefined;
         } else {
-          leftTile = tiles[nowIndex - 1];
+          leftTile = this.tiles[nowIndex - 1];
           leftShape = shapes[nowIndex - 1];
         }
         if (nowIndex % xTileCount === 2) {
           rightTile = undefined;
         } else {
-          rightTile = tiles[nowIndex + 1];
+          rightTile = this.tiles[nowIndex + 1];
           rightShape = shapes[nowIndex + 1];
         }
         if (nowIndex < xTileCount) {
           upTile = undefined;
         } else {
-          upTile = tiles[nowIndex - xTileCount];
+          upTile = this.tiles[nowIndex - xTileCount];
           upShape = shapes[nowIndex - xTileCount];
         }
         if (nowIndex >= xTileCount * (yTileCount - 1)) {
           downTile = undefined;
         } else {
-          downTile = tiles[nowIndex + xTileCount];
+          downTile = this.tiles[nowIndex + xTileCount];
           downShape = shapes[nowIndex + xTileCount];
         }
         if (upTile !== undefined) {
-          this.moveTiles(tile, upTile, nowShape, upShape, 0);
+          this.fitTiles(tile, upTile, nowShape, upShape, 0);
         }
         if (downTile !== undefined) {
-          this.moveTiles(tile, downTile, nowShape, downShape, 1);
+          this.fitTiles(tile, downTile, nowShape, downShape, 1);
         }
         if (leftTile !== undefined) {
-          this.moveTiles(tile, leftTile, nowShape, leftShape, 2);
+          this.fitTiles(tile, leftTile, nowShape, leftShape, 2);
         }
         if (rightTile !== undefined) {
-          this.moveTiles(tile, rightTile, nowShape, rightShape, 3);
+          this.fitTiles(tile, rightTile, nowShape, rightShape, 3);
         }
       };
     });
   }
-  moveTiles(
+  fitTiles(
     nowTile: any,
     preTile: any,
     _nowShape: any,
@@ -190,6 +188,7 @@ class Puzzle {
   ) {
     const range = this.config.tileWidth;
     const yChange = this.findYChange(_nowShape, _preShape);
+    const xChange = this.findXChange(_nowShape, _preShape);
     switch (dir) {
       case 0: //상
         if (
@@ -198,8 +197,8 @@ class Puzzle {
           Math.abs(nowTile.position._x - preTile.position._x) < 10
         ) {
           nowTile.position = new Point(
-            preTile.position._x,
-            preTile.position._y + 90
+            preTile.position._x + xChange,
+            preTile.position._y + this.config.tileWidth + yChange
           );
           this.uniteTiles(nowTile, preTile);
         }
@@ -211,8 +210,8 @@ class Puzzle {
           Math.abs(nowTile.position._x - preTile.position._x) < 10
         ) {
           nowTile.position = new Point(
-            preTile.position._x,
-            preTile.position._y - 90
+            preTile.position._x + xChange,
+            preTile.position._y - (this.config.tileWidth + yChange)
           );
           this.uniteTiles(nowTile, preTile);
         }
@@ -224,7 +223,7 @@ class Puzzle {
           Math.abs(nowTile.position._y - preTile.position._y) < 10
         ) {
           nowTile.position = new Point(
-            preTile.position._x + 85,
+            preTile.position._x + this.config.tileWidth + xChange,
             preTile.position._y + yChange
           );
           this.uniteTiles(nowTile, preTile);
@@ -237,12 +236,62 @@ class Puzzle {
           Math.abs(nowTile.position._y - preTile.position._y) < 10
         ) {
           nowTile.position = new Point(
-            preTile.position._x - 100,
+            preTile.position._x - (this.config.tileWidth + xChange),
             preTile.position._y + yChange
           );
           this.uniteTiles(nowTile, preTile);
         }
         break;
+    }
+  }
+  findYChange(_nowShape: any, _preShape: any) {
+    let yChange = 0;
+    if (
+      _nowShape.topTab !== _preShape.topTab ||
+      _nowShape.bottomTab !== _preShape.bottomTab
+    ) {
+      if (_nowShape.topTab === 0 && _preShape.topTab === 0) {
+        if (_nowShape.bottomTab > _preShape.bottomTab) {
+          yChange = 5;
+        } else {
+          yChange = -5;
+        }
+      } else if (_nowShape.bottomTab === 0 && _preShape.bottomTab === 0) {
+        if (_nowShape.topTab < _preShape.topTab) {
+          yChange = 5;
+        } else {
+          yChange = -5;
+        }
+      } else if (_nowShape.bottomTab === 1 && _preShape.bottomTab === 1) {
+        if (_nowShape.topTab < _preShape.topTab) {
+          yChange = 5;
+        } else {
+          yChange = -5;
+        }
+      } else if (_nowShape.bottomTab === -1 && _preShape.bottomTab === -1) {
+        if (_nowShape.topTab < _preShape.topTab) {
+          yChange = 5;
+        } else {
+          yChange = -5;
+        }
+      } else if (_nowShape.bottomTab === -1 && _preShape.bottomTab === 1) {
+        yChange = -5;
+      } else if (_nowShape.bottomTab === 1 && _preShape.bottomTab === -1) {
+        yChange = 5;
+      }
+    }
+    return yChange;
+  }
+  findXChange(_nowShape: any, _preShape: any) {
+    const sum =
+      _nowShape.leftTab +
+      _nowShape.rightTab +
+      _preShape.leftTab +
+      _preShape.rightTab;
+    if (sum === 1) {
+      return -5;
+    } else {
+      return -10;
     }
   }
   uniteTiles(nowTile: any, preTile: any) {
@@ -286,45 +335,9 @@ class Puzzle {
     });
     return flag;
   }
-  findYChange(_nowShape: any, _preShape: any) {
-    let yChange = 0;
-    if (
-      _nowShape.topTab !== _preShape.topTab ||
-      _nowShape.bottomTab !== _preShape.bottomTab
-    ) {
-      if (_nowShape.topTab === 0 && _preShape.topTab === 0) {
-        if (_nowShape.bottomTab > _preShape.bottomTab) {
-          yChange = 5;
-        } else {
-          yChange = -5;
-        }
-      } else if (_nowShape.bottomTab === 0 && _preShape.bottomTab === 0) {
-        if (_nowShape.topTab < _preShape.topTab) {
-          yChange = 5;
-        } else {
-          yChange = -5;
-        }
-      } else if (_nowShape.bottomTab === 1 && _preShape.bottomTab === 1) {
-        if (_nowShape.topTab < _preShape.topTab) {
-          yChange = 5;
-        } else {
-          yChange = -5;
-        }
-      } else if (_nowShape.bottomTab === -1 && _preShape.bottomTab === -1) {
-        if (_nowShape.topTab < _preShape.topTab) {
-          yChange = 5;
-        } else {
-          yChange = -5;
-        }
-      } else if (_nowShape.bottomTab === -1 && _preShape.bottomTab === 1) {
-        yChange = -5;
-      } else if (_nowShape.bottomTab === 1 && _preShape.bottomTab === -1) {
-        yChange = 5;
-      }
-    }
-    return yChange;
-  }
-  getRandomShapes(width: number, height: number) {
+  getRandomShapes() {
+    const width = this.config.tilesPerRow;
+    const height = this.config.tilesPerColumn;
     const shapeArray = [];
 
     for (let y = 0; y < height; y++) {
@@ -374,11 +387,9 @@ class Puzzle {
 
     return shapeArray;
   }
-
   getRandomTabValue() {
     return Math.pow(-1, Math.floor(Math.random() * 2));
   }
-
   getMask(
     tileRatio: number,
     topTab: number | undefined,
@@ -493,7 +504,6 @@ class Puzzle {
 
     return mask;
   }
-
   getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
     const targetRaster = new this.project.Raster("empty");
     targetRaster.scale(this.config.imgWidth / this.config.originWidth + 0.1);
