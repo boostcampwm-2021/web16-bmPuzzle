@@ -288,10 +288,16 @@ class Puzzle {
       _nowShape.rightTab +
       _preShape.leftTab +
       _preShape.rightTab;
-    if (sum === 1) {
-      return -5;
-    } else {
+    if (sum === -1) {
       return -10;
+    } else if (sum === -2) {
+      return -7;
+    } else if (sum === 0) {
+      return 0;
+    } else if (sum === 2) {
+      return 5;
+    } else {
+      return -5;
     }
   }
   uniteTiles(nowTile: any, preTile: any) {
