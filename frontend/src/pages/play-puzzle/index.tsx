@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Header from "@components/header/index";
 import PuzzleCanvas from "@components/puzzle-canvas/index";
@@ -9,16 +9,16 @@ import { useHistory } from "react-router";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
-
+  const [socket, setCurrentSocket] = useState<any>(null);
   const [isShow, setIsShow] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
   const [puzzleInfo, setPuzzleInfo] = useState({ img: "", level: 1 });
-
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
   const { puzzleID, roomID } = props.match.params;
   const history = useHistory();
+
   const getPuzzleInfo = async () => {
     const response = await fetch(
       `${process.env.REACT_APP_API_URL}/room/${puzzleID}`,
@@ -47,13 +47,18 @@ const PlayPuzzle = (props: any) => {
     }
   };
   const setSocket = () => {
-    if (!loaded) return;
-    const socket = io("http://localhost:5000/");
+    const socket = io("http://localhost:5000/", { forceNew: true });
     socket.emit("joinRoom", { roomID: roomID });
     return socket;
   };
   setPuzzle();
-  const socket = setSocket();
+
+  useEffect(() => {
+    setCurrentSocket(setSocket());
+    return () => {
+      if (socket !== undefined && socket !== null) socket.disconnect();
+    };
+  }, []);
   return (
     <Wrapper>
       <Header
@@ -62,7 +67,7 @@ const PlayPuzzle = (props: any) => {
         setChatVisible={setChatVisible}
       />
       <Body>
-        {loaded && (
+        {socket !== undefined && socket !== null && (
           <Chat socket={socket} roomID={roomID} chatVisible={chatVisible} />
         )}
         <PlayroomMenuBtn
