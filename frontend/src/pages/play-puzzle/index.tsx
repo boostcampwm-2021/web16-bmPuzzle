@@ -9,6 +9,8 @@ import { fetchPost } from "@src/utils/fetch";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
+  const [isShow, setIsShow] = useState(false);
+  const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
@@ -17,9 +19,19 @@ const PlayPuzzle = (props: any) => {
   socket.emit("joinRoom", { roomID: params.roomID });
   return (
     <Wrapper>
-      <Header />
+      <Header
+        isPlayRoom={true}
+        chatVisible={chatVisible}
+        setChatVisible={setChatVisible}
+      />
       <Body>
-        <Chat socket={socket} roomID={params.roomID} />
+        {loaded && (
+          <Chat
+            socket={socket}
+            roomID={params.roomID}
+            chatVisible={chatVisible}
+          />
+        )}
         <PlayroomMenuBtn
           hintFunc={setHintShow}
           hintState={hintShow}
@@ -56,6 +68,7 @@ const Wrapper = styled.div`
 const Body = styled.div`
   width: 100%;
   height: 100%;
+  display: flex;
 `;
 
 const ComponentImg = styled.img<ComponentImgType>`
