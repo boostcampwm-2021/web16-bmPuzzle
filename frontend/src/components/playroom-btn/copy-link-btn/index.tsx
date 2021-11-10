@@ -21,10 +21,16 @@ const CopyBtn = () => {
 const CopyButton = styled.button`
   background: none;
   border: none;
+  padding: 0px;
   width: 70px;
   height: 70px;
   &:hover {
     cursor: pointer;
+  }
+  img {
+    width: 70px;
+    heigth: 70px;
+    filter: drop-shadow(3px 3px 3px #424242);
   }
 `;
 export default CopyBtn;
