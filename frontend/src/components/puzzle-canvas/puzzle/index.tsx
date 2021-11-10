@@ -1,7 +1,7 @@
 import { Point, Size } from "paper/dist/paper-core";
 
 type Config = {
-  originHeight: number | undefined;
+  originHeight: number;
   originWidth: number;
   imgWidth: number;
   imgHeight: number;
@@ -30,6 +30,7 @@ class Puzzle {
       position: this.project.view.center,
     });
     this.groupTiles = [];
+
     this.tiles = [];
     this.createTiles();
   }
@@ -505,7 +506,7 @@ class Puzzle {
   }
   getTileRaster(sourceRaster: paper.Raster, size: any, offset: any) {
     const targetRaster = new this.project.Raster("empty");
-    targetRaster.scale(this.config.imgWidth / this.config.originWidth);
+    targetRaster.scale(this.config.imgWidth / this.config.originWidth + 0.1);
     targetRaster.position = new Point(-offset.x, -offset.y);
 
     return targetRaster;

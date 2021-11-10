@@ -10,9 +10,14 @@ const levelSize: LevelSizeType = { 1: 300, 2: 500, 3: 800 };
 const setConfig = (img: any, level: Levels) => {
   const originHeight = img.current.height;
   const originWidth = img.current.width;
-  const imgWidth = levelSize[level];
+  const imgWidth =
+    originHeight > originWidth
+      ? Math.round((levelSize[level] * originWidth) / originHeight / 100) * 100
+      : levelSize[level];
   const imgHeight =
-    Math.round((imgWidth * originHeight) / originWidth / 100) * 100;
+    originHeight > originWidth
+      ? levelSize[level]
+      : Math.round((levelSize[level] * originHeight) / originWidth / 100) * 100;
   const tileWidth = 100;
   return {
     originHeight: originHeight,
@@ -30,15 +35,14 @@ const setConfig = (img: any, level: Levels) => {
 
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
-  const levelTemp = 1;
+  const level = props.level;
 
   useEffect(() => {
     const canvas: any = canvasRef.current;
     if (canvas === null) return;
     Paper.setup(canvas);
-    const config = setConfig(props.puzzleImg, levelTemp);
+    const config = setConfig(props.puzzleImg, level);
     const puzzle = new Puzzle(Paper, config);
-    console.log(puzzle);
   }, [props.puzzleImg]);
 
   return (
