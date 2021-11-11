@@ -18,6 +18,7 @@ class Puzzle {
   puzzleImage: null | any;
   tiles: any[];
   groupTiles: any[];
+  shapes: any[];
   groupTileIndex = 0;
   config: Config;
   constructor(project: any, config: Config) {
@@ -30,7 +31,7 @@ class Puzzle {
       position: this.project.view.center,
     });
     this.groupTiles = [];
-
+    this.shapes = [];
     this.tiles = [];
     this.createTiles();
   }
@@ -39,11 +40,11 @@ class Puzzle {
     const xTileCount = this.config.tilesPerRow;
     const yTileCount = this.config.tilesPerColumn;
     const tileRatio = this.config.tileWidth / 100.0;
-    const shapeArray = this.getRandomShapes();
+    this.getRandomShapes();
     const tileIndexes = [];
     for (let y = 0; y < yTileCount; y++) {
       for (let x = 0; x < xTileCount; x++) {
-        const shape = shapeArray[y * xTileCount + x];
+        const shape = this.shapes[y * xTileCount + x];
 
         const mask = this.getMask(
           tileRatio,
@@ -107,7 +108,7 @@ class Puzzle {
       }
     }
     this.moveTile();
-    this.findNearTile(shapeArray);
+    this.findNearTile();
   }
   moveTile() {
     this.groupTiles.forEach((gtile) => {
@@ -130,51 +131,96 @@ class Puzzle {
       };
     });
   }
-  findNearTile(shapes: any[]) {
+  findNearTile() {
     const xTileCount = this.config.tilesPerRow;
     const yTileCount = this.config.tilesPerColumn;
-
     this.tiles.forEach((tile) => {
       tile.onMouseUp = (event: any) => {
-        let nowIndex = tile.index - (xTileCount * yTileCount + 1);
+        const nowIndex = tile.index - (xTileCount * yTileCount + 1);
         let leftTile, rightTile, upTile, downTile;
         let leftShape, rightShape, upShape, downShape;
-        const nowShape = shapes[nowIndex];
+        const nowShape = this.shapes[nowIndex];
         if (nowIndex % xTileCount === 0) {
+          if (
+            this.groupTiles[nowIndex - 1] !== undefined &&
+            this.groupTiles[nowIndex] !== undefined
+          ) {
+            if (
+              this.groupTiles[nowIndex][1] !== undefined &&
+              this.groupTiles[nowIndex - 1][1] === this.groupTiles[nowIndex][1]
+            ) {
+              leftTile = undefined;
+            }
+          }
           leftTile = undefined;
         } else {
           leftTile = this.tiles[nowIndex - 1];
-          leftShape = shapes[nowIndex - 1];
+          leftShape = this.shapes[nowIndex - 1];
         }
         if (nowIndex % xTileCount === 2) {
+          if (
+            this.groupTiles[nowIndex + 1] !== undefined &&
+            this.groupTiles[nowIndex] !== undefined
+          ) {
+            if (
+              this.groupTiles[nowIndex][1] !== undefined &&
+              this.groupTiles[nowIndex + 1][1] === this.groupTiles[nowIndex][1]
+            ) {
+              rightTile = undefined;
+            }
+          }
           rightTile = undefined;
         } else {
           rightTile = this.tiles[nowIndex + 1];
-          rightShape = shapes[nowIndex + 1];
+          rightShape = this.shapes[nowIndex + 1];
         }
         if (nowIndex < xTileCount) {
+          if (
+            this.groupTiles[nowIndex - xTileCount] !== undefined &&
+            this.groupTiles[nowIndex] !== undefined
+          ) {
+            if (
+              this.groupTiles[nowIndex][1] !== undefined &&
+              this.groupTiles[nowIndex - xTileCount][1] ===
+                this.groupTiles[nowIndex][1]
+            ) {
+              upTile = undefined;
+            }
+          }
           upTile = undefined;
         } else {
           upTile = this.tiles[nowIndex - xTileCount];
-          upShape = shapes[nowIndex - xTileCount];
+          upShape = this.shapes[nowIndex - xTileCount];
         }
         if (nowIndex >= xTileCount * (yTileCount - 1)) {
+          if (
+            this.groupTiles[nowIndex + xTileCount] !== undefined &&
+            this.groupTiles[nowIndex] !== undefined
+          ) {
+            if (
+              this.groupTiles[nowIndex][1] !== undefined &&
+              this.groupTiles[nowIndex + xTileCount][1] ===
+                this.groupTiles[nowIndex][1]
+            ) {
+              downTile = undefined;
+            }
+          }
           downTile = undefined;
         } else {
           downTile = this.tiles[nowIndex + xTileCount];
-          downShape = shapes[nowIndex + xTileCount];
+          downShape = this.shapes[nowIndex + xTileCount];
         }
         if (upTile !== undefined) {
-          this.fitTiles(tile, upTile, nowShape, upShape, 0);
+          this.fitTiles(tile, upTile, nowShape, upShape, 0, true);
         }
         if (downTile !== undefined) {
-          this.fitTiles(tile, downTile, nowShape, downShape, 1);
+          this.fitTiles(tile, downTile, nowShape, downShape, 1, true);
         }
         if (leftTile !== undefined) {
-          this.fitTiles(tile, leftTile, nowShape, leftShape, 2);
+          this.fitTiles(tile, leftTile, nowShape, leftShape, 2, true);
         }
         if (rightTile !== undefined) {
-          this.fitTiles(tile, rightTile, nowShape, rightShape, 3);
+          this.fitTiles(tile, rightTile, nowShape, rightShape, 3, true);
         }
       };
     });
@@ -184,7 +230,8 @@ class Puzzle {
     preTile: any,
     _nowShape: any,
     _preShape: any,
-    dir: number
+    dir: number,
+    flag: boolean
   ) {
     const range = this.config.tileWidth;
     const yChange = this.findYChange(_nowShape, _preShape);
@@ -194,110 +241,66 @@ class Puzzle {
     switch (dir) {
       case 0: //상
         if (
-          preTile.position._y - nowTile.position._y < range &&
-          preTile.position._y - nowTile.position._y > -range &&
-          Math.abs(nowTile.position._x - preTile.position._x) < 10
+          (preTile.position._y - nowTile.position._y < range &&
+            preTile.position._y - nowTile.position._y > -range &&
+            Math.abs(nowTile.position._x - preTile.position._x) < 10) ||
+          flag === false
         ) {
-          let nowIndex =
-            nowTile.index -
-            (this.config.tilesPerColumn * this.config.tilesPerRow + 1);
-          if (this.groupTiles[nowIndex][1] === undefined) {
-            nowTile.position = new Point(
-              preTile.position._x + xUp,
-              preTile.position._y + this.config.tileWidth + yUp
-            );
-          } else {
-            this.groupTiles.forEach((gtile_now) => {
-              if (this.groupTiles[nowIndex][1] === gtile_now[1]) {
-                gtile_now[0].position = new Point(
-                  gtile_now[0].position._x + xUp,
-                  gtile_now[0].position._y + yUp
-                );
-              }
-            });
+          nowTile.position = new Point(
+            preTile.position._x + xUp,
+            preTile.position._y + this.config.tileWidth + yUp
+          );
+          if (flag === true) {
+            this.uniteTiles(nowTile, preTile);
           }
-          this.uniteTiles(nowTile, preTile);
         }
         break;
       case 1: //하
         if (
-          nowTile.position._y - preTile.position._y < range &&
-          nowTile.position._y - preTile.position._y > -range &&
-          Math.abs(nowTile.position._x - preTile.position._x) < 10
+          (nowTile.position._y - preTile.position._y < range &&
+            nowTile.position._y - preTile.position._y > -range &&
+            Math.abs(nowTile.position._x - preTile.position._x) < 10) ||
+          flag === false
         ) {
-          let nowIndex =
-            nowTile.index -
-            (this.config.tilesPerColumn * this.config.tilesPerRow + 1);
-          if (this.groupTiles[nowIndex][1] === undefined) {
-            nowTile.position = new Point(
-              preTile.position._x + xUp,
-              preTile.position._y - (this.config.tileWidth + yUp)
-            );
-          } else {
-            this.groupTiles.forEach((gtile_now) => {
-              if (this.groupTiles[nowIndex][1] === gtile_now[1]) {
-                gtile_now[0].position = new Point(
-                  gtile_now[0].position._x + xUp,
-                  gtile_now[0].position._y - yUp
-                );
-              }
-            });
+          nowTile.position = new Point(
+            preTile.position._x + xUp,
+            preTile.position._y - (this.config.tileWidth + yUp)
+          );
+          if (flag === true) {
+            this.uniteTiles(nowTile, preTile);
           }
-          this.uniteTiles(nowTile, preTile);
         }
         break;
       case 2: //좌
         if (
-          nowTile.position._x - preTile.position._x < range &&
-          nowTile.position._x - preTile.position._x > -range &&
-          Math.abs(nowTile.position._y - preTile.position._y) < 10
+          (nowTile.position._x - preTile.position._x < range &&
+            nowTile.position._x - preTile.position._x > -range &&
+            Math.abs(nowTile.position._y - preTile.position._y) < 10) ||
+          flag === false
         ) {
-          let nowIndex =
-            nowTile.index -
-            (this.config.tilesPerColumn * this.config.tilesPerRow + 1);
-          if (this.groupTiles[nowIndex][1] === undefined) {
-            nowTile.position = new Point(
-              preTile.position._x + this.config.tileWidth + xChange,
-              preTile.position._y + yChange
-            );
-          } else {
-            this.groupTiles.forEach((gtile_now) => {
-              if (this.groupTiles[nowIndex][1] === gtile_now[1]) {
-                gtile_now[0].position = new Point(
-                  gtile_now[0].position._x + xChange,
-                  gtile_now[0].position._y + yChange
-                );
-              }
-            });
+          nowTile.position = new Point(
+            preTile.position._x + this.config.tileWidth + xChange,
+            preTile.position._y + yChange
+          );
+          if (flag === true) {
+            this.uniteTiles(nowTile, preTile);
           }
-          this.uniteTiles(nowTile, preTile);
         }
         break;
       case 3: //우
         if (
-          preTile.position._x - nowTile.position._x < range &&
-          preTile.position._x - nowTile.position._x > -range &&
-          Math.abs(nowTile.position._y - preTile.position._y) < 10
+          (preTile.position._x - nowTile.position._x < range &&
+            preTile.position._x - nowTile.position._x > -range &&
+            Math.abs(nowTile.position._y - preTile.position._y) < 10) ||
+          flag === false
         ) {
-          let nowIndex =
-            nowTile.index -
-            (this.config.tilesPerColumn * this.config.tilesPerRow + 1);
-          if (this.groupTiles[nowIndex][1] === undefined) {
-            nowTile.position = new Point(
-              preTile.position._x - (this.config.tileWidth + xChange),
-              preTile.position._y + yChange
-            );
-          } else {
-            this.groupTiles.forEach((gtile_now) => {
-              if (this.groupTiles[nowIndex][1] === gtile_now[1]) {
-                gtile_now[0].position = new Point(
-                  gtile_now[0].position._x - xChange,
-                  gtile_now[0].position._y + yChange
-                );
-              }
-            });
+          nowTile.position = new Point(
+            preTile.position._x - (this.config.tileWidth + xChange),
+            preTile.position._y + yChange
+          );
+          if (flag === true) {
+            this.uniteTiles(nowTile, preTile);
           }
-          this.uniteTiles(nowTile, preTile);
         }
         break;
     }
@@ -447,8 +450,76 @@ class Puzzle {
       }
     }
     if (this.checkComplete()) {
-      console.log("퍼즐 완성");
+      window.alert("퍼즐 완성");
     }
+    this.groupFit(this.groupTiles[preIndex][1]);
+  }
+  groupFit(nowGroup: number) {
+    const xTileCount = this.config.tilesPerRow;
+    const yTileCount = this.config.tilesPerColumn;
+    let groupArr: any = [];
+    let groupObj: any = {};
+    this.groupTiles.forEach((tile: any) => {
+      if (tile[1] === nowGroup) {
+        const nowIndex = tile[0].index - (xTileCount * yTileCount + 1);
+        groupArr.push(tile[0]);
+        groupObj[nowIndex] = tile[0];
+      }
+    });
+
+    groupArr.forEach((tile: any) => {
+      const nowIndex = tile.index - (xTileCount * yTileCount + 1);
+      const up: number | undefined =
+        nowIndex - xTileCount < 0 ? undefined : nowIndex - xTileCount;
+      const left: number | undefined =
+        nowIndex % xTileCount === 0 ? undefined : nowIndex - 1;
+      const right: number | undefined =
+        nowIndex % xTileCount === xTileCount - 1 ? undefined : nowIndex + 1;
+      const down: number | undefined =
+        nowIndex >= xTileCount * (yTileCount - 1)
+          ? undefined
+          : nowIndex + xTileCount;
+
+      if (up !== undefined || left !== undefined || right !== undefined) {
+        if (up !== undefined && groupObj[up] !== undefined) {
+          this.fitTiles(
+            tile,
+            groupObj[up],
+            this.shapes[nowIndex],
+            this.shapes[up],
+            0,
+            false
+          );
+        } else if (left !== undefined && groupObj[left] !== undefined) {
+          this.fitTiles(
+            tile,
+            groupObj[left],
+            this.shapes[nowIndex],
+            this.shapes[left],
+            2,
+            false
+          );
+        } else if (right !== undefined && groupObj[right] !== undefined) {
+          this.fitTiles(
+            tile,
+            groupObj[right],
+            this.shapes[nowIndex],
+            this.shapes[right],
+            3,
+            false
+          );
+        } else if (down !== undefined && groupObj[down] !== undefined) {
+          this.fitTiles(
+            tile,
+            groupObj[down],
+            this.shapes[nowIndex],
+            this.shapes[down],
+            1,
+            false
+          );
+        }
+      }
+    });
   }
   checkComplete() {
     let flag = true;
@@ -462,7 +533,6 @@ class Puzzle {
   getRandomShapes() {
     const width = this.config.tilesPerRow;
     const height = this.config.tilesPerColumn;
-    const shapeArray = [];
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
@@ -476,7 +546,7 @@ class Puzzle {
         if (x === 0) leftTab = 0;
         if (x === width - 1) rightTab = 0;
 
-        shapeArray.push({
+        this.shapes.push({
           topTab: topTab,
           rightTab: rightTab,
           bottomTab: bottomTab,
@@ -487,13 +557,13 @@ class Puzzle {
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
-        const shape = shapeArray[y * width + x];
+        const shape = this.shapes[y * width + x];
 
         const shapeRight =
-          x < width - 1 ? shapeArray[y * width + (x + 1)] : undefined;
+          x < width - 1 ? this.shapes[y * width + (x + 1)] : undefined;
 
         const shapeBottom =
-          y < height - 1 ? shapeArray[(y + 1) * width + x] : undefined;
+          y < height - 1 ? this.shapes[(y + 1) * width + x] : undefined;
 
         shape.rightTab =
           x < width - 1 ? this.getRandomTabValue() : shape.rightTab;
@@ -508,8 +578,6 @@ class Puzzle {
           shapeBottom.topTab = -shape.bottomTab;
       }
     }
-
-    return shapeArray;
   }
   getRandomTabValue() {
     return Math.pow(-1, Math.floor(Math.random() * 2));
