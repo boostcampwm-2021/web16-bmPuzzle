@@ -1,6 +1,5 @@
 import puzzleService from '@services/db/puzzle-service';
-
-const roomURL = new Set<string>();
+import { roomURL } from './roomInfo';
 
 const getPuzzleInfo = async (req: any, res: any, next: any) => {
   const puzzleID = Number(req.params.puzzleID);
@@ -19,11 +18,10 @@ const getPuzzleInfo = async (req: any, res: any, next: any) => {
 const checkURL = (req: any, res: any) => {
   let findValidURL = true;
   let randomAddress = '';
-  // while (findValidURL) {
-  //   randomAddress = Math.random().toString(36).substr(2, 11);
-  //   findValidURL = roomURL.has(randomAddress);
-  // }
-  randomAddress = Math.random().toString(36).substr(2, 11);
+  while (findValidURL) {
+    randomAddress = Math.random().toString(36).substr(2, 11);
+    findValidURL = roomURL.has(randomAddress);
+  }
   roomURL.add(randomAddress);
   res.status(200).json({ validURL: randomAddress });
 };

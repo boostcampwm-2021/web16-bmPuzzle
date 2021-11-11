@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import logo_image from "@images/puzzle-icon.png";
@@ -9,6 +9,7 @@ import chat_image from "@images/chat-icon.png";
 const Header = (props: any) => {
   const history = useHistory();
   const { isPlayRoom, chatVisible, setChatVisible } = props;
+  const [time, setTime] = useState({ minutes: 0, seconds: 0 });
   const handleMove = (e: any) => {
     const url =
       e.target.id === "" ? e.target.closest("button").id : e.target.id;
@@ -18,6 +19,16 @@ const Header = (props: any) => {
     const toggle = chatVisible === true ? false : true;
     setChatVisible(toggle);
   };
+  useEffect(() => {
+    const countTime = setInterval(() => {
+      if (time.seconds >= 60) {
+        setTime({ minutes: time.minutes + 1, seconds: 0 });
+      } else {
+        setTime({ minutes: time.minutes, seconds: time.seconds + 1 });
+      }
+    }, 1000);
+    return () => clearInterval(countTime);
+  }, [time]);
 
   return (
     <Wrapper>
@@ -34,6 +45,12 @@ const Header = (props: any) => {
         </Btn>
       </HomeBtnWrapper>
       <RightIconWrapper>
+        {isPlayRoom && (
+          <TimerWrapper>
+            {time.minutes}:
+            {time.seconds < 10 ? `0${time.seconds}` : time.seconds}
+          </TimerWrapper>
+        )}
         <Btn id="ranking" onClick={handleMove}>
           <Img src={ranking_image} alt="ranking_page" />
         </Btn>
@@ -65,6 +82,7 @@ const RightIconWrapper = styled.div`
   width: 50%;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   margin-right: 20px;
   & > button {
     margin-left: 5px;
@@ -73,6 +91,10 @@ const RightIconWrapper = styled.div`
 
 const ChatWrapper = styled.div`
   position: absolute;
+`;
+
+const TimerWrapper = styled.div`
+  color: white;
 `;
 
 const Btn = styled.button`
