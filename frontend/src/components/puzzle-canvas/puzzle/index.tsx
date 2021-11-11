@@ -21,6 +21,7 @@ class Puzzle {
   shapes: any[];
   groupTileIndex = 0;
   config: Config;
+  complete: boolean;
   constructor(project: any, config: Config) {
     this.config = {
       ...config,
@@ -33,6 +34,7 @@ class Puzzle {
     this.groupTiles = [];
     this.shapes = [];
     this.tiles = [];
+    this.complete = false;
     this.createTiles();
   }
 
@@ -40,8 +42,8 @@ class Puzzle {
     const xTileCount = this.config.tilesPerRow;
     const yTileCount = this.config.tilesPerColumn;
     const tileRatio = this.config.tileWidth / 100.0;
-    this.getRandomShapes();
     const tileIndexes = [];
+    this.getRandomShapes();
     for (let y = 0; y < yTileCount; y++) {
       for (let x = 0; x < xTileCount; x++) {
         const shape = this.shapes[y * xTileCount + x];
@@ -449,8 +451,10 @@ class Puzzle {
         this.groupTileIndex++;
       }
     }
-    if (this.checkComplete()) {
+    this.groupFit(this.groupTiles[preIndex][1]);
+    if (this.checkComplete() && !this.complete) {
       window.alert("퍼즐 완성");
+      this.complete = true;
     }
     this.groupFit(this.groupTiles[preIndex][1]);
   }
@@ -523,13 +527,18 @@ class Puzzle {
   }
   checkComplete() {
     let flag = true;
-    this.groupTiles.forEach((gtile) => {
-      if (gtile[1] === undefined) {
-        flag = false;
-      }
-    });
+    if (this.groupTiles[0][1] !== undefined) {
+      this.groupTiles.forEach((gtile) => {
+        if (gtile[1] !== this.groupTiles[0][1]) {
+          flag = false;
+        }
+      });
+    } else {
+      flag = false;
+    }
     return flag;
   }
+
   getRandomShapes() {
     const width = this.config.tilesPerRow;
     const height = this.config.tilesPerColumn;
