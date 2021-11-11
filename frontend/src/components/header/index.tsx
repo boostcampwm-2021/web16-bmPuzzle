@@ -4,18 +4,30 @@ import styled from "styled-components";
 import logo_image from "@images/puzzle-icon.png";
 import ranking_image from "@images/ranking-icon.png";
 import account_image from "@images/account-icon.png";
+import chat_image from "@images/chat-icon.png";
 
-const Header = () => {
+const Header = (props: any) => {
   const history = useHistory();
-
+  const { isPlayRoom, chatVisible, setChatVisible } = props;
   const handleMove = (e: any) => {
     const url =
       e.target.id === "" ? e.target.closest("button").id : e.target.id;
     history.push(`/${url}`);
   };
+  const toggleChat = (e: any) => {
+    const toggle = chatVisible === true ? false : true;
+    setChatVisible(toggle);
+  };
 
   return (
     <Wrapper>
+      {isPlayRoom && (
+        <ChatWrapper>
+          <Btn id="chat" onClick={toggleChat}>
+            <Img src={chat_image} alt="chat" />
+          </Btn>
+        </ChatWrapper>
+      )}
       <HomeBtnWrapper>
         <Btn id="main" onClick={handleMove}>
           <Img src={logo_image} alt="logo" />
@@ -57,6 +69,10 @@ const RightIconWrapper = styled.div`
   & > button {
     margin-left: 5px;
   }
+`;
+
+const ChatWrapper = styled.div`
+  position: absolute;
 `;
 
 const Btn = styled.button`

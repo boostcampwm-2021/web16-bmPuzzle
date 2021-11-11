@@ -17,9 +17,9 @@ const Login = () => {
       body: JSON.stringify({
         id: res.profileObj.name,
       }),
-    }).then((response) => response.json());
+    });
 
-    if (response.code === 200) {
+    if (response.ok) {
       window.sessionStorage.setItem("id", res.profileObj.name);
       history.push("/main");
     } else {

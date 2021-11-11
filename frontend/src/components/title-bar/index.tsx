@@ -1,12 +1,11 @@
 import React from "react";
 import styled from "styled-components";
-import accountImg from "@images/account-black-icon.png";
 
 const AccountBar = (props: any) => {
   return (
     <Wrapper>
-      <Img src={accountImg} alt="account" />
-      <Name>Hello! {props.user}: )</Name>
+      <Img src={props.img} alt="account" />
+      <Name>{props.text}</Name>
     </Wrapper>
   );
 };

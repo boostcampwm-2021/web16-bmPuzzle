@@ -3,13 +3,13 @@ import styled from "styled-components";
 import LevelComponent from "@components/level-component";
 import Header from "@components/header/index";
 import colors from "@styles/theme";
-import { fetchPost } from "@src/utils/fetch";
+import { useHistory } from "react-router-dom";
 
-const registerURI = `${process.env.REACT_APP_API_URL}/register`;
 const RegPuz = () => {
   const [checkedLevel, setLevel] = useState(1);
   const [title, setTitle] = useState("");
   const [selectedImg, setSelectedcImg] = useState(null);
+  const history = useHistory();
 
   const titleHandler = (event: any) => {
     setTitle(event?.target.value);
@@ -17,7 +17,7 @@ const RegPuz = () => {
   const fileHandler = (event: any) => {
     setSelectedcImg(event.target.files[0]);
   };
-  const submitHandler = () => {
+  const submitHandler = async () => {
     const formData = new FormData();
     const id: any = window.sessionStorage.getItem("id");
     if (selectedImg === null || title === "") {
@@ -28,7 +28,16 @@ const RegPuz = () => {
     formData.append("title", title);
     formData.append("img", selectedImg);
     formData.append("level", String(checkedLevel));
-    fetchPost({ path: registerURI, body: formData });
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/register`, {
+      method: "POST",
+      headers: {},
+      body: formData,
+    });
+    if (response.status === 200) {
+      history.push("/main");
+    } else {
+      alert("Upload Fail");
+    }
   };
 
   return (
@@ -56,23 +65,17 @@ const RegPuz = () => {
               />
             </FlexDiv>
             <div>
-              <FlexDiv>Level</FlexDiv>
+              <FlexDiv>Level: {checkedLevel}</FlexDiv>
               <FlexDiv>
-                <LevelComponent
-                  num={1}
-                  checkedLevel={checkedLevel}
-                  checkFunction={setLevel}
-                ></LevelComponent>
-                <LevelComponent
-                  num={2}
-                  checkedLevel={checkedLevel}
-                  checkFunction={setLevel}
-                ></LevelComponent>
-                <LevelComponent
-                  num={3}
-                  checkedLevel={checkedLevel}
-                  checkFunction={setLevel}
-                ></LevelComponent>
+                {[1, 2, 3].map((i) => {
+                  return (
+                    <LevelComponent
+                      num={i}
+                      checkedLevel={checkedLevel}
+                      checkFunction={setLevel}
+                    />
+                  );
+                })}
               </FlexDiv>
             </div>
           </div>

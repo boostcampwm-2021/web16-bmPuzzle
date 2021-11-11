@@ -1,37 +1,29 @@
-import React from "react";
+import { FC, useState } from "react";
 import styled from "styled-components";
 
 const LevelDiv = styled.div`
   display: flex;
 `;
 
-type Props = {
+const LevelComponent: FC<{
   num: number;
   checkedLevel: number;
-  checkFunction: any;
-};
-
-const renderStars = (num: number) => {
-  let value = "⭐";
-  const res = [...Array(Number(num)).keys()].map((i) => value);
-  return res;
-};
-
-const LevelComponent = (props: Props) => {
+  checkFunction: (value: number) => void;
+}> = (props) => {
   const checkEvent = (value: number) => {
     props.checkFunction(value);
   };
   return (
     <LevelDiv>
       <input
-        type="checkbox"
+        type="radio"
         value={props.num}
         checked={props.num === props.checkedLevel}
         onChange={() => {
           checkEvent(props.num);
         }}
       />
-      <div className="renderStars">{renderStars(props.num)}</div>
+      <span className="renderStars">{Array(props.num).fill("⭐️")}</span>
     </LevelDiv>
   );
 };
