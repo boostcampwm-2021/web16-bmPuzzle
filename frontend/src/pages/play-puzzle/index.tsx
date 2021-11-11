@@ -43,7 +43,7 @@ const PlayPuzzle = (props: any) => {
     }
   };
   const setSocket = () => {
-    const socket = io("http://localhost:5000/", { forceNew: true });
+    const socket = io(`${process.env.REACT_APP_ROOT_URL}`, { forceNew: true });
     socket.emit("joinRoom", { roomID: roomID });
     return socket;
   };
