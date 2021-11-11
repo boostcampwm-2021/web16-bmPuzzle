@@ -65,23 +65,17 @@ const RegPuz = () => {
               />
             </FlexDiv>
             <div>
-              <FlexDiv>Level</FlexDiv>
+              <FlexDiv>Level: {checkedLevel}</FlexDiv>
               <FlexDiv>
-                <LevelComponent
-                  num={1}
-                  checkedLevel={checkedLevel}
-                  checkFunction={setLevel}
-                ></LevelComponent>
-                <LevelComponent
-                  num={2}
-                  checkedLevel={checkedLevel}
-                  checkFunction={setLevel}
-                ></LevelComponent>
-                <LevelComponent
-                  num={3}
-                  checkedLevel={checkedLevel}
-                  checkFunction={setLevel}
-                ></LevelComponent>
+                {[1, 2, 3].map((i) => {
+                  return (
+                    <LevelComponent
+                      num={i}
+                      checkedLevel={checkedLevel}
+                      checkFunction={setLevel}
+                    />
+                  );
+                })}
               </FlexDiv>
             </div>
           </div>
