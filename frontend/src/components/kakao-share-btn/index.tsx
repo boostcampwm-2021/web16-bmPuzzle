@@ -11,7 +11,9 @@ const KakaoShareBtn = () => {
   const createKakaoBtn = () => {
     if (window.Kakao) {
       const kakao = window.Kakao;
-      kakao.init(process.env.REACT_APP_KAKAO_KEY);
+      if (!kakao.isInitialized()) {
+        kakao.init(process.env.REACT_APP_KAKAO_KEY);
+      }
 
       kakao.Link.createDefaultButton({
         container: "#kakao-link-btn",
