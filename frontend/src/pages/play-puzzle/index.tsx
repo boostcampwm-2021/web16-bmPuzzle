@@ -4,17 +4,17 @@ import Header from "@components/header/index";
 import PuzzleCanvas from "@components/puzzle-canvas/index";
 import Chat from "@src/components/chat/index";
 import PlayroomMenuBtn from "@src/components/playroom-btn";
-import io from "socket.io-client";
 import { useHistory } from "react-router";
+import { SocketContext, socket } from "@src/context/socket";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
-  const [socket, setCurrentSocket] = useState<any>(null);
   const [isShow, setIsShow] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
   const [puzzleInfo, setPuzzleInfo] = useState<any>({ img: "", level: 1 });
   const imgRef = useRef(null);
+
   const onLoad = () => setLoaded(true);
   const { puzzleID, roomID } = props.match.params;
   const history = useHistory();
@@ -42,19 +42,22 @@ const PlayPuzzle = (props: any) => {
       setPuzzleInfo({ img: res.image, level: res.level });
     }
   };
-  const setSocket = () => {
-    const socket = io(`${process.env.REACT_APP_ROOT_URL}`, { forceNew: true });
-    socket.emit("joinRoom", { roomID: roomID });
-    return socket;
-  };
 
   useEffect(() => {
-    setCurrentSocket(setSocket());
     setPuzzle();
+    socket.emit("joinRoom", { roomID: roomID });
+    const callLeaveRoom = (event: Event) => {
+      socket.emit("leaveRoom", { roomID: roomID });
+      event.preventDefault();
+      event.returnValue = false;
+    };
+    window.addEventListener("beforeunload", callLeaveRoom);
     return () => {
-      if (socket !== undefined && socket !== null) socket.disconnect();
+      socket.emit("leaveRoom", { roomID: roomID });
+      window.removeEventListener("beforeunload", callLeaveRoom);
     };
   }, []);
+
   return (
     <Wrapper>
       <Header
@@ -63,29 +66,30 @@ const PlayPuzzle = (props: any) => {
         setChatVisible={setChatVisible}
       />
       <Body>
-        {socket !== undefined && socket !== null && (
-          <Chat socket={socket} roomID={roomID} chatVisible={chatVisible} />
-        )}
-        <PlayroomMenuBtn
-          hintFunc={setHintShow}
-          hintState={hintShow}
-        ></PlayroomMenuBtn>
-
-        <ComponentImg
-          ref={imgRef}
-          id="puzzleImage"
-          src={puzzleInfo.img}
-          alt="puzzleImage"
-          onLoad={onLoad}
-          show={hintShow}
-        />
-        <ComponentImg
-          id="empty"
-          src={puzzleInfo.img}
-          alt="emptyImage"
-          show={hintShow}
-        />
-        {loaded && <PuzzleCanvas puzzleImg={imgRef} level={puzzleInfo.level} />}
+        <SocketContext.Provider value={socket}>
+          <Chat chatVisible={chatVisible} roomID={roomID} />
+          <PlayroomMenuBtn
+            hintFunc={setHintShow}
+            hintState={hintShow}
+          ></PlayroomMenuBtn>
+          <ComponentImg
+            ref={imgRef}
+            id="puzzleImage"
+            src={puzzleInfo.img}
+            alt="puzzleImage"
+            onLoad={onLoad}
+            show={hintShow}
+          />
+          <ComponentImg
+            id="empty"
+            src={puzzleInfo.img}
+            alt="emptyImage"
+            show={hintShow}
+          />
+          {loaded && (
+            <PuzzleCanvas puzzleImg={imgRef} level={puzzleInfo.level} />
+          )}
+        </SocketContext.Provider>
       </Body>
     </Wrapper>
   );

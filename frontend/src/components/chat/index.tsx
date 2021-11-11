@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
+import { SocketContext } from "@src/context/socket";
 
 const Chat = (props: any) => {
-  const { socket, roomID, chatVisible } = props;
+  const { roomID, chatVisible } = props;
+  const socket = useContext(SocketContext);
   interface MessageInfo {
     name: string;
     message: string;
