@@ -107,6 +107,7 @@ const Body = styled.div`
 `;
 
 const ComponentImg = styled.img<ComponentImgType>`
+  z-index: 1;
   object-fit: scale-down;
   width: 80%;
   height: 80%;
