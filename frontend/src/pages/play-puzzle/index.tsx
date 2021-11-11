@@ -47,10 +47,10 @@ const PlayPuzzle = (props: any) => {
     socket.emit("joinRoom", { roomID: roomID });
     return socket;
   };
-  if (puzzleInfo.img === "" && socket !== null) setPuzzle();
 
   useEffect(() => {
     setCurrentSocket(setSocket());
+    setPuzzle();
     return () => {
       if (socket !== undefined && socket !== null) socket.disconnect();
     };
