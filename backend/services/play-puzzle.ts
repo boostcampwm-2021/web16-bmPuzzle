@@ -19,10 +19,11 @@ const getPuzzleInfo = async (req: any, res: any, next: any) => {
 const checkURL = (req: any, res: any) => {
   let findValidURL = true;
   let randomAddress = '';
-  while (findValidURL) {
-    randomAddress = Math.random().toString(36).substr(2, 11);
-    findValidURL = roomURL.has(randomAddress);
-  }
+  // while (findValidURL) {
+  //   randomAddress = Math.random().toString(36).substr(2, 11);
+  //   findValidURL = roomURL.has(randomAddress);
+  // }
+  randomAddress = Math.random().toString(36).substr(2, 11);
   roomURL.add(randomAddress);
   res.status(200).json({ validURL: randomAddress });
 };
