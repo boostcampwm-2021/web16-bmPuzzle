@@ -36,6 +36,7 @@ interface MenuDetailType {
 }
 
 const MenuWrap = styled.div`
+  z-index: 2;
   position: absolute;
   right: 5%;
   bottom: 5%;
