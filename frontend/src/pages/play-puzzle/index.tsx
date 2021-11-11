@@ -13,7 +13,7 @@ const PlayPuzzle = (props: any) => {
   const [isShow, setIsShow] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
-  const [puzzleInfo, setPuzzleInfo] = useState({ img: "", level: 1 });
+  const [puzzleInfo, setPuzzleInfo] = useState<any>({ img: "", level: 1 });
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
   const { puzzleID, roomID } = props.match.params;
@@ -39,11 +39,7 @@ const PlayPuzzle = (props: any) => {
       const res: any = await getPuzzleInfo();
       if (res === undefined) history.go(-1);
       res.image = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
-      if (res.level !== puzzleInfo.level || res.image !== puzzleInfo.img) {
-        if (res.level < 1) res.level = 1;
-        else if (res.level > 3) res.level = 3;
-        setPuzzleInfo({ img: res.image, level: res.level });
-      }
+      setPuzzleInfo({ img: res.image, level: res.level });
     }
   };
   const setSocket = () => {
@@ -51,7 +47,7 @@ const PlayPuzzle = (props: any) => {
     socket.emit("joinRoom", { roomID: roomID });
     return socket;
   };
-  setPuzzle();
+  if (puzzleInfo.img === "" && socket !== null) setPuzzle();
 
   useEffect(() => {
     setCurrentSocket(setSocket());
