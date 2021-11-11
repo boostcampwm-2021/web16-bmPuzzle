@@ -9,8 +9,12 @@ const Chat = (props: any) => {
     name: string;
     message: string;
   }
-  const [state, setState] = useState({ name: "", message: "" });
+  const [state, setState] = useState<{ name: string | null; message: string }>({
+    name: "",
+    message: "",
+  });
   const [chat, setChat] = useState<MessageInfo[]>([]);
+  const userID = window.sessionStorage.getItem("id");
 
   useEffect(() => {
     socket.on("message", (msg: { name: string; message: string }) => {
@@ -24,7 +28,7 @@ const Chat = (props: any) => {
     setState({ name: "", message: "" });
   };
   const onTextChange = (e: any) => {
-    setState({ name: roomID, message: e.target.value });
+    setState({ name: userID, message: e.target.value });
   };
   const renderChat = () => {
     return chat.map((msg: { name: string; message: string }) => (
