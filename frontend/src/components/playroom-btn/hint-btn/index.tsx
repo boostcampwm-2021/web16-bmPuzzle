@@ -26,6 +26,7 @@ const HintBtn = ({ hintFunc, hintState }: HintBtnProps) => {
 };
 
 const HintButton = styled.button`
+  z-index: 2;
   background: none;
   border: none;
   padding: 0px;
