@@ -46,15 +46,8 @@ const PlayPuzzle = (props: any) => {
   useEffect(() => {
     setPuzzle();
     socket.emit("joinRoom", { roomID: roomID });
-    const callLeaveRoom = (event: Event) => {
-      socket.emit("leaveRoom", { roomID: roomID });
-      event.preventDefault();
-      event.returnValue = false;
-    };
-    window.addEventListener("beforeunload", callLeaveRoom);
     return () => {
       socket.emit("leaveRoom", { roomID: roomID });
-      window.removeEventListener("beforeunload", callLeaveRoom);
     };
   }, []);
 
