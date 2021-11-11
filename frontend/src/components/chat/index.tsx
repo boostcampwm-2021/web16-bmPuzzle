@@ -53,12 +53,13 @@ interface chatState {
   chatVisible: boolean;
 }
 const ChatWrapper = styled.div<chatState>`
-  position: relative;
+  position: absolute;
   width: 23%;
   max-width: 700px;
-  height: 100%;
+  height: calc(100% - 37px);
   display: ${(props) => (props.chatVisible ? "block" : "none")};
   border: 1px solid #f6f3f9;
+  background-color: white;
 `;
 const ChatBar = styled.div`
   display: flex;
