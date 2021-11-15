@@ -3,9 +3,28 @@ import { Point } from "paper/dist/paper-core";
 import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
 import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
 
-const config = Puzzle.exportConfig();
-
+type Config = {
+  originHeight: number;
+  originWidth: number;
+  imgWidth: number;
+  imgHeight: number;
+  tilesPerRow: number;
+  tilesPerColumn: number;
+  tileWidth: number;
+  tileMarginWidth: number;
+  level: number;
+  imgName: String;
+  groupTiles: any[];
+  shapes: any[];
+  tiles: any[];
+  complete: boolean;
+  groupTileIndex: number;
+  project: any;
+  puzzleImage: any;
+};
+let config: Config;
 const moveTile = () => {
+  config = Puzzle.exportConfig();
   config.groupTiles.forEach((gtile: any) => {
     const [tile, group] = gtile;
     tile.onMouseDrag = (event: any) => {

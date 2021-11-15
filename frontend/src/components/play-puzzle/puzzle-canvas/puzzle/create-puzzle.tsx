@@ -12,20 +12,28 @@ const constant = {
   tileMarginX: 50,
   tileMarginY: -30,
 };
+
 export const createTiles = () => {
   const {
+    originHeight,
     originWidth,
     imgWidth,
     imgHeight,
     tilesPerRow,
     tilesPerColumn,
     tileWidth,
+    tileMarginWidth,
+    level,
+    imgName,
     groupTiles,
     shapes,
     tiles,
+    complete,
+    groupTileIndex,
     project,
     puzzleImage,
   } = Puzzle.exportConfig();
+
   const tileRatio = tileWidth / constant.percentageTotal;
   const tileIndexes = [];
   getRandomShapes(shapes, tilesPerRow, tilesPerColumn);
@@ -96,6 +104,25 @@ export const createTiles = () => {
       );
     }
   }
+  Puzzle.setting({
+    originHeight,
+    originWidth,
+    imgWidth,
+    imgHeight,
+    tilesPerRow,
+    tilesPerColumn,
+    tileWidth,
+    tileMarginWidth,
+    level,
+    imgName,
+    groupTiles,
+    shapes,
+    tiles,
+    complete,
+    groupTileIndex,
+    project,
+    puzzleImage,
+  });
 };
 
 const getRandomShapes = (shapes: any[], width: number, height: number) => {
