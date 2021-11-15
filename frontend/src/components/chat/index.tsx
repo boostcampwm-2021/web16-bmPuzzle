@@ -31,8 +31,8 @@ const Chat = (props: any) => {
     setState({ name: userID, message: e.target.value });
   };
   const renderChat = () => {
-    return chat.map((msg: { name: string; message: string }) => (
-      <DialogUnit>
+    return chat.map((msg: { name: string; message: string }, index: number) => (
+      <DialogUnit key={index}>
         <div className="sender">{msg.name}</div>
         <div className="message">{msg.message}</div>
       </DialogUnit>
@@ -97,6 +97,7 @@ const DialogUnit = styled.div`
   margin: 10px;
   background-color: #f6f3f9;
   border-radius: 10px;
+
   > .sender {
     height: 20px;
     color: rgba(100, 100, 100);
