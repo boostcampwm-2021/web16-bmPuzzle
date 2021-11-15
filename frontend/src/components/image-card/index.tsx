@@ -6,6 +6,7 @@ import shareBtnImg from "@images/share-btn.png";
 
 const ImageCard = (props: any) => {
   const history = useHistory();
+  let shareUrl: string;
   const getValidURL = async () => {
     const response = await fetch(
       `${process.env.REACT_APP_API_URL}/room/urlcheck`,
@@ -20,9 +21,13 @@ const ImageCard = (props: any) => {
     return resJSON.validURL;
   };
 
-  const moveHandler = async (event: any, imgID: any) => {
-    const validURL = await getValidURL();
-    history.push(`/room/${imgID}/${validURL}`);
+  const validURL = async (imgID: any) => {
+    const urlHash = await getValidURL();
+    return `/room/${imgID}/${urlHash}`;
+  };
+
+  const moveHandler = async (imgID: any) => {
+    history.push(await validURL(imgID));
   };
 
   const convertTime = (time: number) => {
@@ -59,8 +64,8 @@ const ImageCard = (props: any) => {
         return (
           <Wrapper
             key={idx}
-            onClick={(event: any) => {
-              moveHandler(event, ele.id);
+            onClick={() => {
+              moveHandler(ele.id);
             }}
           >
             <Img src={ele.image} />
@@ -70,9 +75,10 @@ const ImageCard = (props: any) => {
                 <div>{time}</div>
                 <ShareButton
                   shareControl={props.shareControl}
-                  onClick={(e) => {
-                    props.shareControl(true, "", "");
+                  onClick={async (e) => {
                     e.stopPropagation();
+                    const link = await validURL(ele.id);
+                    props.shareControl(true, ele.image, link);
                   }}
                 >
                   <img src={shareBtnImg} alt="공유" />

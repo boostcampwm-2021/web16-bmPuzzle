@@ -6,7 +6,7 @@ import KakaoShareBtn from "@components/share-modal/kakao-share-btn/index";
 const ShareModal = ({
   info,
   shareControl,
-}: shareModalType & shareContrlType) => {
+}: shareModalType & shareControlType) => {
   return (
     <ShareModalWrap
       info={info}
@@ -22,7 +22,7 @@ const ShareModal = ({
         <div>공유하기</div>
         <img id="share-puzzle" src={info.img} alt="puzzle-img" />
         <ShareButtons>
-          <KakaoShareBtn></KakaoShareBtn>
+          <KakaoShareBtn img={info.img} link={info.link}></KakaoShareBtn>
         </ShareButtons>
       </ShareModalContent>
     </ShareModalWrap>
@@ -35,7 +35,7 @@ type infoType = {
   link: string;
 };
 
-type shareContrlType = {
+type shareControlType = {
   shareControl: any;
 };
 
@@ -65,7 +65,7 @@ const ShareModalContent = styled.div`
   background: #ffffff;
   border: none;
   box-sizing: border-box;
-  padding: 50px;
+  padding: 30px;
   width: 500px;
   height: 400px;
   border-radius: 50px;
@@ -76,8 +76,9 @@ const ShareModalContent = styled.div`
   }
   #share-puzzle {
     max-width: 400px;
-    max-height: 2350px;
-    margin-top: 10px;
+    max-height: 255px;
+    margin-top: 20px;
+    object-fit: scale-down;
   }
 `;
 
@@ -85,6 +86,6 @@ const ShareButtons = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 20px;
 `;
 export default ShareModal;

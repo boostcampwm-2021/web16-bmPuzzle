@@ -3,10 +3,12 @@ import styled from "styled-components";
 
 import kakao_share_btn_img from "@images/ic_kakao.svg";
 
-const KakaoShareBtn = () => {
+const KakaoShareBtn = ({ img, link }: KakaoType) => {
+  let shareUrl: string;
   useEffect(() => {
+    shareUrl = `${process.env.REACT_APP_BASE_URL}${link}`;
     createKakaoBtn();
-  }, []);
+  }, [link]);
 
   const createKakaoBtn = () => {
     if (window.Kakao) {
@@ -21,18 +23,18 @@ const KakaoShareBtn = () => {
         content: {
           title: "bmPuzzle",
           description: "온라인에서 퍼즐을 플레이하세요!",
-          imageUrl: "http://assets.paperjs.org/images/marilyn.jpg",
+          imageUrl: img,
           link: {
-            webUrl: "http://localhost:3000/",
-            mobileWebUrl: "http://localhost:3000/",
+            webUrl: shareUrl,
+            mobileWebUrl: shareUrl,
           },
         },
         buttons: [
           {
             title: "퍼즐 맞추러 GO~!",
             link: {
-              webUrl: "http://localhost:3000/",
-              mobileWebUrl: "http://localhost:3000/",
+              webUrl: shareUrl,
+              mobileWebUrl: shareUrl,
             },
           },
         ],
@@ -46,6 +48,11 @@ const KakaoShareBtn = () => {
       </Button>
     </div>
   );
+};
+
+type KakaoType = {
+  img: string;
+  link: string;
 };
 
 const Button = styled.button`
