@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import LevelComponent from "@components/level-component";
+import LevelComponent from "@src/components/register-puzzle/level-component";
 import Header from "@src/components/common/header/index";
 import colors from "@styles/theme";
 import { useHistory } from "react-router-dom";
@@ -70,7 +70,8 @@ const RegPuz = () => {
                 {[1, 2, 3].map((i) => {
                   return (
                     <LevelComponent
-                      num={i}
+                      key={i}
+                      number={i}
                       checkedLevel={checkedLevel}
                       checkFunction={setLevel}
                     />

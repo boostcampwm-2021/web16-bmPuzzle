@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import styled from "styled-components";
 
 const LevelDiv = styled.div`
@@ -6,7 +6,7 @@ const LevelDiv = styled.div`
 `;
 
 const LevelComponent: FC<{
-  num: number;
+  number: number;
   checkedLevel: number;
   checkFunction: (value: number) => void;
 }> = (props) => {
@@ -17,13 +17,13 @@ const LevelComponent: FC<{
     <LevelDiv>
       <input
         type="radio"
-        value={props.num}
-        checked={props.num === props.checkedLevel}
+        value={props.number}
+        checked={props.number === props.checkedLevel}
         onChange={() => {
-          checkEvent(props.num);
+          checkEvent(props.number);
         }}
       />
-      <span className="renderStars">{Array(props.num).fill("⭐️")}</span>
+      <span className="renderStars">{Array(props.number).fill("⭐️")}</span>
     </LevelDiv>
   );
 };
