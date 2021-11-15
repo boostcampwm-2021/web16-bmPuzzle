@@ -1,4 +1,5 @@
-moveTile() {
+export const moveTile = () => {
+  /*
     this.groupTiles.forEach((gtile) => {
       gtile[0].onMouseDrag = (event: any) => {
         if (gtile[1] === undefined) {
@@ -111,8 +112,9 @@ moveTile() {
           this.fitTiles(tile, rightTile, nowShape, rightShape, 3, true);
         }
       };
-    });
-  }
+    }); */
+};
+/*
   fitTiles(
     nowTile: any,
     preTile: any,
@@ -424,3 +426,4 @@ moveTile() {
     }
     return flag;
   }
+  */
