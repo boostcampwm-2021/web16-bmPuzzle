@@ -57,7 +57,11 @@ const Mypage = () => {
           </Btn>
         </BtnWrapper>
         <Container>
-          <TitleBar text={`Hello, ${user} :)`} img={accountImg} />
+          <TitleBar
+            text={`Hello, ${user} :)`}
+            img={accountImg}
+            btn={"logout"}
+          />
           <ImageCard img={current === "upload" ? upload : done} />
           <KakaoShareBtn></KakaoShareBtn>
         </Container>
