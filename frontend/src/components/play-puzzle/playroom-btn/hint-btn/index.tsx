@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 
 import hintBtnImg from "@images/hint-button.png";
-import { isConstructorDeclaration } from "typescript";
 
 interface HintBtnProps {
   hintFunc: any;

@@ -9,7 +9,6 @@ import { SocketContext, socket } from "@src/context/socket";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
-  const [isShow, setIsShow] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
   const [puzzleInfo, setPuzzleInfo] = useState<any>({ img: "", level: 1 });
@@ -34,6 +33,7 @@ const PlayPuzzle = (props: any) => {
     return { img: resJSON.img, level: resJSON.level };
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const setPuzzle = async () => {
     if (puzzleInfo.img === "") {
       const res: any = await getPuzzleInfo();
@@ -49,7 +49,7 @@ const PlayPuzzle = (props: any) => {
     return () => {
       socket.emit("leaveRoom", { roomID: roomID });
     };
-  }, []);
+  }, [roomID, setPuzzle]);
 
   return (
     <Wrapper>
