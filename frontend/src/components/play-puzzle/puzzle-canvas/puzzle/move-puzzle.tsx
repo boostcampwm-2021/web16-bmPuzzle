@@ -2,7 +2,6 @@ import { Point } from "paper/dist/paper-core";
 
 import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
 import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
-import { truncate } from "fs";
 
 type Config = {
   originHeight: number;
