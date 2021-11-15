@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Header from "@components/common/header/index";
-import PuzzleCanvas from "@components/play-puzzle/puzzle-canvas/index";
-import Chat from "@components/play-puzzle/chat/index";
-import PlayroomMenuBtn from "@components/play-puzzle/playroom-btn";
+import Header from "@src/components/common/header/index";
+import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
+import Chat from "@src/components/play-puzzle/chat/index";
+import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
 import { useHistory } from "react-router";
-import { SocketContext, socket } from "@context/socket";
+import { SocketContext, socket } from "@src/context/socket";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
   const [puzzleInfo, setPuzzleInfo] = useState<any>({ img: "", level: 1 });
+  const [isFirstClient, setFirstClient] = useState(false);
   const imgRef = useRef(null);
 
   const onLoad = () => setLoaded(true);
@@ -45,6 +46,9 @@ const PlayPuzzle = (props: any) => {
 
   useEffect(() => {
     setPuzzle();
+    socket.on("isFirstUser", () => {
+      setFirstClient(true);
+    });
     socket.emit("joinRoom", { roomID: roomID });
     return () => {
       socket.emit("leaveRoom", { roomID: roomID });
@@ -79,8 +83,12 @@ const PlayPuzzle = (props: any) => {
             alt="emptyImage"
             show={hintShow}
           />
-          {loaded && (
-            <PuzzleCanvas puzzleImg={imgRef} level={puzzleInfo.level} />
+          {loaded && isFirstClient !== undefined && (
+            <PuzzleCanvas
+              puzzleImg={imgRef}
+              level={puzzleInfo.level}
+              isFirstClient={isFirstClient}
+            />
           )}
         </SocketContext.Provider>
       </Body>
