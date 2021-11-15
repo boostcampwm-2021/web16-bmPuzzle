@@ -1,16 +1,15 @@
-import { clear } from 'console';
 import { roomURL } from './roomInfo';
 
 const updateRoomURL = (io: any) => {
   const cb = (io: any) => {
     let mySet = new Set<string>();
     const _roomURL = Array.from(roomURL);
-    for (let item of _roomURL) {
-      const clients = io.sockets.adapter.rooms.get(item);
+    _roomURL.forEach(url => {
+      const clients = io.sockets.adapter.rooms.get(url);
       const numClients = clients ? clients.size : 0;
-      if (numClients === 0) mySet.add(item);
-    }
-    mySet.forEach(item => roomURL.delete(item));
+      if (numClients === 0) mySet.add(url);
+    });
+    mySet.forEach(url => roomURL.delete(url));
   };
   setInterval(cb, 60000, io);
 };
