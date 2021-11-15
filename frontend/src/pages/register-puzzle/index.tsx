@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import LevelComponent from "@components/level-component";
-import Header from "@components/header/index";
+import Header from "@src/components/common/header/index";
 import colors from "@styles/theme";
 import { useHistory } from "react-router-dom";
 
