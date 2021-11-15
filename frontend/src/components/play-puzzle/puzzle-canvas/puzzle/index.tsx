@@ -1,6 +1,7 @@
 import Paper from "paper";
 import { Point, Size } from "paper/dist/paper-core";
 import { createTiles } from "@src/components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
+import movePuzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/move-puzzle";
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -28,31 +29,9 @@ const setting = (conf: Config) => {
 const exportConfig = () => config;
 const run = () => {
   createTiles();
-  //moveTile();
-  //findNearTile();
+  movePuzzle.moveTile();
+  movePuzzle.findNearTile();
 };
 
-/*
-class Puzzle {
-  project: any;
-  puzzleImage: null | any;
-
-  config: Config;
-  constructor(project: any, config: Config) {
-    this.config = {
-      ...config,
-    };
-    this.project = project;
-    this.puzzleImage = new this.project.Raster({
-      source: "puzzleImage",
-      position: this.project.view.center,
-    });
-
-    createTiles();
-    this.moveTile();
-    this.findNearTile();
-  }
-}
-*/
-
-export default { setting, run, exportConfig };
+const Puzzle = { setting, run, exportConfig };
+export default Puzzle;
