@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
 
-import Header from "@src/components/common/header/index";
-import ImageCard from "@src/components/common/image-card/index";
+import Header from "@components/common/header/index";
+import ImageCard from "@components/common/image-card/index";
 
-import TitleBar from "@src/components/common/title-bar/index";
-import ShareModal from "@src/components/mypage/share-modal/index";
+import TitleBar from "@components/common/title-bar/index";
+import ShareModal from "@components/mypage/share-modal/index";
 
 import accountImg from "@images/account-black-icon.png";
 
-import getImgfile from "@src/js/get-img-file";
+import getImgfile from "@js/get-img-file";
 
 const Mypage = () => {
   let dummy_image: any[] = [];

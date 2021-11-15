@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 
-import Line from "@src/components/ranking/ranking-line/index";
+import Line from "@components/ranking/ranking-line/index";
 
 type TypeProps = {
   rankInfo: Array<Object>;

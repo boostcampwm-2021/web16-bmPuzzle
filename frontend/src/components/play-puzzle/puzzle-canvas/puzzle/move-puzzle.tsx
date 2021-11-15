@@ -1,6 +1,6 @@
 import { Point } from "paper/dist/paper-core";
 
-import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
+import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
 import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
 
 type Config = {
@@ -23,23 +23,22 @@ type Config = {
   puzzleImage: any;
 };
 let config: Config;
+
 const moveTile = () => {
   config = Puzzle.exportConfig();
-  config.groupTiles.forEach((gtile: any) => {
-    const [tile, group] = gtile;
-    tile.onMouseDrag = (event: any) => {
-      if (group === undefined) {
-        tile.position = new Point(
-          tile.position._x + event.delta.x,
-          tile.position._y + event.delta.y
+  config.groupTiles.forEach((gtile) => {
+    gtile[0].onMouseDrag = (event: any) => {
+      if (gtile[1] === undefined) {
+        gtile[0].position = new Point(
+          gtile[0].position._x + event.delta.x,
+          gtile[0].position._y + event.delta.y
         );
       } else {
-        config.groupTiles.forEach((gtileNow) => {
-          const nowGroup = gtileNow[1];
-          if (group === nowGroup) {
-            tile.position = new Point(
-              tile.position._x + event.delta.x,
-              tile.position._y + event.delta.y
+        config.groupTiles.forEach((gtile_now) => {
+          if (gtile[1] === gtile_now[1]) {
+            gtile_now[0].position = new Point(
+              gtile_now[0].position._x + event.delta.x,
+              gtile_now[0].position._y + event.delta.y
             );
           }
         });
@@ -73,6 +72,7 @@ const findNearTile = () => {
         }
       });
 
+      console.log(tileArr);
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined)
           fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
@@ -115,10 +115,15 @@ const checkUndefined = (
   return flag;
 };
 
-const enterRange = (preTile: any, nowTile: any, range: number, flag: boolean) =>
-  (preTile.position._y - nowTile.position._y < range &&
-    preTile.position._y - nowTile.position._y > -range &&
-    Math.abs(nowTile.position._x - preTile.position._x) < 10) ||
+const enterRange = (
+  preY: number,
+  preX: number,
+  nowY: number,
+  nowX: number,
+  range: number,
+  flag: boolean
+) =>
+  (preY - nowY < range && preY - nowY > -range && Math.abs(nowX - preX) < 10) ||
   flag === false;
 
 const fitTiles = (
@@ -135,39 +140,53 @@ const fitTiles = (
   const yUp = FindChange.findYUp(_nowShape, _preShape);
 
   const range = config.tileWidth;
+  const pre = preTile.position;
+  const now = nowTile.position;
+  console.log(pre._x);
+  console.log("hello", nowTile.index, preTile.index, dir, flag);
 
-  if (enterRange(preTile, nowTile, range, flag) || !flag) {
-    switch (dir) {
-      case 0: //좌
+  switch (dir) {
+    case 0: //좌
+      if (enterRange(pre._x, pre._y, now._x, now._y, range, flag)) {
         nowTile.position = new Point(
           preTile.position._x + range + xChange,
           preTile.position._y + yChange
         );
-        break;
-      case 1: //우
+      }
+      if (flag) uniteTiles(nowTile, preTile);
+      break;
+    case 1: //우
+      if (enterRange(pre._x, pre._y, now._x, now._y, range, flag)) {
         nowTile.position = new Point(
           preTile.position._x - (range + xChange),
           preTile.position._y + yChange
         );
-        break;
-      case 2: //상
+      }
+      if (flag) uniteTiles(nowTile, preTile);
+      break;
+    case 2: //상
+      if (enterRange(pre._y, pre._x, now._y, now._x, range, flag)) {
         nowTile.position = new Point(
           preTile.position._x + xUp,
           preTile.position._y + range + yUp
         );
-        break;
-      case 3: //하
+      }
+      if (flag) uniteTiles(nowTile, preTile);
+      break;
+    case 3: //하
+      if (enterRange(pre._y, pre._x, now._y, now._x, range, flag)) {
         nowTile.position = new Point(
           preTile.position._x + xUp,
           preTile.position._y - (range + yUp)
         );
-        break;
-    }
+      }
+      if (flag) uniteTiles(nowTile, preTile);
+      break;
   }
-  if (flag) uniteTiles(nowTile, preTile);
 };
 
 const uniteTiles = (nowTile: any, preTile: any) => {
+  console.log("unite", nowTile.index, preTile.index);
   const substract = config.tilesPerRow * config.tilesPerColumn + 1;
   let nowIndex = nowTile.index - substract;
   let preIndex = preTile.index - substract;

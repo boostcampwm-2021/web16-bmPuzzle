@@ -3,7 +3,7 @@ import styled from "styled-components";
 import searchIcon from "@images/search-icon.png";
 import colors from "@styles/theme";
 
-import getImgfile from "@src/js/get-img-file";
+import getImgfile from "@js/get-img-file";
 
 const SearchBar = (props: any) => {
   const [search, setSearch] = useState("");

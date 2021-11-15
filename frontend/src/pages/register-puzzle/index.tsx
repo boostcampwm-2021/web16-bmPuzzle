@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import LevelComponent from "@src/components/register-puzzle/level-component";
-import Header from "@src/components/common/header/index";
+import LevelComponent from "@components/register-puzzle/level-component";
+import Header from "@components/common/header/index";
 import colors from "@styles/theme";
 import { useHistory } from "react-router-dom";
 

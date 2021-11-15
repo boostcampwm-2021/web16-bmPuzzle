@@ -2,7 +2,6 @@ import React from "react";
 import styled from "styled-components";
 
 const RankingLine = (props: any) => {
-  console.log(props.background, props.first);
   return (
     <Line background={props.background}>
       <span>{props.first}</span>

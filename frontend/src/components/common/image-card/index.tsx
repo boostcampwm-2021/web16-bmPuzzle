@@ -6,7 +6,6 @@ import shareBtnImg from "@images/share-btn.png";
 
 const ImageCard = (props: any) => {
   const history = useHistory();
-  let shareUrl: string;
   const getValidURL = async () => {
     const response = await fetch(
       `${process.env.REACT_APP_API_URL}/room/urlcheck`,

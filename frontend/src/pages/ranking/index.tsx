@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
 
-import Header from "@src/components/common/header/index";
-import RankingTable from "@src/components/ranking/ranking-table/index";
-import TitleBar from "@src/components/common/title-bar/index";
+import Header from "@components/common/header/index";
+import RankingTable from "@components/ranking/ranking-table/index";
+import TitleBar from "@components/common/title-bar/index";
 
 import RankingIcon from "@images/ranking-black-icon.png";
 

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import CopyBtn from "@src/components/play-puzzle/playroom-btn/copy-link-btn";
-import HintBtn from "@src/components/play-puzzle/playroom-btn/hint-btn";
+import CopyBtn from "@components/play-puzzle/playroom-btn/copy-link-btn";
+import HintBtn from "@components/play-puzzle/playroom-btn/hint-btn";
 
 import playroomMenuBtnImg from "@images/playroom-menu-button.png";
 

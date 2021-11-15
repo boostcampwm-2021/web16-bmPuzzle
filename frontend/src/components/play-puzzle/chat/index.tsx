@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
-import { SocketContext } from "@src/context/socket";
+import { SocketContext } from "@context/socket";
 
 const Chat = (props: any) => {
   const { roomID, chatVisible } = props;

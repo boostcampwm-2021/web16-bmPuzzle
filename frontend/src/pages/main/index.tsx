@@ -3,12 +3,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
 
-import Header from "@src/components/common/header/index";
-import Search from "@src/components/main/search-bar/index";
-import ImageCard from "@src/components/common/image-card/index";
-import UploadBtn from "@src/components/main/upload-button/index";
+import Header from "@components/common/header/index";
+import Search from "@components/main/search-bar/index";
+import ImageCard from "@components/common/image-card/index";
+import UploadBtn from "@components/main/upload-button/index";
 
-import getImgfile from "@src/js/get-img-file";
+import getImgfile from "@js/get-img-file";
 
 const Main = () => {
   let dummy_image: any[] = [];

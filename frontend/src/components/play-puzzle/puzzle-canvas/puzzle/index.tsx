@@ -1,7 +1,5 @@
-import Paper from "paper";
-import { Point, Size } from "paper/dist/paper-core";
-import { createTiles } from "@src/components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
-import movePuzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/move-puzzle";
+import { createTiles } from "@components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
+import MovePuzzle from "@components/play-puzzle/puzzle-canvas/puzzle/move-puzzle";
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -29,8 +27,8 @@ const setting = (conf: Config) => {
 const exportConfig = () => config;
 const run = () => {
   createTiles();
-  movePuzzle.moveTile();
-  movePuzzle.findNearTile();
+  MovePuzzle.moveTile();
+  MovePuzzle.findNearTile();
 };
 
 const Puzzle = { setting, run, exportConfig };

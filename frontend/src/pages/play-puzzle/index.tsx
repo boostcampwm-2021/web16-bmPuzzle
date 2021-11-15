@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Header from "@src/components/common/header/index";
-import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
-import Chat from "@src/components/play-puzzle/chat/index";
-import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
+import Header from "@components/common/header/index";
+import PuzzleCanvas from "@components/play-puzzle/puzzle-canvas/index";
+import Chat from "@components/play-puzzle/chat/index";
+import PlayroomMenuBtn from "@components/play-puzzle/playroom-btn";
 import { useHistory } from "react-router";
-import { SocketContext, socket } from "@src/context/socket";
+import { SocketContext, socket } from "@context/socket";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);

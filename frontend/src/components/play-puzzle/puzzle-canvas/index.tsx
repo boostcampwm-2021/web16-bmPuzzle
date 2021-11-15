@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import Paper from "paper";
-import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
+import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
 import styled from "styled-components";
 
 type LevelSizeType = { 1: number; 2: number; 3: number };
@@ -54,7 +54,7 @@ const PuzzleCanvas = (props: any) => {
     const config = setConfig(props.puzzleImg, level, Paper);
     Puzzle.setting(config);
     Puzzle.run();
-  }, [props.puzzleImg]);
+  }, [level, props.puzzleImg]);
 
   return (
     <Wrapper>
