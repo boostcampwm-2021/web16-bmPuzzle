@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Header from "@components/header/index";
-import PuzzleCanvas from "@components/puzzle-canvas/index";
+import Header from "@src/components/common/header/index";
+import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
 import Chat from "@src/components/chat/index";
-import PlayroomMenuBtn from "@src/components/playroom-btn";
+import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
 import { useHistory } from "react-router";
 import { SocketContext, socket } from "@src/context/socket";
 
