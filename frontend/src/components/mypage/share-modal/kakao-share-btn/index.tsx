@@ -7,6 +7,7 @@ const KakaoShareBtn = ({ img, link }: KakaoType) => {
   let shareUrl: string;
   useEffect(() => {
     shareUrl = `${process.env.REACT_APP_BASE_URL}${link}`;
+    console.log(shareUrl);
     createKakaoBtn();
   }, [link]);
 

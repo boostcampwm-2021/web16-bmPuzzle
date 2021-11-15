@@ -1,13 +1,13 @@
 import React, { useRef, useEffect } from "react";
 import Paper from "paper";
-import Puzzle from "@components/puzzle-canvas/puzzle/index";
+import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
 import styled from "styled-components";
 
 type LevelSizeType = { 1: number; 2: number; 3: number };
 type Levels = 1 | 2 | 3;
 const levelSize: LevelSizeType = { 1: 300, 2: 500, 3: 800 };
 
-const setConfig = (img: any, level: Levels) => {
+const setConfig = (img: any, level: Levels, Paper: any) => {
   const originHeight = img.current.height;
   const originWidth = img.current.width;
   const imgWidth =
@@ -30,6 +30,16 @@ const setConfig = (img: any, level: Levels) => {
     tileMarginWidth: tileWidth * 0.203125,
     level: level,
     imgName: "puzzleImage",
+    groupTiles: [],
+    shapes: [],
+    tiles: [],
+    complete: false,
+    groupTileIndex: 0,
+    project: Paper,
+    puzzleImage: new Paper.Raster({
+      source: "puzzleImage",
+      position: Paper.view.center,
+    }),
   };
 };
 
@@ -41,8 +51,9 @@ const PuzzleCanvas = (props: any) => {
     const canvas: any = canvasRef.current;
     if (canvas === null) return;
     Paper.setup(canvas);
-    const config = setConfig(props.puzzleImg, level);
-    const puzzle = new Puzzle(Paper, config);
+    const config = setConfig(props.puzzleImg, level, Paper);
+    Puzzle.setting(config);
+    Puzzle.run();
   }, [props.puzzleImg]);
 
   return (

@@ -1,11 +1,16 @@
 import React from "react";
 import styled from "styled-components";
 
+import LogoutBtn from "@components/logout-btn/index";
+
 const AccountBar = (props: any) => {
   return (
     <Wrapper>
-      <Img src={props.img} alt="account" />
-      <Name>{props.text}</Name>
+      <LeftWrapper>
+        <Img src={props.img} alt="account" />
+        <Name>{props.text}</Name>
+      </LeftWrapper>
+      {props.btn === "logout" ? <LogoutBtn /> : ""}
     </Wrapper>
   );
 };
@@ -14,6 +19,11 @@ const Wrapper = styled.div`
   display: flex;
   margin-left: 10%;
   margin: 3% 12% 0 12%;
+  justify-content: space-between;
+`;
+
+const LeftWrapper = styled.div`
+  display: flex;
 `;
 
 const Img = styled.img`

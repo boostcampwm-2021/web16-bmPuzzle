@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
-import Header from "@components/header/index";
-import PuzzleCanvas from "@components/puzzle-canvas/index";
-import Chat from "@src/components/chat/index";
-import PlayroomMenuBtn from "@src/components/playroom-btn";
+import Header from "@src/components/common/header/index";
+import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
+import Chat from "@src/components/play-puzzle/chat/index";
+import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
 import { useHistory } from "react-router";
 import { SocketContext, socket } from "@src/context/socket";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
-  const [isShow, setIsShow] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
   const [puzzleInfo, setPuzzleInfo] = useState<any>({ img: "", level: 1 });
@@ -34,6 +33,7 @@ const PlayPuzzle = (props: any) => {
     return { img: resJSON.img, level: resJSON.level };
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const setPuzzle = async () => {
     if (puzzleInfo.img === "") {
       const res: any = await getPuzzleInfo();
@@ -49,7 +49,7 @@ const PlayPuzzle = (props: any) => {
     return () => {
       socket.emit("leaveRoom", { roomID: roomID });
     };
-  }, []);
+  }, [roomID, setPuzzle]);
 
   return (
     <Wrapper>

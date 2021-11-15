@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-import KakaoShareBtn from "@components/share-modal/kakao-share-btn/index";
+import KakaoShareBtn from "@src/components/mypage/share-modal/kakao-share-btn/index";
 
 const ShareModal = ({
   info,

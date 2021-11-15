@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
 
-import Header from "@components/header/index";
-import ImageCard from "@components/image-card/index";
+import Header from "@src/components/common/header/index";
+import ImageCard from "@src/components/common/image-card/index";
 
-import TitleBar from "@components/title-bar/index";
-import ShareModal from "@components/share-modal";
+import TitleBar from "@src/components/common/title-bar/index";
+import ShareModal from "@src/components/mypage/share-modal/index";
+
 import accountImg from "@images/account-black-icon.png";
 
 import getImgfile from "@src/js/get-img-file";
@@ -66,7 +67,11 @@ const Mypage = () => {
           </Btn>
         </BtnWrapper>
         <Container>
-          <TitleBar text={`Hello, ${user} :)`} img={accountImg} />
+          <TitleBar
+            text={`Hello, ${user} :)`}
+            img={accountImg}
+            btn={"logout"}
+          />
           <ImageCard
             img={current === "upload" ? upload : done}
             shareControl={setShareModal}
