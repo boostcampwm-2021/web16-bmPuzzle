@@ -1,3 +1,5 @@
+import Paper from "paper";
+import { Point, Size } from "paper/dist/paper-core";
 import { createTiles } from "@src/components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
 import movePuzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/move-puzzle";
 type Config = {
@@ -16,6 +18,8 @@ type Config = {
   tiles: any[];
   complete: boolean;
   groupTileIndex: number;
+  project: any;
+  puzzleImage: any;
 };
 
 let config: Config;
