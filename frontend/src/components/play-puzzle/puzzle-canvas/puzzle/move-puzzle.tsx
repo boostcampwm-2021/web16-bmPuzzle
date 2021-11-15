@@ -1,7 +1,8 @@
 import { Point } from "paper/dist/paper-core";
 
-import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
+import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
 import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
+import { truncate } from "fs";
 
 type Config = {
   originHeight: number;
@@ -23,7 +24,6 @@ type Config = {
   puzzleImage: any;
 };
 let config: Config;
-
 const moveTile = () => {
   config = Puzzle.exportConfig();
   config.groupTiles.forEach((gtile) => {
@@ -71,8 +71,6 @@ const findNearTile = () => {
           tileShape[index] = config.shapes[nextIndex];
         }
       });
-
-      console.log(tileArr);
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined)
           fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
@@ -115,17 +113,6 @@ const checkUndefined = (
   return flag;
 };
 
-const enterRange = (
-  preY: number,
-  preX: number,
-  nowY: number,
-  nowX: number,
-  range: number,
-  flag: boolean
-) =>
-  (preY - nowY < range && preY - nowY > -range && Math.abs(nowX - preX) < 10) ||
-  flag === false;
-
 const fitTiles = (
   nowTile: any,
   preTile: any,
@@ -140,53 +127,69 @@ const fitTiles = (
   const yUp = FindChange.findYUp(_nowShape, _preShape);
 
   const range = config.tileWidth;
-  const pre = preTile.position;
-  const now = nowTile.position;
-  console.log(pre._x);
-  console.log("hello", nowTile.index, preTile.index, dir, flag);
-
+  let uniteFlag = false;
   switch (dir) {
-    case 0: //좌
-      if (enterRange(pre._x, pre._y, now._x, now._y, range, flag)) {
+    case 0:
+      if (
+        (nowTile.position._x - preTile.position._x < range &&
+          nowTile.position._x - preTile.position._x > -range &&
+          Math.abs(nowTile.position._y - preTile.position._y) < 10) ||
+        flag === false
+      ) {
         nowTile.position = new Point(
           preTile.position._x + range + xChange,
           preTile.position._y + yChange
         );
+        uniteFlag = true;
       }
-      if (flag) uniteTiles(nowTile, preTile);
       break;
-    case 1: //우
-      if (enterRange(pre._x, pre._y, now._x, now._y, range, flag)) {
+    case 1:
+      if (
+        (preTile.position._x - nowTile.position._x < range &&
+          preTile.position._x - nowTile.position._x > -range &&
+          Math.abs(nowTile.position._y - preTile.position._y) < 10) ||
+        flag === false
+      ) {
         nowTile.position = new Point(
           preTile.position._x - (range + xChange),
           preTile.position._y + yChange
         );
+        uniteFlag = true;
       }
-      if (flag) uniteTiles(nowTile, preTile);
       break;
-    case 2: //상
-      if (enterRange(pre._y, pre._x, now._y, now._x, range, flag)) {
+    case 2:
+      if (
+        (preTile.position._y - nowTile.position._y < range &&
+          preTile.position._y - nowTile.position._y > -range &&
+          Math.abs(nowTile.position._x - preTile.position._x) < 10) ||
+        flag === false
+      ) {
         nowTile.position = new Point(
           preTile.position._x + xUp,
           preTile.position._y + range + yUp
         );
+        uniteFlag = true;
       }
-      if (flag) uniteTiles(nowTile, preTile);
       break;
-    case 3: //하
-      if (enterRange(pre._y, pre._x, now._y, now._x, range, flag)) {
+    case 3:
+      if (
+        (nowTile.position._y - preTile.position._y < range &&
+          nowTile.position._y - preTile.position._y > -range &&
+          Math.abs(nowTile.position._x - preTile.position._x) < 10) ||
+        flag === false
+      ) {
         nowTile.position = new Point(
           preTile.position._x + xUp,
           preTile.position._y - (range + yUp)
         );
+        uniteFlag = true;
       }
-      if (flag) uniteTiles(nowTile, preTile);
       break;
   }
+  if (flag && uniteFlag) uniteTiles(nowTile, preTile);
 };
 
 const uniteTiles = (nowTile: any, preTile: any) => {
-  console.log("unite", nowTile.index, preTile.index);
   const substract = config.tilesPerRow * config.tilesPerColumn + 1;
   let nowIndex = nowTile.index - substract;
   let preIndex = preTile.index - substract;
@@ -249,10 +252,9 @@ const groupFit = (nowGroup: number) => {
         : nowIndex + xTileCount;
 
     let directionArr = [left, right, up, down];
-    let flag = true;
 
     directionArr.forEach((dir, idx) => {
-      if (dir !== undefined && groupObj[dir] !== undefined && flag) {
+      if (dir !== undefined && groupObj[dir] !== undefined) {
         fitTiles(
           tile,
           groupObj[dir],
@@ -261,7 +263,6 @@ const groupFit = (nowGroup: number) => {
           idx,
           false
         );
-        flag = false;
       }
     });
   });
@@ -272,9 +273,12 @@ const checkComplete = () => {
   const firstGroup = config.groupTiles[0][1];
 
   if (firstGroup !== undefined) {
+    flag = true;
     config.groupTiles.forEach((gtile) => {
       const nowGroup = gtile[1];
-      flag = nowGroup !== firstGroup ? false : true;
+      if (nowGroup !== firstGroup) {
+        flag = false;
+      }
     });
   }
 
