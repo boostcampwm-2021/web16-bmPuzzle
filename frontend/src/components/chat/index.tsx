@@ -103,6 +103,7 @@ const DialogUnit = styled.div`
   }
   > .message {
     font-size: 20px;
+    font-weight: 400;
   }
 `;
 
