@@ -12,26 +12,23 @@ input:focus {
     outline: none;
 }
 @font-face {
-    src: url("./RobotoSlab.ttf");
-    font-family: "roboto slab";
+    font-family: 'roboto slab';
+    src: local("./RobotoSlab.ttf");
 }
 @font-face {
-    src: url("./RobotoSlab-Bold.ttf");
-    font-family: "roboto slab bold";
+    font-family: roboto slab bold;
+    src: local("./RobotoSlab-Bold.ttf");
 }
 *{
-    box-sizing:boerder-box;
-    font-family: "roboto slab";
-    font-weight: 400;
+    font-family: "roboto slab bold";
 }
 #root {
     height: 100vh;
     overflow-y: hidden;
 }
 div {
-    font-family: "roboto slab bold";
+    font-family: "roboto slab";
     font-weight: bold;
-    font-weight: 420;
 }
 `;
 export default globalStyles;
