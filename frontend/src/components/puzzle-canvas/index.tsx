@@ -11,11 +11,11 @@ const setConfig = (img: any, level: Levels) => {
   const originHeight = img.current.height;
   const originWidth = img.current.width;
   const imgWidth =
-    originHeight > originWidth
+    originHeight >= originWidth
       ? Math.round((levelSize[level] * originWidth) / originHeight / 100) * 100
       : levelSize[level];
   const imgHeight =
-    originHeight > originWidth
+    originHeight >= originWidth
       ? levelSize[level]
       : Math.round((levelSize[level] * originHeight) / originWidth / 100) * 100;
   const tileWidth = 100;

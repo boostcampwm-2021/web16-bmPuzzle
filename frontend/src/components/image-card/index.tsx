@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 
+import shareBtnImg from "@images/share-btn.png";
+
 const ImageCard = (props: any) => {
   const history = useHistory();
   const getValidURL = async () => {
@@ -48,6 +50,7 @@ const ImageCard = (props: any) => {
 
     return str.join("");
   };
+
   return (
     <ImageGroup {...props}>
       {props.img.map((ele: any, idx: any) => {
@@ -63,7 +66,18 @@ const ImageCard = (props: any) => {
             <Img src={ele.image} />
             <Content>
               <div>{ele.title}</div>
-              <div>{time}</div>
+              <DetailWrap>
+                <div>{time}</div>
+                <ShareButton
+                  shareControl={props.shareControl}
+                  onClick={(e) => {
+                    props.shareControl(true, "", "");
+                    e.stopPropagation();
+                  }}
+                >
+                  <img src={shareBtnImg} alt="공유" />
+                </ShareButton>
+              </DetailWrap>
             </Content>
           </Wrapper>
         );
@@ -75,6 +89,11 @@ const ImageCard = (props: any) => {
 type marginType = {
   margin: number;
 };
+
+type shareBtnType = {
+  shareControl: any;
+};
+
 const ImageGroup = styled.div<marginType>`
   display: flex;
   margin-top: ${(props) => {
@@ -90,7 +109,6 @@ const Wrapper = styled.div`
   margin: 3% 5% 1% 5%;
   align-items: center;
   &: hover {
-    opacity: 0.5;
     cursor: pointer;
   }
 `;
@@ -101,6 +119,7 @@ const Content = styled.div`
   width: 65%;
   font-size: 12px;
   color: gray;
+  line-height: 30px;
 `;
 
 const Img = styled.img`
@@ -108,5 +127,30 @@ const Img = styled.img`
   height: 80%;
   margin-bottom: 10px;
   object-fit: contain;
+  &: hover {
+    opacity: 0.5;
+  }
+`;
+const DetailWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const ShareButton = styled.button<shareBtnType>`
+  display: ${(props) => (props.shareControl === undefined ? "none" : "block")};
+  padding: 0px;
+  margin: 0px 0px 0px 10px;
+  background: none;
+  border: none;
+  width: 30px;
+  height: 30px;
+  &: hover {
+    cursor: pointer;
+    opacity: 0.5;
+  }
+  img {
+    width: 30px;
+    height: 30px;
+    object-fit: scale-down;
+  }
 `;
 export default ImageCard;

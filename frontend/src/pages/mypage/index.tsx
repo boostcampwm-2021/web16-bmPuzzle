@@ -6,7 +6,7 @@ import Header from "@components/header/index";
 import ImageCard from "@components/image-card/index";
 
 import TitleBar from "@components/title-bar/index";
-import KakaoShareBtn from "@src/components/kakao-share-btn/index";
+import ShareModal from "@components/share-modal";
 import accountImg from "@images/account-black-icon.png";
 
 import getImgfile from "@src/js/get-img-file";
@@ -18,9 +18,18 @@ const Mypage = () => {
   const [upload, setUpload] = useState(dummy_image);
   const [done, setDone] = useState(dummy_image);
   const [current, setCurrent] = useState(undefined);
+  const [shareModalInfo, setShareModalInfo] = useState({
+    show: false,
+    img: "",
+    link: "",
+  });
 
   const handleMove = (e: any) => {
     setCurrent(e.target.id);
+  };
+
+  const setShareModal = (show: boolean, img: string, link: string) => {
+    setShareModalInfo({ show: show, img: img, link: link });
   };
 
   const myPageEnter = async () => {
@@ -58,10 +67,16 @@ const Mypage = () => {
         </BtnWrapper>
         <Container>
           <TitleBar text={`Hello, ${user} :)`} img={accountImg} />
-          <ImageCard img={current === "upload" ? upload : done} />
-          <KakaoShareBtn></KakaoShareBtn>
+          <ImageCard
+            img={current === "upload" ? upload : done}
+            shareControl={setShareModal}
+          />
         </Container>
       </ContainerWrapper>
+      <ShareModal
+        info={shareModalInfo}
+        shareControl={setShareModal}
+      ></ShareModal>
     </Wrapper>
   );
 };
