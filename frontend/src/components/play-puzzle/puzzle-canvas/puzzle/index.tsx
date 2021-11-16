@@ -31,10 +31,18 @@ const settingValue = (key: string, value: any) => {
   config[key] = value;
 };
 const exportConfig = () => config;
-const move = (isFirstClient: boolean) => {
-  MovePuzzle.moveTile(isFirstClient);
+const move = (isFirstClient: boolean, socket: any, roomID: string) => {
+  MovePuzzle.moveTile(isFirstClient, socket, roomID);
   MovePuzzle.findNearTile(isFirstClient);
 };
 
-const Puzzle = { setting, settingValue, move, exportConfig };
+const renderMove = (
+  tileIndex: number,
+  tilePosition: any[],
+  tileGroup: any[] | null
+) => {
+  MovePuzzle.moveUpdate(tileIndex, tilePosition, tileGroup);
+};
+
+const Puzzle = { setting, settingValue, move, exportConfig, renderMove };
 export default Puzzle;

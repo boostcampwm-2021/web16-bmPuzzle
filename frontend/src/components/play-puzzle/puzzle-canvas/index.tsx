@@ -83,9 +83,8 @@ const getConfig = (data: Config, Paper: any) => {
     const res = new config.project.Group(p1, r1, p2);
     return res;
   });
-  console.log(data.shapes);
   config.shapes = data.shapes;
-  console.log(config.shapes);
+
   config.tiles = tiles;
   config.groupTiles = tiles.map((x, i) => [x, config.groupTiles[i][1]]);
 
@@ -96,27 +95,31 @@ const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
   const { puzzleImg, level, isFirstClient, roomID } = props;
   const socket = useContext(SocketContext);
-  console.log(`isFirstClient? ${isFirstClient}`);
 
   useEffect(() => {
     const canvas: any = canvasRef.current;
     if (canvas === null) return;
     Paper.setup(canvas);
     let config: Config;
+
     if (isFirstClient) {
       setConfig(puzzleImg, level, Paper);
       createTiles();
       config = Puzzle.exportConfig();
-      Puzzle.move(isFirstClient);
+      Puzzle.move(isFirstClient, socket, roomID);
       socket.emit("setPuzzleConfig", { roomID: roomID, config: config });
     } else {
       socket.on("getPuzzleConfig", (res: Config) => {
         Puzzle.setting(getConfig(res, Paper));
-        Puzzle.move(isFirstClient);
+        Puzzle.move(isFirstClient, socket, roomID);
       });
       socket.emit("getPuzzleConfig", { roomID: roomID });
     }
-  }, [puzzleImg]);
+    socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
+      console.log("update tile Position!");
+      Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
+    });
+  }, []);
 
   return (
     <Wrapper>

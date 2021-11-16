@@ -66,6 +66,22 @@ export default (io: any) => {
     socket.on('getPuzzleConfig', (res: { roomID: string }) => {
       socket.emit('getPuzzleConfig', roomPuzzleInfo.get(res.roomID));
     });
+    socket.on(
+      'tilePosition',
+      (res: {
+        roomID: string;
+        tileIndex: number;
+        tilePosition: any[];
+        tileGroup: any[];
+      }) => {
+        /*
+      let updatePosition = roomPuzzleInfo.get(res.roomID);
+      updatePosition.groupTiles = res.groupTiles;
+      roomPuzzleInfo.set(res.roomID, updatePosition);
+      */
+        socket.broadcast.to(res.roomID).emit('tilePosition', res);
+      },
+    );
     socket.on('disconnect', () => {});
   });
 };

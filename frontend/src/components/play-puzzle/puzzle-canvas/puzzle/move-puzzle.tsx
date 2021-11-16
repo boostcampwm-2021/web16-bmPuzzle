@@ -113,7 +113,7 @@ const initConfig = () => {
     ...config,
   });
 };
-const moveTile = (isFirstClient: boolean) => {
+const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config = Puzzle.exportConfig();
   if (isFirstClient) initConfig();
   config.groupTiles.forEach((gtile, index) => {
@@ -121,7 +121,7 @@ const moveTile = (isFirstClient: boolean) => {
       gtile[1] = undefined;
     }
   });
-  config.groupTiles.forEach((gtile) => {
+  config.groupTiles.forEach((gtile, idx) => {
     gtile[0].onMouseDrag = (event: any) => {
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
@@ -138,8 +138,23 @@ const moveTile = (isFirstClient: boolean) => {
           }
         });
       }
+      socket.emit("tilePosition", {
+        roomID: roomID,
+        tileIndex: idx,
+        tilePosition: gtile[0].position,
+        tileGroup: gtile[1],
+      });
     };
   });
+};
+const moveUpdate = (
+  tileIndex: number,
+  tilePosition: any[],
+  tileGroup: any[] | null
+) => {
+  config = Puzzle.exportConfig();
+  let nowIndex = tileIndex;
+  config.tiles[nowIndex].position = new Point(tilePosition[1], tilePosition[2]);
 };
 
 const findNearTile = (isFirstClient: boolean) => {
@@ -149,7 +164,6 @@ const findNearTile = (isFirstClient: boolean) => {
   const yTileCount = config.tilesPerColumn;
   config.tiles.forEach((tile) => {
     tile.onMouseUp = (event: any) => {
-      console.log(tile.index);
       let nowIndex = 0;
       if (first) {
         nowIndex = tile.index - (xTileCount * yTileCount + 1);
@@ -533,5 +547,5 @@ const getTileRaster = (
   return targetRaster;
 };
 
-const MovePuzzle = { moveTile, findNearTile };
+const MovePuzzle = { moveTile, findNearTile, moveUpdate };
 export default MovePuzzle;
