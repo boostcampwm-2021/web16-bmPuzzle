@@ -116,7 +116,6 @@ const PuzzleCanvas = (props: any) => {
       socket.emit("getPuzzleConfig", { roomID: roomID });
     }
     socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
-      console.log("update tile Position!");
       Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
     });
   }, []);
