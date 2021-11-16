@@ -1,5 +1,28 @@
 import { roomURL } from './roomInfo';
 
+type Config = {
+  originHeight: number;
+  originWidth: number;
+  imgWidth: number;
+  imgHeight: number;
+  tilesPerRow: number;
+  tilesPerColumn: number;
+  tileWidth: number;
+  tileMarginWidth: number;
+  level: number;
+  imgName: String;
+  groupTiles: any[];
+  shapes: any[];
+  tiles: any[];
+  complete: boolean;
+  groupTileIndex: number;
+  project: any;
+  puzzleImage: any;
+  tileIndexes: any[];
+};
+
+const roomPuzzleInfo = new Map<string, Config>();
+
 const updateRoomURL = (io: any) => {
   const cb = (io: any) => {
     let mySet = new Set<string>();
@@ -35,6 +58,12 @@ export default (io: any) => {
     });
     socket.on('leaveRoom', (res: { roomID: string }) => {
       socket.leave(res.roomID);
+    });
+    socket.on('setPuzzleConfig', (res: { roomID: string; config: Config }) => {
+      roomPuzzleInfo.set(res.roomID, res.config);
+    });
+    socket.on('getPuzzleConfig', (res: { roomID: string }) => {
+      socket.emit('getPuzzleConfig', roomPuzzleInfo.get(res.roomID));
     });
     socket.on('disconnect', () => {});
   });

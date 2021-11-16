@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Switch } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import GlobalStyles from "@styles/global-style";
 
@@ -21,8 +21,7 @@ const App = () => {
         <PrivateRoute path="/main" component={Main} exact />
         <PrivateRoute path="/register" component={RegPuz} exact={true} />
         <PrivateRoute path="/mypage" component={Mypage} exact={true} />
-        <PublicRoute
-          restricted={false}
+        <Route
           path="/room/:puzzleID/:roomID"
           component={PlayPuzzle}
           exact={true}
