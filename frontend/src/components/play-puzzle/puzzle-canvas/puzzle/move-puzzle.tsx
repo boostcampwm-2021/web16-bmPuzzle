@@ -1,5 +1,5 @@
 import { Point } from "paper/dist/paper-core";
-
+import { Howl } from "howler";
 import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
 import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
 
@@ -189,6 +189,7 @@ const fitTiles = (
 };
 
 const uniteTiles = (nowTile: any, preTile: any) => {
+  const es = effectSound(ES, 1);
   const substract = config.tilesPerRow * config.tilesPerColumn + 1;
   let nowIndex = nowTile.index - substract;
   let preIndex = preTile.index - substract;
@@ -283,6 +284,14 @@ const checkComplete = () => {
 
   return flag;
 };
-
+const effectSound = (src: any, volume = 1) => {
+  let sound;
+  const soundInject = (src: any) => {
+    sound = new Howl({ src });
+    sound.volume(volume);
+  };
+  soundInject(src);
+  return sound;
+};
 const MovePuzzle = { moveTile, findNearTile };
 export default MovePuzzle;
