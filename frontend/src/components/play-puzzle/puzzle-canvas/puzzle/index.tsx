@@ -20,6 +20,7 @@ type Config = {
   project: any;
   puzzleImage: any;
   tileIndexes: any[];
+  groupArr: any[];
 };
 
 let config: Config;
@@ -32,7 +33,7 @@ const settingValue = (key: string, value: any) => {
 const exportConfig = () => config;
 const move = (isFirstClient: boolean) => {
   MovePuzzle.moveTile(isFirstClient);
-  MovePuzzle.findNearTile();
+  MovePuzzle.findNearTile(isFirstClient);
 };
 
 const Puzzle = { setting, settingValue, move, exportConfig };

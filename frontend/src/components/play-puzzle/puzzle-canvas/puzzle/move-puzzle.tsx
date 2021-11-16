@@ -13,6 +13,7 @@ const constant = {
   tileMarginX: 50,
   tileMarginY: -30,
 };
+let first = true;
 
 type Config = {
   originHeight: number;
@@ -33,6 +34,7 @@ type Config = {
   project: any;
   puzzleImage: any;
   tileIndexes: any[];
+  groupArr: any[];
 };
 let config: Config;
 const initConfig = () => {
@@ -73,6 +75,7 @@ const initConfig = () => {
       tile.position = new Point(constant.orgTileLoc, constant.orgTileLoc);
       config.tiles.push(tile);
       config.groupTiles.push([tile, undefined]);
+      config.groupArr.push(undefined);
       config.tileIndexes.push(config.tileIndexes.length);
     }
   }
@@ -113,6 +116,11 @@ const initConfig = () => {
 const moveTile = (isFirstClient: boolean) => {
   config = Puzzle.exportConfig();
   if (isFirstClient) initConfig();
+  config.groupTiles.forEach((gtile, index) => {
+    if (gtile[1] === null) {
+      gtile[1] = undefined;
+    }
+  });
   config.groupTiles.forEach((gtile) => {
     gtile[0].onMouseDrag = (event: any) => {
       if (gtile[1] === undefined) {
@@ -134,12 +142,20 @@ const moveTile = (isFirstClient: boolean) => {
   });
 };
 
-const findNearTile = () => {
+const findNearTile = (isFirstClient: boolean) => {
+  first = isFirstClient;
+  config = Puzzle.exportConfig();
   const xTileCount = config.tilesPerRow;
   const yTileCount = config.tilesPerColumn;
   config.tiles.forEach((tile) => {
     tile.onMouseUp = (event: any) => {
-      const nowIndex = tile.index - (xTileCount * yTileCount + 1);
+      console.log(tile.index);
+      let nowIndex = 0;
+      if (first) {
+        nowIndex = tile.index - (xTileCount * yTileCount + 1);
+      } else {
+        nowIndex = tile.index - 1;
+      }
       let nextIndexArr = [
         nowIndex - 1,
         nowIndex + 1,
@@ -149,7 +165,6 @@ const findNearTile = () => {
       const tileArr: any[] = [];
       const tileShape: any[] = [];
       const nowShape = config.shapes[nowIndex];
-
       nextIndexArr.forEach((nextIndex, index) => {
         if (!checkUndefined(nowIndex, nextIndex, index)) {
           tileArr[index] = undefined;
@@ -277,7 +292,12 @@ const fitTiles = (
 };
 
 const uniteTiles = (nowTile: any, preTile: any) => {
-  const substract = config.tilesPerRow * config.tilesPerColumn + 1;
+  let substract = 0;
+  if (first) {
+    substract = config.tilesPerRow * config.tilesPerColumn + 1;
+  } else {
+    substract = 1;
+  }
   let nowIndex = nowTile.index - substract;
   let preIndex = preTile.index - substract;
   let nowGroup = config.groupTiles[nowIndex][1];
@@ -318,15 +338,25 @@ const groupFit = (nowGroup: number) => {
   let groupObj: any = {};
 
   config.groupTiles.forEach((tile: any) => {
+    let nowIndex = 0;
     if (tile[1] === nowGroup) {
-      const nowIndex = tile[0].index - (xTileCount * yTileCount + 1);
+      if (first) {
+        nowIndex = tile[0].index - (xTileCount * yTileCount + 1);
+      } else {
+        nowIndex = tile[0].index - 1;
+      }
       groupArr.push(tile[0]);
       groupObj[nowIndex] = tile[0];
     }
   });
 
   groupArr.forEach((tile: any) => {
-    const nowIndex = tile.index - (xTileCount * yTileCount + 1);
+    let nowIndex = 0;
+    if (first) {
+      nowIndex = tile.index - (xTileCount * yTileCount + 1);
+    } else {
+      nowIndex = tile.index - 1;
+    }
     const up: number | undefined =
       nowIndex - xTileCount < 0 ? undefined : nowIndex - xTileCount;
     const left: number | undefined =
