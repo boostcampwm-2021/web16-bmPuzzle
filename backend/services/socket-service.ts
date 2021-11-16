@@ -19,6 +19,7 @@ type Config = {
   project: any;
   puzzleImage: any;
   tileIndexes: any[];
+  groupArr: any[];
 };
 
 const roomPuzzleInfo = new Map<string, any>();

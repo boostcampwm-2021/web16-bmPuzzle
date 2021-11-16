@@ -27,6 +27,7 @@ type Config = {
   project: any;
   puzzleImage: any;
   tileIndexes: any[];
+  groupArr: any[];
 };
 
 const setConfig = (img: any, level: Levels, Paper: any) => {
@@ -63,6 +64,7 @@ const setConfig = (img: any, level: Levels, Paper: any) => {
       position: Paper.view.center,
     }),
     tileIndexes: [],
+    groupArr: [],
   };
   Puzzle.setting(config);
 };
@@ -74,16 +76,19 @@ const getConfig = (data: Config, Paper: any) => {
     source: "puzzleImage",
     position: Paper.view.center,
   });
-  config.tiles.map((tile) => {
-    //console.log(tile[1].children);
+  const tiles = config.tiles.map((tile) => {
     const p1 = new config.project.Path(tile[1].children[0][1]);
     const r1 = new config.project.Raster(tile[1].children[1][1]);
     const p2 = new config.project.Path(tile[1].children[2][1]);
     const res = new config.project.Group(p1, r1, p2);
-    console.log(res);
     return res;
   });
-  console.log(config);
+  console.log(data.shapes);
+  config.shapes = data.shapes;
+  console.log(config.shapes);
+  config.tiles = tiles;
+  config.groupTiles = tiles.map((x, i) => [x, config.groupTiles[i][1]]);
+
   return config;
 };
 
@@ -103,12 +108,10 @@ const PuzzleCanvas = (props: any) => {
       createTiles();
       config = Puzzle.exportConfig();
       Puzzle.move(isFirstClient);
-      console.log(config);
       socket.emit("setPuzzleConfig", { roomID: roomID, config: config });
     } else {
       socket.on("getPuzzleConfig", (res: Config) => {
         Puzzle.setting(getConfig(res, Paper));
-        console.log(Puzzle.exportConfig());
         Puzzle.move(isFirstClient);
       });
       socket.emit("getPuzzleConfig", { roomID: roomID });
