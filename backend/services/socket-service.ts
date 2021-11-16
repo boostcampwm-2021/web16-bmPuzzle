@@ -72,7 +72,7 @@ export default (io: any) => {
         roomID: string;
         tileIndex: number;
         tilePosition: any[];
-        tileGroup: any[];
+        tileGroup: number | null;
       }) => {
         /*
       let updatePosition = roomPuzzleInfo.get(res.roomID);

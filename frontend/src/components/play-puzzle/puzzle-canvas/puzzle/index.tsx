@@ -33,13 +33,13 @@ const settingValue = (key: string, value: any) => {
 const exportConfig = () => config;
 const move = (isFirstClient: boolean, socket: any, roomID: string) => {
   MovePuzzle.moveTile(isFirstClient, socket, roomID);
-  MovePuzzle.findNearTile(isFirstClient);
+  MovePuzzle.findNearTile(isFirstClient, socket, roomID);
 };
 
 const renderMove = (
   tileIndex: number,
   tilePosition: any[],
-  tileGroup: any[] | null
+  tileGroup: number | null
 ) => {
   MovePuzzle.moveUpdate(tileIndex, tilePosition, tileGroup);
 };

@@ -121,43 +121,52 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       gtile[1] = undefined;
     }
   });
-  config.groupTiles.forEach((gtile, idx) => {
+  config.groupTiles.forEach((gtile, gtileIdx) => {
     gtile[0].onMouseDrag = (event: any) => {
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
           gtile[0].position._x + event.delta.x,
           gtile[0].position._y + event.delta.y
         );
+        socket.emit("tilePosition", {
+          roomID: roomID,
+          tileIndex: gtileIdx,
+          tilePosition: gtile[0].position,
+          tileGroup: gtile[1],
+        });
       } else {
-        config.groupTiles.forEach((gtile_now) => {
+        config.groupTiles.forEach((gtile_now, index) => {
           if (gtile[1] === gtile_now[1]) {
             gtile_now[0].position = new Point(
               gtile_now[0].position._x + event.delta.x,
               gtile_now[0].position._y + event.delta.y
             );
+            socket.emit("tilePosition", {
+              roomID: roomID,
+              tileIndex: index,
+              tilePosition: gtile_now[0].position,
+              tileGroup: gtile_now[1],
+            });
           }
         });
       }
-      socket.emit("tilePosition", {
-        roomID: roomID,
-        tileIndex: idx,
-        tilePosition: gtile[0].position,
-        tileGroup: gtile[1],
-      });
     };
   });
 };
 const moveUpdate = (
   tileIndex: number,
   tilePosition: any[],
-  tileGroup: any[] | null
+  tileGroup: number | null
 ) => {
   config = Puzzle.exportConfig();
-  let nowIndex = tileIndex;
-  config.tiles[nowIndex].position = new Point(tilePosition[1], tilePosition[2]);
+  config.tiles[tileIndex].position = new Point(
+    tilePosition[1],
+    tilePosition[2]
+  );
+  config.groupTiles[tileIndex][1] = tileGroup;
 };
 
-const findNearTile = (isFirstClient: boolean) => {
+const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   first = isFirstClient;
   config = Puzzle.exportConfig();
   const xTileCount = config.tilesPerRow;
@@ -190,6 +199,14 @@ const findNearTile = (isFirstClient: boolean) => {
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined)
           fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
+        config.groupTiles.forEach((gtile, idx) => {
+          socket.emit("tilePosition", {
+            roomID: roomID,
+            tileIndex: idx,
+            tilePosition: gtile[0].position,
+            tileGroup: gtile[1],
+          });
+        });
       });
     };
   });
