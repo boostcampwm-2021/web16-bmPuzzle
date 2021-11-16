@@ -21,7 +21,7 @@ type Config = {
   tileIndexes: any[];
 };
 
-const roomPuzzleInfo = new Map<string, Config>();
+const roomPuzzleInfo = new Map<string, any>();
 
 const updateRoomURL = (io: any) => {
   const cb = (io: any) => {
