@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useContext, useState } from "react";
 import Paper from "paper";
 import styled from "styled-components";
-
 import { SocketContext } from "@context/socket";
 import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
 import { createTiles } from "@components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
@@ -65,16 +64,26 @@ const setConfig = (img: any, level: Levels, Paper: any) => {
     }),
     tileIndexes: [],
   };
-  return config;
+  Puzzle.setting(config);
 };
 
 const getConfig = (data: Config, Paper: any) => {
-  const config = data;
+  let config = data;
   config.project = Paper;
   config.puzzleImage = new Paper.Raster({
     source: "puzzleImage",
     position: Paper.view.center,
   });
+  config.tiles.map((tile) => {
+    //console.log(tile[1].children);
+    const p1 = new config.project.Path(tile[1].children[0][1]);
+    const r1 = new config.project.Raster(tile[1].children[1][1]);
+    const p2 = new config.project.Path(tile[1].children[2][1]);
+    const res = new config.project.Group(p1, r1, p2);
+    console.log(res);
+    return res;
+  });
+  console.log(config);
   return config;
 };
 
@@ -90,18 +99,17 @@ const PuzzleCanvas = (props: any) => {
     Paper.setup(canvas);
     let config: Config;
     if (isFirstClient) {
-      config = setConfig(puzzleImg, level, Paper);
-      Puzzle.setting(config);
+      setConfig(puzzleImg, level, Paper);
       createTiles();
       config = Puzzle.exportConfig();
+      Puzzle.move(isFirstClient);
       console.log(config);
       socket.emit("setPuzzleConfig", { roomID: roomID, config: config });
-      Puzzle.move();
     } else {
       socket.on("getPuzzleConfig", (res: Config) => {
         Puzzle.setting(getConfig(res, Paper));
-        console.log("hi", res);
-        Puzzle.move();
+        console.log(Puzzle.exportConfig());
+        Puzzle.move(isFirstClient);
       });
       socket.emit("getPuzzleConfig", { roomID: roomID });
     }

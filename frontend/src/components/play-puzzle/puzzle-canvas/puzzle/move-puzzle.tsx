@@ -1,4 +1,4 @@
-import { Size, Point } from "paper/dist/paper-core";
+import { Size, Point, settings } from "paper/dist/paper-core";
 import { Howl } from "howler";
 import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
 import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
@@ -35,90 +35,48 @@ type Config = {
   tileIndexes: any[];
 };
 let config: Config;
-const moveTile = () => {
-  config = Puzzle.exportConfig();
-  const {
-    originHeight,
-    originWidth,
-    imgWidth,
-    imgHeight,
-    tilesPerRow,
-    tilesPerColumn,
-    tileWidth,
-    tileMarginWidth,
-    level,
-    imgName,
-    groupTiles,
-    shapes,
-    tiles,
-    complete,
-    groupTileIndex,
-    project,
-    puzzleImage,
-    tileIndexes,
-  } = Puzzle.exportConfig();
-  console.log(tileIndexes);
-  const tileRatio = tileWidth / constant.percentageTotal;
-  for (let y = 0; y < tilesPerColumn; y++) {
-    for (let x = 0; x < tilesPerRow; x++) {
-      const shape = shapes[y * tilesPerRow + x];
+const initConfig = () => {
+  const tileRatio = config.tileWidth / constant.percentageTotal;
+  for (let y = 0; y < config.tilesPerColumn; y++) {
+    for (let x = 0; x < config.tilesPerRow; x++) {
+      const shape = config.shapes[y * config.tilesPerRow + x];
       const mask = getMask(
         tileRatio,
         shape.topTab,
         shape.rightTab,
         shape.bottomTab,
         shape.leftTab,
-        tileWidth,
-        project,
-        imgWidth,
-        imgHeight
+        config.tileWidth,
+        config.project,
+        config.imgWidth,
+        config.imgHeight
       );
       if (mask === undefined) continue;
       mask.opacity = constant.maskOpacity;
-      mask.strokeColor = new project.Color("#fff");
+      mask.strokeColor = new config.project.Color("#fff");
 
-      const cloneImg = puzzleImage.clone();
+      const cloneImg = config.puzzleImage.clone();
       const img = getTileRaster(
         cloneImg,
-        new Size(tileWidth, tileWidth),
-        new Point(tileWidth * x, tileWidth * y),
-        project,
-        imgWidth / originWidth + constant.imgMargin
+        new Size(config.tileWidth, config.tileWidth),
+        new Point(config.tileWidth * x, config.tileWidth * y),
+        config.imgWidth / config.originWidth + constant.imgMargin
       );
 
       const border = mask.clone();
-      border.strokeColor = new project.Color("#ddd");
+      border.strokeColor = new config.project.Color("#ddd");
       border.strokeWidth = constant.borderStrokeWidth;
 
-      const tile = new project.Group([mask, img, border]);
+      const tile = new config.project.Group([mask, img, border]);
       tile.clipped = true;
       tile.opacity = constant.tileOpacity;
       tile.position = new Point(constant.orgTileLoc, constant.orgTileLoc);
-      tiles.push(tile);
-      groupTiles.push([tile, undefined]);
-      tileIndexes.push(tileIndexes.length);
+      config.tiles.push(tile);
+      config.groupTiles.push([tile, undefined]);
+      config.tileIndexes.push(config.tileIndexes.length);
     }
   }
-  Puzzle.setting({
-    originHeight,
-    originWidth,
-    imgWidth,
-    imgHeight,
-    tilesPerRow,
-    tilesPerColumn,
-    tileWidth,
-    tileMarginWidth,
-    level,
-    imgName,
-    groupTiles,
-    shapes,
-    tiles,
-    complete,
-    groupTileIndex,
-    project,
-    puzzleImage,
-    tileIndexes,
-  });
+
   for (let y = 0; y < config.tilesPerColumn; y++) {
     for (let x = 0; x < config.tilesPerRow; x++) {
       const index1 = Math.floor(Math.random() * config.tileIndexes.length);
@@ -148,6 +106,13 @@ const moveTile = () => {
       );
     }
   }
+  Puzzle.setting({
+    ...config,
+  });
+};
+const moveTile = (isFirstClient: boolean) => {
+  config = Puzzle.exportConfig();
+  if (isFirstClient) initConfig();
   config.groupTiles.forEach((gtile) => {
     gtile[0].onMouseDrag = (event: any) => {
       if (gtile[1] === undefined) {
@@ -529,10 +494,9 @@ const getTileRaster = (
   sourceRaster: paper.Raster,
   size: paper.Size,
   offset: paper.Point,
-  project: any,
   scaleValue: number
 ) => {
-  const targetRaster = new project.Raster("empty");
+  const targetRaster = new config.project.Raster("empty");
   targetRaster.scale(scaleValue);
   targetRaster.position = new Point(-offset.x, -offset.y);
 
