@@ -1,4 +1,3 @@
-import { createTiles } from "@components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
 import MovePuzzle from "@components/play-puzzle/puzzle-canvas/puzzle/move-puzzle";
 type Config = {
   originHeight: number;
@@ -18,6 +17,7 @@ type Config = {
   groupTileIndex: number;
   project: any;
   puzzleImage: any;
+  tileIndexes: any[];
 };
 
 let config: Config;
@@ -25,11 +25,10 @@ const setting = (conf: Config) => {
   config = { ...conf };
 };
 const exportConfig = () => config;
-const run = () => {
-  createTiles();
+const move = () => {
   MovePuzzle.moveTile();
   MovePuzzle.findNearTile();
 };
 
-const Puzzle = { setting, run, exportConfig };
+const Puzzle = { setting, move, exportConfig };
 export default Puzzle;

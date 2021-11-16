@@ -3,6 +3,17 @@ import { Point } from "paper/dist/paper-core";
 import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
 import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
 
+const constant = {
+  percentageTotal: 100.0,
+  imgMargin: 0.1,
+  borderStrokeWidth: 5,
+  tileOpacity: 1,
+  maskOpacity: 0.25,
+  orgTileLoc: 100,
+  tileMarginX: 50,
+  tileMarginY: -30,
+};
+
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -21,10 +32,43 @@ type Config = {
   groupTileIndex: number;
   project: any;
   puzzleImage: any;
+  tileIndexes: any[];
 };
 let config: Config;
 const moveTile = () => {
   config = Puzzle.exportConfig();
+  console.log(config);
+  //if(isFirstClient) randomPlace();
+  for (let y = 0; y < config.tilesPerColumn; y++) {
+    for (let x = 0; x < config.tilesPerRow; x++) {
+      const index1 = Math.floor(Math.random() * config.tileIndexes.length);
+      const index2 = config.tileIndexes[index1];
+      console.log(`${index1}, ${index2}`);
+      const tile = config.tiles[index2];
+      config.tileIndexes.splice(index1, 1);
+
+      const position = new Point(
+        config.project.view.center.x -
+          config.tileWidth +
+          config.tileWidth * (x * 2 + (y % 2)) -
+          config.imgWidth,
+        config.project.view.center.y -
+          config.tileWidth / 2 +
+          config.tileWidth * y -
+          config.imgHeight / 2
+      );
+
+      const cellPosition = new Point(
+        Math.round(position.x / config.tileWidth) + 1,
+        Math.round(position.y / config.tileWidth) + 1
+      );
+
+      tile.position = new Point(
+        cellPosition.x * config.tileWidth + constant.tileMarginX,
+        cellPosition.y * config.tileWidth + constant.tileMarginY
+      );
+    }
+  }
   config.groupTiles.forEach((gtile) => {
     gtile[0].onMouseDrag = (event: any) => {
       if (gtile[1] === undefined) {

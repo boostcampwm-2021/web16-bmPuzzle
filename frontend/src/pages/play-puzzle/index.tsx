@@ -88,6 +88,7 @@ const PlayPuzzle = (props: any) => {
               puzzleImg={imgRef}
               level={puzzleInfo.level}
               isFirstClient={isFirstClient}
+              roomID={roomID}
             />
           )}
         </SocketContext.Provider>
