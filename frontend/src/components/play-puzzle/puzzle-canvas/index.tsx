@@ -1,11 +1,34 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useContext, useState } from "react";
 import Paper from "paper";
-import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
 import styled from "styled-components";
+
+import { SocketContext } from "@context/socket";
+import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
+import { createTiles } from "@components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
 
 type LevelSizeType = { 1: number; 2: number; 3: number };
 type Levels = 1 | 2 | 3;
 const levelSize: LevelSizeType = { 1: 300, 2: 500, 3: 800 };
+type Config = {
+  originHeight: number;
+  originWidth: number;
+  imgWidth: number;
+  imgHeight: number;
+  tilesPerRow: number;
+  tilesPerColumn: number;
+  tileWidth: number;
+  tileMarginWidth: number;
+  level: number;
+  imgName: String;
+  groupTiles: any[];
+  shapes: any[];
+  tiles: any[];
+  complete: boolean;
+  groupTileIndex: number;
+  project: any;
+  puzzleImage: any;
+  tileIndexes: any[];
+};
 
 const setConfig = (img: any, level: Levels, Paper: any) => {
   const originHeight = img.current.height;
@@ -19,7 +42,7 @@ const setConfig = (img: any, level: Levels, Paper: any) => {
       ? levelSize[level]
       : Math.round((levelSize[level] * originHeight) / originWidth / 100) * 100;
   const tileWidth = 100;
-  return {
+  const config: Config = {
     originHeight: originHeight,
     originWidth: originWidth,
     imgWidth: imgWidth,
@@ -40,21 +63,49 @@ const setConfig = (img: any, level: Levels, Paper: any) => {
       source: "puzzleImage",
       position: Paper.view.center,
     }),
+    tileIndexes: [],
   };
+  return config;
+};
+
+const getConfig = (data: Config, Paper: any) => {
+  const config = data;
+  config.project = Paper;
+  config.puzzleImage = new Paper.Raster({
+    source: "puzzleImage",
+    position: Paper.view.center,
+  });
+  return config;
 };
 
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
-  const level = props.level;
+  const { puzzleImg, level, isFirstClient, roomID } = props;
+  const socket = useContext(SocketContext);
+  console.log(`isFirstClient? ${isFirstClient}`);
 
   useEffect(() => {
     const canvas: any = canvasRef.current;
     if (canvas === null) return;
     Paper.setup(canvas);
-    const config = setConfig(props.puzzleImg, level, Paper);
-    Puzzle.setting(config);
-    Puzzle.run();
-  }, [level, props.puzzleImg]);
+    let config: Config;
+    if (isFirstClient) {
+      config = setConfig(puzzleImg, level, Paper);
+      Puzzle.setting(config);
+      createTiles();
+      config = Puzzle.exportConfig();
+      console.log(config);
+      socket.emit("setPuzzleConfig", { roomID: roomID, config: config });
+      Puzzle.move();
+    } else {
+      socket.on("getPuzzleConfig", (res: Config) => {
+        Puzzle.setting(getConfig(res, Paper));
+        console.log("hi", res);
+        Puzzle.move();
+      });
+      socket.emit("getPuzzleConfig", { roomID: roomID });
+    }
+  }, [puzzleImg]);
 
   return (
     <Wrapper>

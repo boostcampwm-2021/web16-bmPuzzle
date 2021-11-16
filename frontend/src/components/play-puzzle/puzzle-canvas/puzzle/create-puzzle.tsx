@@ -31,10 +31,10 @@ export const createTiles = () => {
     groupTileIndex,
     project,
     puzzleImage,
+    tileIndexes,
   } = Puzzle.exportConfig();
-
+  console.log(tileIndexes);
   const tileRatio = tileWidth / constant.percentageTotal;
-  const tileIndexes = [];
   getRandomShapes(shapes, tilesPerRow, tilesPerColumn);
   for (let y = 0; y < tilesPerColumn; y++) {
     for (let x = 0; x < tilesPerRow; x++) {
@@ -76,33 +76,6 @@ export const createTiles = () => {
       tileIndexes.push(tileIndexes.length);
     }
   }
-
-  for (let y = 0; y < tilesPerColumn; y++) {
-    for (let x = 0; x < tilesPerRow; x++) {
-      const index1 = Math.floor(Math.random() * tileIndexes.length);
-      const index2 = tileIndexes[index1];
-      const tile = tiles[index2];
-      tileIndexes.splice(index1, 1);
-
-      const position = new Point(
-        project.view.center.x -
-          tileWidth +
-          tileWidth * (x * 2 + (y % 2)) -
-          imgWidth,
-        project.view.center.y - tileWidth / 2 + tileWidth * y - imgHeight / 2
-      );
-
-      const cellPosition = new Point(
-        Math.round(position.x / tileWidth) + 1,
-        Math.round(position.y / tileWidth) + 1
-      );
-
-      tile.position = new Point(
-        cellPosition.x * tileWidth + constant.tileMarginX,
-        cellPosition.y * tileWidth + constant.tileMarginY
-      );
-    }
-  }
   Puzzle.setting({
     originHeight,
     originWidth,
@@ -121,6 +94,7 @@ export const createTiles = () => {
     groupTileIndex,
     project,
     puzzleImage,
+    tileIndexes,
   });
 };
 

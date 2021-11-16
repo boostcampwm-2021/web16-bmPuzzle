@@ -2,6 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import GlobalStyles from "@styles/global-style";
+
+import PublicRoute from "@components/router/public-route/index";
+import PrivateRoute from "@components/router/private-route/index";
 import Login from "@pages/login";
 import RegPuz from "@pages/register-puzzle/index";
 import Main from "@pages/main/index";
@@ -14,16 +17,16 @@ const App = () => {
     <Router>
       <GlobalStyles />
       <Switch>
-        <Route path="/" component={Login} exact={true} />
-        <Route path="/register" component={RegPuz} exact={true} />
-        <Route path="/main" component={Main} exact={true} />
-        <Route path="/mypage" component={Mypage} exact={true} />
+        <PublicRoute restricted={true} path="/" component={Login} exact />
+        <PrivateRoute path="/main" component={Main} exact />
+        <PrivateRoute path="/register" component={RegPuz} exact={true} />
+        <PrivateRoute path="/mypage" component={Mypage} exact={true} />
         <Route
           path="/room/:puzzleID/:roomID"
           component={PlayPuzzle}
           exact={true}
         />
-        <Route path="/ranking" component={Ranking} exact={true} />
+        <PrivateRoute path="/ranking" component={Ranking} exact={true} />
       </Switch>
     </Router>
   );
