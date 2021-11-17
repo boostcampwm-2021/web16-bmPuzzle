@@ -13,6 +13,7 @@ const PlayPuzzle = (props: any) => {
   const [hintShow, setHintShow] = useState(false);
   const [puzzleInfo, setPuzzleInfo] = useState<any>({ img: "", level: 1 });
   const [isFirstClient, setFirstClient] = useState(false);
+  const [time, setTime] = useState({ minutes: 0, seconds: 0 });
   const imgRef = useRef(null);
 
   const onLoad = () => setLoaded(true);
@@ -61,6 +62,8 @@ const PlayPuzzle = (props: any) => {
         isPlayRoom={true}
         chatVisible={chatVisible}
         setChatVisible={setChatVisible}
+        time={time}
+        setTime={setTime}
       />
       <Body>
         <SocketContext.Provider value={socket}>
@@ -89,6 +92,8 @@ const PlayPuzzle = (props: any) => {
               level={puzzleInfo.level}
               isFirstClient={isFirstClient}
               roomID={roomID}
+              puzzleID={puzzleID}
+              time={time}
             />
           )}
         </SocketContext.Provider>

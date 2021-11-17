@@ -93,9 +93,9 @@ const getConfig = (data: Config, Paper: any) => {
 
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
-  const { puzzleImg, level, isFirstClient, roomID } = props;
+  const { puzzleImg, level, isFirstClient, roomID, puzzleID, time } = props;
+  const [complete, setComplete] = useState(false);
   const socket = useContext(SocketContext);
-
   useEffect(() => {
     const canvas: any = canvasRef.current;
     if (canvas === null) return;
@@ -120,9 +120,37 @@ const PuzzleCanvas = (props: any) => {
     });
   }, []);
 
+  const postDonePuzzle = async () => {
+    const timeToNum = time.seconds + time.minutes * 60;
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/complete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userID: window.sessionStorage.getItem("id"),
+        puzzleID: Number(puzzleID),
+        time: timeToNum,
+      }),
+    });
+
+    if (!response.ok) {
+      throw Error;
+    }
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const complete = Puzzle.completePuzzle();
+    setComplete(complete);
+    if (complete) {
+      window.alert("완성");
+      postDonePuzzle();
+    }
+  }, [time.minutes, time.seconds]);
   return (
     <Wrapper>
       <Canvas ref={canvasRef} id="canvas" />
+      <p>{time.seconds}</p>
     </Wrapper>
   );
 };

@@ -13,7 +13,14 @@ const constant = {
   tileMarginX: 50,
   tileMarginY: -30,
 };
+
+type Timer = {
+  minutes: number;
+  seconds: number;
+};
+
 let first = true;
+let time: Timer = { minutes: 0, seconds: 0 };
 
 type Config = {
   originHeight: number;
@@ -37,6 +44,7 @@ type Config = {
   groupArr: any[];
 };
 let config: Config;
+
 const initConfig = () => {
   const tileRatio = config.tileWidth / constant.percentageTotal;
   for (let y = 0; y < config.tilesPerColumn; y++) {
@@ -355,11 +363,6 @@ const uniteTiles = (nowTile: any, preTile: any) => {
   }
 
   groupFit(config.groupTiles[preIndex][1]);
-
-  if (checkComplete() && !config.complete) {
-    window.alert("퍼즐 완성");
-    config.complete = true;
-  }
 };
 
 const groupFit = (nowGroup: number) => {
@@ -429,7 +432,11 @@ const checkComplete = () => {
       }
     });
   }
-
+  if (flag && !config.complete) {
+    config.complete = true;
+  } else {
+    flag = false;
+  }
   return flag;
 };
 const effectSound = (src: any, volume = 1) => {
@@ -564,5 +571,5 @@ const getTileRaster = (
   return targetRaster;
 };
 
-const MovePuzzle = { moveTile, findNearTile, moveUpdate };
+const MovePuzzle = { moveTile, findNearTile, moveUpdate, checkComplete };
 export default MovePuzzle;

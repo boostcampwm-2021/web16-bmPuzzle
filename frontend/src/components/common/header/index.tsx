@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import logo_image from "@images/puzzle-icon.png";
@@ -8,8 +8,8 @@ import chat_image from "@images/chat-icon.png";
 
 const Header = (props: any) => {
   const history = useHistory();
-  const { isPlayRoom, chatVisible, setChatVisible } = props;
-  const [time, setTime] = useState({ minutes: 0, seconds: 0 });
+  const ref: any = useRef(null);
+  const { isPlayRoom, chatVisible, setChatVisible, time, setTime } = props;
   const handleMove = (e: any) => {
     const url =
       e.target.id === "" ? e.target.closest("button").id : e.target.id;
@@ -19,16 +19,19 @@ const Header = (props: any) => {
     const toggle = chatVisible === true ? false : true;
     setChatVisible(toggle);
   };
+
   useEffect(() => {
-    const countTime = setInterval(() => {
-      if (time.seconds >= 60) {
-        setTime({ minutes: time.minutes + 1, seconds: 0 });
-      } else {
-        setTime({ minutes: time.minutes, seconds: time.seconds + 1 });
-      }
-    }, 1000);
-    return () => clearInterval(countTime);
-  }, [time]);
+    if (time !== undefined) {
+      const countTime = setInterval(() => {
+        if (time.seconds >= 60) {
+          setTime({ minutes: time.minutes + 1, seconds: 0 });
+        } else {
+          setTime({ minutes: time.minutes, seconds: time.seconds + 1 });
+        }
+      }, 1000);
+      return () => clearInterval(countTime);
+    }
+  }, [setTime, time]);
 
   return (
     <Wrapper>
@@ -46,7 +49,7 @@ const Header = (props: any) => {
       </HomeBtnWrapper>
       <RightIconWrapper>
         {isPlayRoom && (
-          <TimerWrapper>
+          <TimerWrapper ref={ref}>
             {time.minutes}:
             {time.seconds < 10 ? `0${time.seconds}` : time.seconds}
           </TimerWrapper>
