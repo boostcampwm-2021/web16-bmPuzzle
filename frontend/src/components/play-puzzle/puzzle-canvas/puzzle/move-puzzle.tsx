@@ -14,7 +14,7 @@ const constant = {
   tileMarginY: -30,
 };
 let first = true;
-
+let select_idx: any;
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -122,6 +122,10 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
     }
   });
   config.groupTiles.forEach((gtile, gtileIdx) => {
+    gtile[0].onMouseDown = (event: any) => {
+      select_idx = gtile[0].index;
+      gtile[0]._parent.addChild(gtile[0]);
+    };
     gtile[0].onMouseDrag = (event: any) => {
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
@@ -173,6 +177,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.tiles.forEach((tile) => {
     tile.onMouseUp = (event: any) => {
+      tile._parent.insertChild(select_idx, tile);
       let nowIndex = 0;
       if (first) {
         nowIndex = tile.index - (xTileCount * yTileCount + 1);
@@ -197,8 +202,11 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
         }
       });
       tileArr.forEach((nowIndexTile, index) => {
-        if (nowIndexTile !== undefined)
+        if (nowIndexTile !== undefined) {
+          //console.log(tile.position);
+          //console.log(nowIndexTile.position);
           fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
+        }
         config.groupTiles.forEach((gtile, idx) => {
           socket.emit("tilePosition", {
             roomID: roomID,
