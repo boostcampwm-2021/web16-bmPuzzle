@@ -20,7 +20,7 @@ type Config = {
   project: any;
   puzzleImage: any;
   tileIndexes: any[];
-  groupArr: any[];,
+  groupArr: any[];
   selectIndex: number;
 };
 
