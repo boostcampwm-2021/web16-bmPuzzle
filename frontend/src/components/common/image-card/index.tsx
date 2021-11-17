@@ -29,6 +29,20 @@ const ImageCard = (props: any) => {
     history.push(await validURL(imgID));
   };
 
+  const download = async (image: any) => {
+    const fileName = image.split("/static/")[1];
+    fetch(image)
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+      });
+  };
+
   const convertTime = (time: number) => {
     let hour, minute, second;
     if (time >= 3600) {
@@ -63,8 +77,8 @@ const ImageCard = (props: any) => {
         return (
           <Wrapper
             key={idx}
-            onClick={() => {
-              moveHandler(ele.id);
+            onClick={(e) => {
+              props.my ? download(ele.image) : moveHandler(ele.id);
             }}
           >
             <Img src={ele.image} />
