@@ -128,11 +128,13 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
           gtile[0].position._x + event.delta.x,
           gtile[0].position._y + event.delta.y
         );
+        console.log(gtile[0].position);
         socket.emit("tilePosition", {
           roomID: roomID,
           tileIndex: gtileIdx,
           tilePosition: gtile[0].position,
           tileGroup: gtile[1],
+          changedData: [event.delta.x, event.delta.y],
         });
       } else {
         config.groupTiles.forEach((gtile_now, index) => {
@@ -141,11 +143,13 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
               gtile_now[0].position._x + event.delta.x,
               gtile_now[0].position._y + event.delta.y
             );
+            console.log(gtile_now[0].position);
             socket.emit("tilePosition", {
               roomID: roomID,
               tileIndex: index,
               tilePosition: gtile_now[0].position,
               tileGroup: gtile_now[1],
+              changedData: [event.delta.x, event.delta.y],
             });
           }
         });
@@ -172,45 +176,73 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const xTileCount = config.tilesPerRow;
   const yTileCount = config.tilesPerColumn;
   config.tiles.forEach((tile) => {
-    tile.onMouseUp = (event: any) => {
-      let nowIndex = 0;
-      if (first) {
-        nowIndex = tile.index - (xTileCount * yTileCount + 1);
-      } else {
-        nowIndex = tile.index - 1;
-      }
-      let nextIndexArr = [
-        nowIndex - 1,
-        nowIndex + 1,
-        nowIndex - xTileCount,
-        nowIndex + xTileCount,
-      ];
-      const tileArr: any[] = [];
-      const tileShape: any[] = [];
-      const nowShape = config.shapes[nowIndex];
-      nextIndexArr.forEach((nextIndex, index) => {
-        if (!checkUndefined(nowIndex, nextIndex, index)) {
-          tileArr[index] = undefined;
-        } else {
-          tileArr[index] = config.tiles[nextIndex];
-          tileShape[index] = config.shapes[nextIndex];
-        }
-      });
-      tileArr.forEach((nowIndexTile, index) => {
-        if (nowIndexTile !== undefined)
-          fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
-        config.groupTiles.forEach((gtile, idx) => {
-          socket.emit("tilePosition", {
-            roomID: roomID,
-            tileIndex: idx,
-            tilePosition: gtile[0].position,
-            tileGroup: gtile[1],
-          });
-        });
-      });
+    tile.onMouseUp = () => {
+      findNearTileEvent(tile, socket, xTileCount, yTileCount, roomID);
     };
   });
 };
+
+const findNearTileEvent = (
+  tile: any,
+  socket: any,
+  xTileCount: number,
+  yTileCount: number,
+  roomID: string
+) => {
+  let nowIndex = 0;
+  if (first) {
+    nowIndex = tile.index - (xTileCount * yTileCount + 1);
+  } else {
+    nowIndex = tile.index - 1;
+  }
+  let nextIndexArr = [
+    nowIndex - 1,
+    nowIndex + 1,
+    nowIndex - xTileCount,
+    nowIndex + xTileCount,
+  ];
+  const tileArr: any[] = [];
+  const tileShape: any[] = [];
+  const nowShape = config.shapes[nowIndex];
+  nextIndexArr.forEach((nextIndex, index) => {
+    if (!checkUndefined(nowIndex, nextIndex, index)) {
+      tileArr[index] = undefined;
+    } else {
+      tileArr[index] = config.tiles[nextIndex];
+      tileShape[index] = config.shapes[nextIndex];
+    }
+  });
+  if (tileArr.length === 0) return;
+  //fitEffect();
+  tileArr.forEach((nowIndexTile, index) => {
+    if (nowIndexTile !== undefined)
+      fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
+    config.groupTiles.forEach((gtile, idx) => {
+      socket.emit("tilePosition", {
+        roomID: roomID,
+        tileIndex: idx,
+        tilePosition: gtile[0].position,
+        tileGroup: gtile[1],
+      });
+    });
+  });
+};
+
+// const fitEffect = () => {
+//   let audio = new Audio("bgm.mp3");
+//   audio.loop = false;
+//   audio.crossOrigin = "anonymous";
+//   audio.volume = 1;
+//   audio.load();
+//   audio
+//     .play()
+//     .then(() => {
+//       // Audio is playing.
+//     })
+//     .catch((error: any) => {
+//       console.log(error);
+//     });
+// };
 
 const checkUndefined = (
   nowIndex: number,

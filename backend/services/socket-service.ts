@@ -73,12 +73,29 @@ export default (io: any) => {
         tileIndex: number;
         tilePosition: any[];
         tileGroup: number | null;
+        changedData: any[];
       }) => {
-        /*
-      let updatePosition = roomPuzzleInfo.get(res.roomID);
-      updatePosition.groupTiles = res.groupTiles;
-      roomPuzzleInfo.set(res.roomID, updatePosition);
-      */
+        let config = roomPuzzleInfo.get(res.roomID);
+        console.log(res.changedData);
+        if (res.changedData !== undefined) {
+          config.tiles[res.tileIndex][1].children.forEach((child: any) => {
+            if (child[0] === 'Path') {
+              child[1].segments.forEach((c: any, idx: number) => {
+                if (idx === 0) {
+                  c[0] += res.changedData[0];
+                  c[1] += res.changedData[1];
+                } else {
+                  c[0][0] += res.changedData[0];
+                  c[0][1] += res.changedData[1];
+                }
+              });
+            } else {
+              child[1].matrix[4] += res.changedData[0];
+              child[1].matrix[5] += res.changedData[1];
+            }
+          });
+        }
+        config.groupTiles[res.tileIndex][1] = res.tileGroup;
         socket.broadcast.to(res.roomID).emit('tilePosition', res);
       },
     );
