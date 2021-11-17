@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { SocketContext } from "@context/socket";
 import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
 import { createTiles } from "@components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
+import { puzzleCompleteAudio } from "@components/play-puzzle/puzzle-canvas/puzzle/audio-effect";
+import { completeAnimation } from "@components/play-puzzle/puzzle-canvas/puzzle/complete-animation";
 
 type LevelSizeType = { 1: number; 2: number; 3: number };
 type Levels = 1 | 2 | 3;
@@ -28,6 +30,7 @@ type Config = {
   puzzleImage: any;
   tileIndexes: any[];
   groupArr: any[];
+  selectIndex: number;
 };
 
 const setConfig = (img: any, level: Levels, Paper: any) => {
@@ -65,6 +68,7 @@ const setConfig = (img: any, level: Levels, Paper: any) => {
     }),
     tileIndexes: [],
     groupArr: [],
+    selectIndex: -1,
   };
   Puzzle.setting(config);
 };
@@ -143,7 +147,8 @@ const PuzzleCanvas = (props: any) => {
     const complete = Puzzle.completePuzzle();
     setComplete(complete);
     if (complete) {
-      window.alert("완성");
+      completeAnimation(Puzzle.exportConfig().project);
+      puzzleCompleteAudio();
       postDonePuzzle();
     }
   }, [time.minutes, time.seconds]);
