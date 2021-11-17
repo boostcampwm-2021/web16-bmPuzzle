@@ -1,3 +1,4 @@
+import { stringify } from 'querystring';
 import { roomURL } from './roomInfo';
 
 type Config = {
@@ -23,6 +24,7 @@ type Config = {
 };
 
 const roomPuzzleInfo = new Map<string, any>();
+const roomSelectedTiles = new Map<string, any>();
 
 const updateRoomURL = (io: any) => {
   const cb = (io: any) => {
@@ -33,7 +35,11 @@ const updateRoomURL = (io: any) => {
       const numClients = clients ? clients.size : 0;
       if (numClients === 0) mySet.add(url);
     });
-    mySet.forEach(url => roomURL.delete(url));
+    mySet.forEach(url => {
+      roomURL.delete(url);
+      roomPuzzleInfo.delete(url);
+      roomSelectedTiles.delete(url);
+    });
   };
   setInterval(cb, 60000, io);
 };
@@ -98,6 +104,34 @@ export default (io: any) => {
         socket.broadcast.to(res.roomID).emit('tilePosition', res);
       },
     );
+    socket.on(
+      'getSelectedTiles',
+      (res: { roomID: string; selectIdx: number }) => {
+        console.log('req: getSelectedTiles!--------------------------');
+        console.log(roomSelectedTiles.get(res.roomID));
+        socket.emit('getSelectedTiles', {
+          res: roomSelectedTiles.get(res.roomID),
+          selectIdx: res.selectIdx,
+        });
+      },
+    );
+    socket.on('updateSelectedTiles', (res: { roomID: string; idx: number }) => {
+      console.log('req: updateSelectedTiles!--------------------------');
+      let resArr = roomSelectedTiles.get(res.roomID);
+      console.log(roomSelectedTiles.get(res.roomID));
+      if (resArr === undefined) resArr = [res.idx];
+      else if (!resArr.includes(res.idx)) resArr.push(res.idx);
+      roomSelectedTiles.set(res.roomID, resArr);
+      console.log(roomSelectedTiles.get(res.roomID));
+    });
+    socket.on('deleteSelectedTiles', (res: { roomID: string; idx: number }) => {
+      console.log('req: deleteSelectedTiles!--------------------------');
+      let resArr = roomSelectedTiles.get(res.roomID);
+      const didx = resArr.findIndex((element: number) => element === res.idx);
+      resArr.splice(didx, 1);
+      roomSelectedTiles.set(res.roomID, resArr);
+      console.log(roomSelectedTiles.get(res.roomID));
+    });
     socket.on('disconnect', () => {});
   });
 };

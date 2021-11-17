@@ -20,7 +20,7 @@ type Timer = {
 };
 
 let first = true;
-let select_idx: any;
+let selectIdx: number;
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -42,6 +42,9 @@ type Config = {
   tileIndexes: any[];
   groupArr: any[];
 };
+
+let selectedTiles: any[] = [];
+let canDrag = true;
 let config: Config;
 
 const initConfig = () => {
@@ -128,14 +131,37 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       gtile[1] = undefined;
     }
   });
+  socket.on(
+    "getSelectedTiles",
+    ({ res, selectIdx }: { res: any; selectIdx: any }) => {
+      let canSelected = true;
+      canSelected = res === undefined ? true : res === null ? true : false;
+      if (!canSelected) {
+        canSelected = !res.includes(selectIdx);
+      }
+      if (canSelected) {
+        socket.emit("updateSelectedTiles", {
+          roomID: roomID,
+          idx: selectIdx,
+        });
+        if (res !== null && res !== undefined) selectedTiles = [...res];
+        canDrag = true;
+      }
+    }
+  );
   config.groupTiles.forEach((gtile, gtileIdx) => {
     gtile[0].onMouseDown = (event: any) => {
-      select_idx = gtile[0].index;
-      console.log(select_idx);
+      selectIdx = gtile[0].index;
       gtile[0]._parent.addChild(gtile[0]);
+      canDrag = false;
+      socket.emit("getSelectedTiles", { roomID: roomID, selectIdx: selectIdx });
     };
     gtile[0].onMouseDrag = (event: any) => {
-      console.log(gtile[0]);
+      console.log(selectedTiles);
+      if (selectedTiles.includes(selectIdx) || !canDrag) {
+        console.log(`나는 ${selectIdx}다 움직이지마~`);
+        return;
+      }
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
           gtile[0].position._x + event.delta.x,
@@ -188,7 +214,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.tiles.forEach((tile) => {
     tile.onMouseUp = (event: any) => {
-      tile._parent.insertChild(select_idx, tile);
+      tile._parent.insertChild(selectIdx, tile);
       let nowIndex = 0;
       if (first) {
         nowIndex = tile.index - (xTileCount * yTileCount + 1);
@@ -215,6 +241,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined) {
           fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
+          fitEffect();
         }
         config.groupTiles.forEach((gtile, idx) => {
           socket.emit("tilePosition", {
@@ -225,7 +252,10 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
           });
         });
       });
-      fitEffect();
+      socket.emit("deleteSelectedTiles", {
+        roomID: roomID,
+        idx: selectIdx,
+      });
     };
   });
 };
