@@ -20,8 +20,7 @@ type Timer = {
 };
 
 let first = true;
-let time: Timer = { minutes: 0, seconds: 0 };
-
+let select_idx: any;
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -130,7 +129,13 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
     }
   });
   config.groupTiles.forEach((gtile, gtileIdx) => {
+    gtile[0].onMouseDown = (event: any) => {
+      select_idx = gtile[0].index;
+      console.log(select_idx);
+      gtile[0]._parent.addChild(gtile[0]);
+    };
     gtile[0].onMouseDrag = (event: any) => {
+      console.log(gtile[0]);
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
           gtile[0].position._x + event.delta.x,
@@ -141,6 +146,7 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
           tileIndex: gtileIdx,
           tilePosition: gtile[0].position,
           tileGroup: gtile[1],
+          changedData: [event.delta.x, event.delta.y],
         });
       } else {
         config.groupTiles.forEach((gtile_now, index) => {
@@ -154,6 +160,7 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
               tileIndex: index,
               tilePosition: gtile_now[0].position,
               tileGroup: gtile_now[1],
+              changedData: [event.delta.x, event.delta.y],
             });
           }
         });
@@ -181,6 +188,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.tiles.forEach((tile) => {
     tile.onMouseUp = (event: any) => {
+      tile._parent.insertChild(select_idx, tile);
       let nowIndex = 0;
       if (first) {
         nowIndex = tile.index - (xTileCount * yTileCount + 1);
@@ -205,8 +213,9 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
         }
       });
       tileArr.forEach((nowIndexTile, index) => {
-        if (nowIndexTile !== undefined)
+        if (nowIndexTile !== undefined) {
           fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
+        }
         config.groupTiles.forEach((gtile, idx) => {
           socket.emit("tilePosition", {
             roomID: roomID,
@@ -216,8 +225,22 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
           });
         });
       });
+      fitEffect();
     };
   });
+};
+
+const fitEffect = () => {
+  let audio = new Audio("/audios/fit-tile.mp3");
+  audio.loop = false;
+  audio.crossOrigin = "anonymous";
+  audio.volume = 0.5;
+  audio.load();
+  try {
+    audio.play();
+  } catch (err: any) {
+    console.log(err);
+  }
 };
 
 const checkUndefined = (
