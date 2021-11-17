@@ -218,25 +218,23 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
           });
         });
       });
+      fitEffect();
     };
   });
 };
 
-// const fitEffect = () => {
-//   let audio = new Audio("bgm.mp3");
-//   audio.loop = false;
-//   audio.crossOrigin = "anonymous";
-//   audio.volume = 1;
-//   audio.load();
-//   audio
-//     .play()
-//     .then(() => {
-//       // Audio is playing.
-//     })
-//     .catch((error: any) => {
-//       console.log(error);
-//     });
-// };
+const fitEffect = () => {
+  let audio = new Audio("/audios/fit-tile.mp3");
+  audio.loop = false;
+  audio.crossOrigin = "anonymous";
+  audio.volume = 0.5;
+  audio.load();
+  try {
+    audio.play();
+  } catch (err: any) {
+    console.log(err);
+  }
+};
 
 const checkUndefined = (
   nowIndex: number,

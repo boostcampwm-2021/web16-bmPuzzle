@@ -76,7 +76,6 @@ export default (io: any) => {
         changedData: any[];
       }) => {
         let config = roomPuzzleInfo.get(res.roomID);
-        console.log(res.changedData);
         if (res.changedData !== undefined) {
           config.tiles[res.tileIndex][1].children.forEach((child: any) => {
             if (child[0] === 'Path') {
