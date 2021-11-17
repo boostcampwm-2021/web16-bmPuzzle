@@ -21,6 +21,7 @@ type Timer = {
 
 let first = true;
 let selectIdx: number;
+
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -41,6 +42,7 @@ type Config = {
   puzzleImage: any;
   tileIndexes: any[];
   groupArr: any[];
+  selectIndex: number;
 };
 
 let selectedTiles: any[] = [];
@@ -200,11 +202,13 @@ const moveUpdate = (
   tileGroup: number | null
 ) => {
   config = Puzzle.exportConfig();
-  config.tiles[tileIndex].position = new Point(
-    tilePosition[1],
-    tilePosition[2]
-  );
-  config.groupTiles[tileIndex][1] = tileGroup;
+  if (config !== undefined) {
+    config.tiles[tileIndex].position = new Point(
+      tilePosition[1],
+      tilePosition[2]
+    );
+    config.groupTiles[tileIndex][1] = tileGroup;
+  }
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
@@ -474,16 +478,19 @@ const groupFit = (nowGroup: number) => {
 
 const checkComplete = () => {
   let flag = false;
-  const firstGroup = config.groupTiles[0][1];
+  config = Puzzle.exportConfig();
+  if (config !== undefined) {
+    const firstGroup = config.groupTiles[0][1];
 
-  if (firstGroup !== undefined) {
-    flag = true;
-    config.groupTiles.forEach((gtile) => {
-      const nowGroup = gtile[1];
-      if (nowGroup !== firstGroup) {
-        flag = false;
-      }
-    });
+    if (firstGroup !== undefined) {
+      flag = true;
+      config.groupTiles.forEach((gtile) => {
+        const nowGroup = gtile[1];
+        if (nowGroup !== firstGroup) {
+          flag = false;
+        }
+      });
+    }
   }
   if (flag && !config.complete) {
     config.complete = true;
