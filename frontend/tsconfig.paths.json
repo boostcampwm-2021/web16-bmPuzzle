@@ -6,7 +6,10 @@
       "@components/*": ["./src/components/*"],
       "@styles/*": ["./src/styles/*"],
       "@images/*": ["./src/images/*"],
-      "@pages/*": ["./src/pages/*"]
+      "@audios/*": ["./src/audios/*"],
+      "@pages/*": ["./src/pages/*"],
+      "@context/*": ["./src/context/*"],
+      "@js/*": ["./src/js/*"]
     }
   }
 }

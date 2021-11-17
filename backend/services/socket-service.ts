@@ -1,18 +1,54 @@
-import { clear } from 'console';
+import { stringify } from 'querystring';
 import { roomURL } from './roomInfo';
+
+type Config = {
+  originHeight: number;
+  originWidth: number;
+  imgWidth: number;
+  imgHeight: number;
+  tilesPerRow: number;
+  tilesPerColumn: number;
+  tileWidth: number;
+  tileMarginWidth: number;
+  level: number;
+  imgName: String;
+  groupTiles: any[];
+  shapes: any[];
+  tiles: any[];
+  complete: boolean;
+  groupTileIndex: number;
+  project: any;
+  puzzleImage: any;
+  tileIndexes: any[];
+  groupArr: any[];
+};
+
+const roomPuzzleInfo = new Map<string, any>();
+const roomSelectedTiles = new Map<string, any>();
 
 const updateRoomURL = (io: any) => {
   const cb = (io: any) => {
     let mySet = new Set<string>();
     const _roomURL = Array.from(roomURL);
-    for (let item of _roomURL) {
-      const clients = io.sockets.adapter.rooms.get(item);
+    _roomURL.forEach(url => {
+      const clients = io.sockets.adapter.rooms.get(url);
       const numClients = clients ? clients.size : 0;
-      if (numClients === 0) mySet.add(item);
-    }
-    mySet.forEach(item => roomURL.delete(item));
+      if (numClients === 0) mySet.add(url);
+    });
+    mySet.forEach(url => {
+      roomURL.delete(url);
+      roomPuzzleInfo.delete(url);
+      roomSelectedTiles.delete(url);
+    });
   };
   setInterval(cb, 60000, io);
+};
+
+const checkFirstClient = (io: any, roomID: string) => {
+  const clients = io.sockets.adapter.rooms.get(roomID);
+  const numClients = clients ? clients.size : 0;
+  if (numClients === 1) return true;
+  return false;
 };
 
 export default (io: any) => {
@@ -21,12 +57,80 @@ export default (io: any) => {
     updateRoomURL(io);
     socket.on('joinRoom', (res: { roomID: string }) => {
       socket.join(res.roomID);
+      const isFirstClient = checkFirstClient(io, res.roomID);
+      if (isFirstClient) socket.emit('isFirstUser');
     });
     socket.on('message', (res: { roomID: string; message: object }) => {
       io.sockets.in(res.roomID).emit('message', res.message);
     });
     socket.on('leaveRoom', (res: { roomID: string }) => {
       socket.leave(res.roomID);
+    });
+    socket.on('setPuzzleConfig', (res: { roomID: string; config: Config }) => {
+      roomPuzzleInfo.set(res.roomID, res.config);
+    });
+    socket.on('getPuzzleConfig', (res: { roomID: string }) => {
+      socket.emit('getPuzzleConfig', roomPuzzleInfo.get(res.roomID));
+    });
+    socket.on(
+      'tilePosition',
+      (res: {
+        roomID: string;
+        tileIndex: number;
+        tilePosition: any[];
+        tileGroup: number | null;
+        changedData: any[];
+      }) => {
+        let config = roomPuzzleInfo.get(res.roomID);
+        if (res.changedData !== undefined) {
+          config.tiles[res.tileIndex][1].children.forEach((child: any) => {
+            if (child[0] === 'Path') {
+              child[1].segments.forEach((c: any, idx: number) => {
+                if (idx === 0) {
+                  c[0] += res.changedData[0];
+                  c[1] += res.changedData[1];
+                } else {
+                  c[0][0] += res.changedData[0];
+                  c[0][1] += res.changedData[1];
+                }
+              });
+            } else {
+              child[1].matrix[4] += res.changedData[0];
+              child[1].matrix[5] += res.changedData[1];
+            }
+          });
+        }
+        config.groupTiles[res.tileIndex][1] = res.tileGroup;
+        socket.broadcast.to(res.roomID).emit('tilePosition', res);
+      },
+    );
+    socket.on(
+      'getSelectedTiles',
+      (res: { roomID: string; selectIdx: number }) => {
+        console.log('req: getSelectedTiles!--------------------------');
+        console.log(roomSelectedTiles.get(res.roomID));
+        socket.emit('getSelectedTiles', {
+          res: roomSelectedTiles.get(res.roomID),
+          selectIdx: res.selectIdx,
+        });
+      },
+    );
+    socket.on('updateSelectedTiles', (res: { roomID: string; idx: number }) => {
+      console.log('req: updateSelectedTiles!--------------------------');
+      let resArr = roomSelectedTiles.get(res.roomID);
+      console.log(roomSelectedTiles.get(res.roomID));
+      if (resArr === undefined) resArr = [res.idx];
+      else if (!resArr.includes(res.idx)) resArr.push(res.idx);
+      roomSelectedTiles.set(res.roomID, resArr);
+      console.log(roomSelectedTiles.get(res.roomID));
+    });
+    socket.on('deleteSelectedTiles', (res: { roomID: string; idx: number }) => {
+      console.log('req: deleteSelectedTiles!--------------------------');
+      let resArr = roomSelectedTiles.get(res.roomID);
+      const didx = resArr.findIndex((element: number) => element === res.idx);
+      resArr.splice(didx, 1);
+      roomSelectedTiles.set(res.roomID, resArr);
+      console.log(roomSelectedTiles.get(res.roomID));
     });
     socket.on('disconnect', () => {});
   });

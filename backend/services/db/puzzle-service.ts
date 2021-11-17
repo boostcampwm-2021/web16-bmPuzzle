@@ -53,9 +53,16 @@ const updateVisitTime = async (id: number) => {
     return { code: 500, msg: err };
   }
 };
-const donePuzzle = async (puzzle_id: any) => {
-  const puzzle = await db.Puzzle.findAll({ where: { id: puzzle_id } });
-  return puzzle;
+const donePuzzle = async (puzzle: any, time: any) => {
+  const puzzleInfo = await Promise.all(
+    puzzle.map((ele: any) => db.Puzzle.findAll({ where: { id: ele } })),
+  );
+  const data = puzzleInfo.map((ele: any, idx: number) => {
+    Object.assign(ele[0].dataValues, { time: time[idx] });
+    return ele[0].dataValues;
+  });
+
+  return data;
 };
 export default {
   createPuzzle,

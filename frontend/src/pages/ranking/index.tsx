@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
 
-import Header from "@components/header/index";
-import RankingTable from "@components/ranking-table/index";
-import TitleBar from "@components/title-bar/index";
+import Header from "@components/common/header/index";
+import RankingTable from "@components/ranking/ranking-table/index";
+import TitleBar from "@components/common/title-bar/index";
 
 import RankingIcon from "@images/ranking-black-icon.png";
 
@@ -30,7 +30,6 @@ const Ranking = () => {
       const myRank = rankInfo.rank.filter(
         (ele: any) => ele.id === window.sessionStorage.id
       )[0];
-      console.log(myRank);
       setRankInfo(rankInfo.rank);
       setUserRank(myRank);
     }

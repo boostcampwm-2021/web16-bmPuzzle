@@ -1,5 +1,5 @@
 import searchService from '@services/db/puzzle-service';
-import myDone from '@services/db/done-puzzle-service';
+import donePuzzleService from '@services/db/done-puzzle-service';
 import path from 'path';
 import fs from 'fs';
 
@@ -11,7 +11,7 @@ const search = (req: any, res: any, next: any) => {
 const filter = async (req: any, res: any, next: any) => {
   const id = req.body.id;
   const upload = await searchService.myPuzzle(id);
-  const done = await myDone(id);
+  const done = await donePuzzleService.myDone(id);
 
   const uploadInfo: any = [];
   const uploadName: any = [];
@@ -19,14 +19,13 @@ const filter = async (req: any, res: any, next: any) => {
   const doneName: any = [];
   let idx: number = 0;
   upload.data.forEach((file: any) => {
-    if(req.files.includes(file.image)){
+    if (req.files.includes(file.image)) {
       uploadInfo.push(file);
       uploadName.push(file.image);
     }
   });
   done.data.forEach((file: any) => {
-    if(req.files.includes(file.image)){
-      file.dataValues=Object.assign(file.dataValues, { time: done.time[idx++] });
+    if (req.files.includes(file.image)) {
       doneInfo.push(file);
       doneName.push(file.image);
     }
@@ -40,4 +39,4 @@ const filter = async (req: any, res: any, next: any) => {
     doneTime: done.time,
   });
 };
-export default {search,filter};
+export default { search, filter };
