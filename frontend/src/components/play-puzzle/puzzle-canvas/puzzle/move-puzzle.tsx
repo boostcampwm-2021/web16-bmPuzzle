@@ -14,7 +14,7 @@ const constant = {
   tileMarginY: -30,
 };
 let first = true;
-
+let select_idx: any;
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -122,6 +122,10 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
     }
   });
   config.groupTiles.forEach((gtile, gtileIdx) => {
+    gtile[0].onMouseDown = (event: any) => {
+      select_idx = gtile[0].index;
+      gtile[0]._parent.addChild(gtile[0]);
+    };
     gtile[0].onMouseDrag = (event: any) => {
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
