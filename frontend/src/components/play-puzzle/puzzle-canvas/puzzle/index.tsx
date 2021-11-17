@@ -23,6 +23,11 @@ type Config = {
   groupArr: any[];
 };
 
+type Timer = {
+  minutes: number;
+  seconds: number;
+};
+
 let config: Config;
 const setting = (conf: Config) => {
   config = { ...conf };
@@ -43,6 +48,16 @@ const renderMove = (
 ) => {
   MovePuzzle.moveUpdate(tileIndex, tilePosition, tileGroup);
 };
+const completePuzzle = () => {
+  return MovePuzzle.checkComplete();
+};
 
-const Puzzle = { setting, settingValue, move, exportConfig, renderMove };
+const Puzzle = {
+  setting,
+  settingValue,
+  move,
+  exportConfig,
+  renderMove,
+  completePuzzle,
+};
 export default Puzzle;
