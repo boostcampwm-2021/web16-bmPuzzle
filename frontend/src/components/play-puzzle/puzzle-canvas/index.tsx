@@ -155,7 +155,6 @@ const PuzzleCanvas = (props: any) => {
   return (
     <Wrapper>
       <Canvas ref={canvasRef} id="canvas" />
-      <p>{time.seconds}</p>
     </Wrapper>
   );
 };
