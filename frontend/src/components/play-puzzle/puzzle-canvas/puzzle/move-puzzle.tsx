@@ -15,6 +15,7 @@ const constant = {
 };
 let first = true;
 let select_idx: any;
+let selected_tile: any;
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -35,6 +36,7 @@ type Config = {
   puzzleImage: any;
   tileIndexes: any[];
   groupArr: any[];
+  selectIndex: number;
 };
 let config: Config;
 const initConfig = () => {
@@ -124,11 +126,11 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config.groupTiles.forEach((gtile, gtileIdx) => {
     gtile[0].onMouseDown = (event: any) => {
       select_idx = gtile[0].index;
-      console.log(select_idx);
       gtile[0]._parent.addChild(gtile[0]);
+      config = Puzzle.exportConfig();
+      console.log(config.selectIndex);
     };
     gtile[0].onMouseDrag = (event: any) => {
-      console.log(gtile[0]);
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
           gtile[0].position._x + event.delta.x,
@@ -167,11 +169,13 @@ const moveUpdate = (
   tileGroup: number | null
 ) => {
   config = Puzzle.exportConfig();
-  config.tiles[tileIndex].position = new Point(
-    tilePosition[1],
-    tilePosition[2]
-  );
-  config.groupTiles[tileIndex][1] = tileGroup;
+  if (config !== undefined) {
+    config.tiles[tileIndex].position = new Point(
+      tilePosition[1],
+      tilePosition[2]
+    );
+    config.groupTiles[tileIndex][1] = tileGroup;
+  }
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
@@ -444,16 +448,19 @@ const groupFit = (nowGroup: number) => {
 
 const checkComplete = () => {
   let flag = false;
-  const firstGroup = config.groupTiles[0][1];
+  config = Puzzle.exportConfig();
+  if (config !== undefined) {
+    const firstGroup = config.groupTiles[0][1];
 
-  if (firstGroup !== undefined) {
-    flag = true;
-    config.groupTiles.forEach((gtile) => {
-      const nowGroup = gtile[1];
-      if (nowGroup !== firstGroup) {
-        flag = false;
-      }
-    });
+    if (firstGroup !== undefined) {
+      flag = true;
+      config.groupTiles.forEach((gtile) => {
+        const nowGroup = gtile[1];
+        if (nowGroup !== firstGroup) {
+          flag = false;
+        }
+      });
+    }
   }
 
   return flag;
