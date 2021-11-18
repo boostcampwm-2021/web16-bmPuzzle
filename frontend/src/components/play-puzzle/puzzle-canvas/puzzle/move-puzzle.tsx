@@ -119,7 +119,6 @@ const initConfig = () => {
 const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config = Puzzle.exportConfig();
   if (isFirstClient) initConfig();
-  console.log(config.groupTileIndex);
   config.groupTiles.forEach((gtile, index) => {
     if (gtile[1] === null) {
       gtile[1] = undefined;
@@ -220,7 +219,6 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined) {
           fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
-          console.log(config.groupTileIndex);
           config.groupTiles.forEach((gtile, idx) => {
             socket.emit("tilePosition", {
               roomID: roomID,
@@ -300,10 +298,6 @@ const fitTiles = (
   const range = config.tileWidth;
   let uniteFlag = false;
 
-  if (!flag) {
-    console.log("전", nowTile.position);
-    console.log("yChange", yChange);
-  }
   switch (dir) {
     case 0:
       if (
@@ -362,7 +356,6 @@ const fitTiles = (
       }
       break;
   }
-  if (!flag) console.log("후", nowTile.position);
   if (flag && uniteFlag) {
     uniteTiles(nowTile, preTile);
     fitEffect();
