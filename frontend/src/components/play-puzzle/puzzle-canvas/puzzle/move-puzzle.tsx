@@ -294,6 +294,10 @@ const fitTiles = (
   const range = config.tileWidth;
   let uniteFlag = false;
 
+  if (!flag) {
+    console.log("전", nowTile.position);
+    console.log("yChange", yChange);
+  }
   switch (dir) {
     case 0:
       if (
@@ -352,6 +356,7 @@ const fitTiles = (
       }
       break;
   }
+  if (!flag) console.log("후", nowTile.position);
   if (flag && uniteFlag) {
     uniteTiles(nowTile, preTile);
     fitEffect();
@@ -412,6 +417,9 @@ const groupFit = (nowGroup: number) => {
     }
   });
 
+  if (groupArr.length === 1) return;
+  console.log("hihihihihihi", groupObj);
+
   groupArr.forEach((tile: any) => {
     let nowIndex = 0;
     if (first) {
@@ -430,18 +438,37 @@ const groupFit = (nowGroup: number) => {
         ? undefined
         : nowIndex + xTileCount;
 
-    let directionArr = [left, right, up, down];
+    let directionArr = [
+      [up, 2],
+      [left, 0],
+      [right, 1],
+      [down, 3],
+    ];
 
+    let index = 0;
     directionArr.forEach((dir, idx) => {
-      if (dir !== undefined && groupObj[dir] !== undefined) {
+      if (
+        dir[0] !== undefined &&
+        dir[1] !== undefined &&
+        groupObj[dir[0]] !== undefined &&
+        index < 1
+      ) {
+        console.log(
+          "tile",
+          "현재",
+          tile.index - (xTileCount * yTileCount + 1),
+          "기준",
+          dir[0]
+        );
         fitTiles(
           tile,
-          groupObj[dir],
+          groupObj[dir[0]],
           config.shapes[nowIndex],
-          config.shapes[dir],
-          idx,
+          config.shapes[dir[0]],
+          dir[1],
           false
         );
+        index++;
       }
     });
   });
