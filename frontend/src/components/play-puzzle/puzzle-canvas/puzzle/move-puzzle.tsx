@@ -222,7 +222,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
               tileIndex: idx,
               tilePosition: gtile[0].position,
               tileGroup: gtile[1],
-              changedData: config,
+              changedData: gtile[0],
             });
           });
         }

@@ -26,7 +26,6 @@ type Config = {
 };
 
 const roomPuzzleInfo = new Map<string, any>();
-const roomSelectedTiles = new Map<string, any>();
 
 const updateRoomURL = (io: any) => {
   const cb = (io: any) => {
@@ -40,7 +39,6 @@ const updateRoomURL = (io: any) => {
     mySet.forEach(url => {
       roomURL.delete(url);
       roomPuzzleInfo.delete(url);
-      roomSelectedTiles.delete(url);
     });
   };
   setInterval(cb, 60000, io);
@@ -81,11 +79,10 @@ export default (io: any) => {
         tileIndex: number;
         tilePosition: any[];
         tileGroup: number | null;
-        changedData: any[];
-        eventName: string;
+        changedData: any;
       }) => {
         let config = roomPuzzleInfo.get(res.roomID);
-        if (Array.isArray(res.changedData)) {
+        if (typeof res.changedData[0] === 'number') {
           config.tiles[res.tileIndex][1].children.forEach((child: any) => {
             if (child[0] === 'Path') {
               child[1].segments.forEach((c: any, idx: number) => {
@@ -102,9 +99,16 @@ export default (io: any) => {
               child[1].matrix[5] += res.changedData[1];
             }
           });
-          config.groupTiles[res.tileIndex][1] = res.tileGroup;
-        } else roomPuzzleInfo.set(res.roomID, res.changedData);
-        socket.broadcast.to(res.roomID).emit('tilePosition', res);
+        } else {
+          config.tiles[res.tileIndex] = res.changedData;
+          roomPuzzleInfo.set(res.roomID, config);
+        }
+        config.groupTiles[res.tileIndex][1] = res.tileGroup;
+        socket.broadcast.to(res.roomID).emit('tilePosition', {
+          tileIndex: res.tileIndex,
+          tilePosition: res.tilePosition,
+          tileGroup: res.tileGroup,
+        });
       },
     );
     socket.on('disconnect', () => {});
