@@ -64,6 +64,8 @@ const PlayPuzzle = (props: any) => {
         setChatVisible={setChatVisible}
         time={time}
         setTime={setTime}
+        isFirstClient={isFirstClient}
+        roomID={roomID}
       />
       <Body>
         <SocketContext.Provider value={socket}>
