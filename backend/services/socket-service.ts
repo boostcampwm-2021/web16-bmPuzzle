@@ -1,3 +1,4 @@
+import { eventNames } from 'process';
 import { stringify } from 'querystring';
 import { roomURL } from './roomInfo';
 
@@ -82,6 +83,7 @@ export default (io: any) => {
         tilePosition: any[];
         tileGroup: number | null;
         changedData: any[];
+        eventName: string;
       }) => {
         let config = roomPuzzleInfo.get(res.roomID);
         if (res.changedData !== undefined) {

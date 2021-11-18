@@ -13,15 +13,8 @@ const constant = {
   tileMarginX: 50,
   tileMarginY: -30,
 };
-
-type Timer = {
-  minutes: number;
-  seconds: number;
-};
-
 let first = true;
-let selectIdx: number;
-
+let select_idx: any;
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -44,7 +37,6 @@ type Config = {
   groupArr: any[];
   selectIndex: number;
 };
-
 let selectedTiles: any[] = [];
 let canDrag = true;
 let config: Config;
@@ -133,37 +125,12 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       gtile[1] = undefined;
     }
   });
-  socket.on(
-    "getSelectedTiles",
-    ({ res, selectIdx }: { res: any; selectIdx: any }) => {
-      let canSelected = true;
-      canSelected = res === undefined ? true : res === null ? true : false;
-      if (!canSelected) {
-        canSelected = !res.includes(selectIdx);
-      }
-      if (canSelected) {
-        socket.emit("updateSelectedTiles", {
-          roomID: roomID,
-          idx: selectIdx,
-        });
-        if (res !== null && res !== undefined) selectedTiles = [...res];
-        canDrag = true;
-      }
-    }
-  );
   config.groupTiles.forEach((gtile, gtileIdx) => {
     gtile[0].onMouseDown = (event: any) => {
-      selectIdx = gtile[0].index;
+      select_idx = gtile[0].index;
       gtile[0]._parent.addChild(gtile[0]);
-      canDrag = false;
-      socket.emit("getSelectedTiles", { roomID: roomID, selectIdx: selectIdx });
     };
     gtile[0].onMouseDrag = (event: any) => {
-      console.log(selectedTiles);
-      if (selectedTiles.includes(selectIdx) || !canDrag) {
-        console.log(`나는 ${selectIdx}다 움직이지마~`);
-        return;
-      }
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
           gtile[0].position._x + event.delta.x,
@@ -202,13 +169,11 @@ const moveUpdate = (
   tileGroup: number | null
 ) => {
   config = Puzzle.exportConfig();
-  if (config !== undefined) {
-    config.tiles[tileIndex].position = new Point(
-      tilePosition[1],
-      tilePosition[2]
-    );
-    config.groupTiles[tileIndex][1] = tileGroup;
-  }
+  config.tiles[tileIndex].position = new Point(
+    tilePosition[1],
+    tilePosition[2]
+  );
+  config.groupTiles[tileIndex][1] = tileGroup;
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
@@ -218,7 +183,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.tiles.forEach((tile) => {
     tile.onMouseUp = (event: any) => {
-      tile._parent.insertChild(selectIdx, tile);
+      tile._parent.insertChild(select_idx, tile);
       let nowIndex = 0;
       if (first) {
         nowIndex = tile.index - (xTileCount * yTileCount + 1);
@@ -245,20 +210,16 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined) {
           fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
-          fitEffect();
-        }
-        config.groupTiles.forEach((gtile, idx) => {
-          socket.emit("tilePosition", {
-            roomID: roomID,
-            tileIndex: idx,
-            tilePosition: gtile[0].position,
-            tileGroup: gtile[1],
+          config.groupTiles.forEach((gtile, idx) => {
+            socket.emit("tilePosition", {
+              roomID: roomID,
+              tileIndex: idx,
+              tilePosition: gtile[0].position,
+              tileGroup: gtile[1],
+              eventName: "up",
+            });
           });
-        });
-      });
-      socket.emit("deleteSelectedTiles", {
-        roomID: roomID,
-        idx: selectIdx,
+        }
       });
     };
   });
@@ -326,6 +287,7 @@ const fitTiles = (
 
   const range = config.tileWidth;
   let uniteFlag = false;
+
   switch (dir) {
     case 0:
       if (
@@ -384,7 +346,10 @@ const fitTiles = (
       }
       break;
   }
-  if (flag && uniteFlag) uniteTiles(nowTile, preTile);
+  if (flag && uniteFlag) {
+    uniteTiles(nowTile, preTile);
+    fitEffect();
+  }
 };
 
 const uniteTiles = (nowTile: any, preTile: any) => {
@@ -498,15 +463,6 @@ const checkComplete = () => {
     flag = false;
   }
   return flag;
-};
-const effectSound = (src: any, volume = 1) => {
-  let sound;
-  const soundInject = (src: any) => {
-    sound = new Howl({ src });
-    sound.volume(volume);
-  };
-  soundInject(src);
-  return sound;
 };
 const getMask = (
   tileRatio: number,
