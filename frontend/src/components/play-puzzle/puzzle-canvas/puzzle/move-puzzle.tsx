@@ -37,9 +37,8 @@ type Config = {
   groupArr: any[];
   selectIndex: number;
 };
-let selectedTiles: any[] = [];
-let canDrag = true;
 let config: Config;
+let mouseFlag = 2; //mouseUp된 상태
 
 const initConfig = () => {
   const tileRatio = config.tileWidth / constant.percentageTotal;
@@ -127,10 +126,14 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   });
   config.groupTiles.forEach((gtile, gtileIdx) => {
     gtile[0].onMouseDown = (event: any) => {
+      if (mouseFlag !== 2) return;
+      mouseFlag = 0;
       select_idx = gtile[0].index;
       gtile[0]._parent.addChild(gtile[0]);
     };
     gtile[0].onMouseDrag = (event: any) => {
+      if (mouseFlag === 2) return;
+      mouseFlag = 1;
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
           gtile[0].position._x + event.delta.x,
@@ -183,6 +186,9 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.tiles.forEach((tile) => {
     tile.onMouseUp = (event: any) => {
+      console.log("mouseUP");
+      if (mouseFlag !== 1) return;
+      mouseFlag = 2;
       tile._parent.insertChild(select_idx, tile);
       let nowIndex = 0;
       if (first) {
@@ -216,7 +222,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
               tileIndex: idx,
               tilePosition: gtile[0].position,
               tileGroup: gtile[1],
-              eventName: "up",
+              changedData: config,
             });
           });
         }
