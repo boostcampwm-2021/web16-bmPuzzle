@@ -26,6 +26,7 @@ type Config = {
 
 const roomPuzzleInfo = new Map<string, any>();
 const roomSelectedTiles = new Map<string, any>();
+const timer = new Map<string, any>();
 
 const updateRoomURL = (io: any) => {
   const cb = (io: any) => {
@@ -132,6 +133,21 @@ export default (io: any) => {
       resArr.splice(didx, 1);
       roomSelectedTiles.set(res.roomID, resArr);
       console.log(roomSelectedTiles.get(res.roomID));
+    });
+    socket.on('setTimer', (res: { roomID: string; timer: number }) => {
+      timer.set(res.roomID, res.timer);
+    });
+    socket.on('getTimer', (res: { roomID: string; timer: number }) => {
+      const sub = res.timer - timer.get(res.roomID);
+      const tmp = {
+        minutes: Math.round(sub / 60),
+        seconds: Math.round(sub % 60),
+      };
+      socket.emit('getTimer', tmp);
+    });
+
+    socket.on('deleteRoom', (res: { roomID: string }) => {
+      timer.delete(res.roomID);
     });
     socket.on('disconnect', () => {});
   });

@@ -97,7 +97,8 @@ const getConfig = (data: Config, Paper: any) => {
 
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
-  const { puzzleImg, level, isFirstClient, roomID, puzzleID, time } = props;
+  const { puzzleImg, level, isFirstClient, roomID, puzzleID } = props;
+  let time = props.time;
   const [complete, setComplete] = useState(false);
   const socket = useContext(SocketContext);
   useEffect(() => {
@@ -150,6 +151,8 @@ const PuzzleCanvas = (props: any) => {
       completeAnimation(Puzzle.exportConfig().project);
       puzzleCompleteAudio();
       postDonePuzzle();
+      socket.emit("deleteRoom", { roomID: roomID });
+      time = undefined;
     }
   }, [time.minutes, time.seconds]);
   return (

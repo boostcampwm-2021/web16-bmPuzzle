@@ -1,15 +1,26 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import logo_image from "@images/puzzle-icon.png";
 import ranking_image from "@images/ranking-icon.png";
 import account_image from "@images/account-icon.png";
 import chat_image from "@images/chat-icon.png";
+import { SocketContext, socket } from "@src/context/socket";
 
 const Header = (props: any) => {
   const history = useHistory();
   const ref: any = useRef(null);
-  const { isPlayRoom, chatVisible, setChatVisible, time, setTime } = props;
+  let idx = 0;
+  let {
+    isPlayRoom,
+    chatVisible,
+    setChatVisible,
+    time,
+    setTime,
+    isFirstClient,
+    roomID,
+  } = props;
+  const socket = useContext(SocketContext);
   const handleMove = (e: any) => {
     const url =
       e.target.id === "" ? e.target.closest("button").id : e.target.id;
@@ -19,6 +30,33 @@ const Header = (props: any) => {
     const toggle = chatVisible === true ? false : true;
     setChatVisible(toggle);
   };
+
+  const getNow = () => {
+    const today = new Date();
+    const hours = today.getHours() * 3600; // 시
+    const minutes = today.getMinutes() * 60; // 분
+    const seconds = today.getSeconds() + hours + minutes;
+    return seconds;
+  };
+
+  useEffect(() => {
+    if (time !== undefined) {
+      if (isFirstClient) {
+        socket.emit("setTimer", { roomID: roomID, timer: getNow() });
+      }
+    }
+  }, [isFirstClient]);
+
+  useEffect(() => {
+    if (time !== undefined && !isFirstClient) {
+      socket.on("getTimer", (res: any) => {
+        if (res !== null && res.minutes !== null) {
+          time = res;
+        }
+      });
+      socket.emit("getTimer", { roomID: roomID, timer: getNow() });
+    }
+  }, []);
 
   useEffect(() => {
     if (time !== undefined) {
@@ -31,7 +69,7 @@ const Header = (props: any) => {
       }, 1000);
       return () => clearInterval(countTime);
     }
-  }, [setTime, time]);
+  }, [time, setTime]);
 
   return (
     <Wrapper>
