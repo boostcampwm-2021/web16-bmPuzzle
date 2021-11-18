@@ -142,7 +142,6 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
           tilePosition: gtile[0].position,
           tileGroup: gtile[1],
           changedData: [event.delta.x, event.delta.y],
-          eventName: "drag",
         });
       } else {
         config.groupTiles.forEach((gtile_now, index) => {
@@ -157,7 +156,6 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
               tilePosition: gtile_now[0].position,
               tileGroup: gtile_now[1],
               changedData: [event.delta.x, event.delta.y],
-              eventName: "drag",
             });
           }
         });

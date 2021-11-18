@@ -84,7 +84,6 @@ export default (io: any) => {
         changedData: any[];
         eventName: string;
       }) => {
-        console.log(res.eventName);
         let config = roomPuzzleInfo.get(res.roomID);
         if (res.changedData !== undefined) {
           config.tiles[res.tileIndex][1].children.forEach((child: any) => {
