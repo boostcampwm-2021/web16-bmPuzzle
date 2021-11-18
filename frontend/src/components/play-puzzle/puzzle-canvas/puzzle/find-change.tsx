@@ -48,7 +48,13 @@ const findYChange = (_nowShape: any, _preShape: any) => {
     if (nT === 0) yChange = 5 * nB;
     else if (nB === 0) yChange = 5 * pT;
     else if (pT === nB) yChange = 5 * pT;
-    else yChange = sum * -5;
+    else {
+      if (Math.abs(sum) === 1) {
+        yChange = sum * -5;
+      } else {
+        yChange = (sum * -5) / 2;
+      }
+    }
   }
   return yChange;
 };
