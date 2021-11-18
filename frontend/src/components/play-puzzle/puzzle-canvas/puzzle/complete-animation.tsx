@@ -51,18 +51,18 @@ const completeAnimation = (project: any) => {
     instance.rotation = Math.random() * 180;
     confettiItems.push({
       item: instance,
-      directionX: (Math.random() - 0.5) * 3,
-      directionY: (Math.random() - 0.5) * 3,
+      directionX: (Math.random() - 0.5) * 20,
+      directionY: (Math.random() - 0.5) * 20,
     });
   }
   confettiItems.forEach(({ item, directionX, directionY }) => {
-    item.onFrame = () => {
+    item.onFrame = (event: any) => {
       item.position.x += directionX;
       item.position.y += directionY;
     };
   });
   project.view.onFrame = () => {
-    completeLetter.fillColor.hue += 0.5;
+    completeLetter.fillColor.hue += 1;
   };
 };
 
