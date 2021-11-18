@@ -21,6 +21,7 @@ type Config = {
   puzzleImage: any;
   tileIndexes: any[];
   groupArr: any[];
+  selectIndex: number;
 };
 
 let config: Config;

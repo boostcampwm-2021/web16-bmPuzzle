@@ -28,6 +28,7 @@ type Config = {
   puzzleImage: any;
   tileIndexes: any[];
   groupArr: any[];
+  selectIndex: number;
 };
 
 const setConfig = (img: any, level: Levels, Paper: any) => {
@@ -65,6 +66,7 @@ const setConfig = (img: any, level: Levels, Paper: any) => {
     }),
     tileIndexes: [],
     groupArr: [],
+    selectIndex: -1,
   };
   Puzzle.setting(config);
 };
