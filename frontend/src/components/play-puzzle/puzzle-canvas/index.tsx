@@ -25,7 +25,7 @@ type Config = {
   shapes: any[];
   tiles: any[];
   complete: boolean;
-  groupTileIndex: number;
+  groupTileIndex: number | null;
   project: any;
   puzzleImage: any;
   tileIndexes: any[];
@@ -120,9 +120,12 @@ const PuzzleCanvas = (props: any) => {
       });
       socket.emit("getPuzzleConfig", { roomID: roomID });
     }
-    socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
-      Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
-    });
+    socket.on(
+      "tilePosition",
+      ({ tileIndex, tilePosition, tileGroup, groupTileIndex }) => {
+        Puzzle.renderMove(tileIndex, tilePosition, tileGroup, groupTileIndex);
+      }
+    );
   }, []);
 
   const postDonePuzzle = async () => {

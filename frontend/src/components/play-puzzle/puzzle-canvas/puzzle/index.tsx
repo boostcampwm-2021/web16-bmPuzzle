@@ -16,7 +16,7 @@ type Config = {
   shapes: any[];
   tiles: any[];
   complete: boolean;
-  groupTileIndex: number;
+  groupTileIndex: number | null;
   project: any;
   puzzleImage: any;
   tileIndexes: any[];
@@ -45,9 +45,10 @@ const move = (isFirstClient: boolean, socket: any, roomID: string) => {
 const renderMove = (
   tileIndex: number,
   tilePosition: any[],
-  tileGroup: number | null
+  tileGroup: number | null,
+  groupTileIndex: number | null
 ) => {
-  MovePuzzle.moveUpdate(tileIndex, tilePosition, tileGroup);
+  MovePuzzle.moveUpdate(tileIndex, tilePosition, tileGroup, groupTileIndex);
 };
 const completePuzzle = () => {
   return MovePuzzle.checkComplete();

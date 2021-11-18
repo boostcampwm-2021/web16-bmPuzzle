@@ -80,6 +80,7 @@ export default (io: any) => {
         tilePosition: any[];
         tileGroup: number | null;
         changedData: any;
+        groupTileIndex: number;
       }) => {
         let config = roomPuzzleInfo.get(res.roomID);
         if (typeof res.changedData[0] === 'number') {
@@ -108,6 +109,7 @@ export default (io: any) => {
           tileIndex: res.tileIndex,
           tilePosition: res.tilePosition,
           tileGroup: res.tileGroup,
+          groupTileIndex: ++res.groupTileIndex,
         });
       },
     );
