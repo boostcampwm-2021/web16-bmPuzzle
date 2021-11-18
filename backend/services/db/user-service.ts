@@ -28,4 +28,13 @@ const getCompleteData = async () => {
   return userInfo;
 };
 
-export default { postData, updateUploadData, getCompleteData };
+const addComplete = async (userID: string) => {
+  const response = await db.User.increment(
+    { complete: +1 },
+    { where: { id: userID } },
+  );
+  if (response == null) return { code: 500, msg: 'not update user complete' };
+  return { code: 200, msg: 'update user complete' };
+};
+
+export default { postData, updateUploadData, getCompleteData, addComplete };

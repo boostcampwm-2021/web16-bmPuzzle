@@ -13,8 +13,15 @@ const constant = {
   tileMarginX: 50,
   tileMarginY: -30,
 };
+
+type Timer = {
+  minutes: number;
+  seconds: number;
+};
+
 let first = true;
-let select_idx: any;
+let selectIdx: number;
+
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -35,8 +42,13 @@ type Config = {
   puzzleImage: any;
   tileIndexes: any[];
   groupArr: any[];
+  selectIndex: number;
 };
+
+let selectedTiles: any[] = [];
+let canDrag = true;
 let config: Config;
+
 const initConfig = () => {
   const tileRatio = config.tileWidth / constant.percentageTotal;
   for (let y = 0; y < config.tilesPerColumn; y++) {
@@ -121,14 +133,37 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       gtile[1] = undefined;
     }
   });
+  socket.on(
+    "getSelectedTiles",
+    ({ res, selectIdx }: { res: any; selectIdx: any }) => {
+      let canSelected = true;
+      canSelected = res === undefined ? true : res === null ? true : false;
+      if (!canSelected) {
+        canSelected = !res.includes(selectIdx);
+      }
+      if (canSelected) {
+        socket.emit("updateSelectedTiles", {
+          roomID: roomID,
+          idx: selectIdx,
+        });
+        if (res !== null && res !== undefined) selectedTiles = [...res];
+        canDrag = true;
+      }
+    }
+  );
   config.groupTiles.forEach((gtile, gtileIdx) => {
     gtile[0].onMouseDown = (event: any) => {
-      select_idx = gtile[0].index;
-      console.log(select_idx);
+      selectIdx = gtile[0].index;
       gtile[0]._parent.addChild(gtile[0]);
+      canDrag = false;
+      socket.emit("getSelectedTiles", { roomID: roomID, selectIdx: selectIdx });
     };
     gtile[0].onMouseDrag = (event: any) => {
-      console.log(gtile[0]);
+      console.log(selectedTiles);
+      if (selectedTiles.includes(selectIdx) || !canDrag) {
+        console.log(`나는 ${selectIdx}다 움직이지마~`);
+        return;
+      }
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
           gtile[0].position._x + event.delta.x,
@@ -167,11 +202,13 @@ const moveUpdate = (
   tileGroup: number | null
 ) => {
   config = Puzzle.exportConfig();
-  config.tiles[tileIndex].position = new Point(
-    tilePosition[1],
-    tilePosition[2]
-  );
-  config.groupTiles[tileIndex][1] = tileGroup;
+  if (config !== undefined) {
+    config.tiles[tileIndex].position = new Point(
+      tilePosition[1],
+      tilePosition[2]
+    );
+    config.groupTiles[tileIndex][1] = tileGroup;
+  }
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
@@ -181,7 +218,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.tiles.forEach((tile) => {
     tile.onMouseUp = (event: any) => {
-      tile._parent.insertChild(select_idx, tile);
+      tile._parent.insertChild(selectIdx, tile);
       let nowIndex = 0;
       if (first) {
         nowIndex = tile.index - (xTileCount * yTileCount + 1);
@@ -208,6 +245,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined) {
           fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
+          fitEffect();
         }
         config.groupTiles.forEach((gtile, idx) => {
           socket.emit("tilePosition", {
@@ -218,25 +256,26 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
           });
         });
       });
+      socket.emit("deleteSelectedTiles", {
+        roomID: roomID,
+        idx: selectIdx,
+      });
     };
   });
 };
 
-// const fitEffect = () => {
-//   let audio = new Audio("bgm.mp3");
-//   audio.loop = false;
-//   audio.crossOrigin = "anonymous";
-//   audio.volume = 1;
-//   audio.load();
-//   audio
-//     .play()
-//     .then(() => {
-//       // Audio is playing.
-//     })
-//     .catch((error: any) => {
-//       console.log(error);
-//     });
-// };
+const fitEffect = () => {
+  let audio = new Audio("/audios/fit-tile.mp3");
+  audio.loop = false;
+  audio.crossOrigin = "anonymous";
+  audio.volume = 0.5;
+  audio.load();
+  try {
+    audio.play();
+  } catch (err: any) {
+    console.log(err);
+  }
+};
 
 const checkUndefined = (
   nowIndex: number,
@@ -381,11 +420,6 @@ const uniteTiles = (nowTile: any, preTile: any) => {
   }
 
   groupFit(config.groupTiles[preIndex][1]);
-
-  if (checkComplete() && !config.complete) {
-    window.alert("퍼즐 완성");
-    config.complete = true;
-  }
 };
 
 const groupFit = (nowGroup: number) => {
@@ -444,18 +478,25 @@ const groupFit = (nowGroup: number) => {
 
 const checkComplete = () => {
   let flag = false;
-  const firstGroup = config.groupTiles[0][1];
+  config = Puzzle.exportConfig();
+  if (config !== undefined) {
+    const firstGroup = config.groupTiles[0][1];
 
-  if (firstGroup !== undefined) {
-    flag = true;
-    config.groupTiles.forEach((gtile) => {
-      const nowGroup = gtile[1];
-      if (nowGroup !== firstGroup) {
-        flag = false;
-      }
-    });
+    if (firstGroup !== undefined) {
+      flag = true;
+      config.groupTiles.forEach((gtile) => {
+        const nowGroup = gtile[1];
+        if (nowGroup !== firstGroup) {
+          flag = false;
+        }
+      });
+    }
   }
-
+  if (flag && !config.complete) {
+    config.complete = true;
+  } else {
+    flag = false;
+  }
   return flag;
 };
 const effectSound = (src: any, volume = 1) => {
@@ -590,5 +631,5 @@ const getTileRaster = (
   return targetRaster;
 };
 
-const MovePuzzle = { moveTile, findNearTile, moveUpdate };
+const MovePuzzle = { moveTile, findNearTile, moveUpdate, checkComplete };
 export default MovePuzzle;

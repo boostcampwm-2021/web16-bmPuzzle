@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { SocketContext } from "@context/socket";
 import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
 import { createTiles } from "@components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
+import { puzzleCompleteAudio } from "@components/play-puzzle/puzzle-canvas/puzzle/audio-effect";
+import { completeAnimation } from "@components/play-puzzle/puzzle-canvas/puzzle/complete-animation";
 
 type LevelSizeType = { 1: number; 2: number; 3: number };
 type Levels = 1 | 2 | 3;
@@ -95,9 +97,9 @@ const getConfig = (data: Config, Paper: any) => {
 
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
-  const { puzzleImg, level, isFirstClient, roomID } = props;
+  const { puzzleImg, level, isFirstClient, roomID, puzzleID, time } = props;
+  const [complete, setComplete] = useState(false);
   const socket = useContext(SocketContext);
-
   useEffect(() => {
     const canvas: any = canvasRef.current;
     if (canvas === null) return;
@@ -122,6 +124,34 @@ const PuzzleCanvas = (props: any) => {
     });
   }, []);
 
+  const postDonePuzzle = async () => {
+    const timeToNum = time.seconds + time.minutes * 60;
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/complete`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userID: window.sessionStorage.getItem("id"),
+        puzzleID: Number(puzzleID),
+        time: timeToNum,
+      }),
+    });
+
+    if (!response.ok) {
+      throw Error;
+    }
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const complete = Puzzle.completePuzzle();
+    setComplete(complete);
+    if (complete) {
+      completeAnimation(Puzzle.exportConfig().project);
+      puzzleCompleteAudio();
+      postDonePuzzle();
+    }
+  }, [time.minutes, time.seconds]);
   return (
     <Wrapper>
       <Canvas ref={canvasRef} id="canvas" />
