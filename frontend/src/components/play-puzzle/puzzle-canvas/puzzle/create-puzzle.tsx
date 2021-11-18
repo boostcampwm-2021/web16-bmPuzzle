@@ -27,7 +27,7 @@ type Config = {
   shapes: any[];
   tiles: any[];
   complete: boolean;
-  groupTileIndex: number;
+  groupTileIndex: number | null;
   project: any;
   puzzleImage: any;
   tileIndexes: any[];

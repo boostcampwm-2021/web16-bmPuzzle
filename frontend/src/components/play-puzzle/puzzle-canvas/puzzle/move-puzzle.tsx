@@ -30,7 +30,7 @@ type Config = {
   shapes: any[];
   tiles: any[];
   complete: boolean;
-  groupTileIndex: number;
+  groupTileIndex: number | null;
   project: any;
   puzzleImage: any;
   tileIndexes: any[];
@@ -169,14 +169,18 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
 const moveUpdate = (
   tileIndex: number,
   tilePosition: any[],
-  tileGroup: number | null
+  tileGroup: number | null,
+  groupTileIndex: number | null
 ) => {
   config = Puzzle.exportConfig();
-  config.tiles[tileIndex].position = new Point(
-    tilePosition[1],
-    tilePosition[2]
-  );
-  config.groupTiles[tileIndex][1] = tileGroup;
+  if (config !== undefined) {
+    config.tiles[tileIndex].position = new Point(
+      tilePosition[1],
+      tilePosition[2]
+    );
+    config.groupTiles[tileIndex][1] = tileGroup;
+    config.groupTileIndex = groupTileIndex;
+  }
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
@@ -186,7 +190,6 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.tiles.forEach((tile) => {
     tile.onMouseUp = (event: any) => {
-      console.log("mouseUP");
       if (mouseFlag !== 1) return;
       mouseFlag = 2;
       tile._parent.insertChild(select_idx, tile);
@@ -223,6 +226,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
               tilePosition: gtile[0].position,
               tileGroup: gtile[1],
               changedData: gtile[0],
+              groupTileIndex: config.groupTileIndex,
             });
           });
         }
@@ -294,10 +298,6 @@ const fitTiles = (
   const range = config.tileWidth;
   let uniteFlag = false;
 
-  if (!flag) {
-    console.log("전", nowTile.position);
-    console.log("yChange", yChange);
-  }
   switch (dir) {
     case 0:
       if (
@@ -356,7 +356,6 @@ const fitTiles = (
       }
       break;
   }
-  if (!flag) console.log("후", nowTile.position);
   if (flag && uniteFlag) {
     uniteTiles(nowTile, preTile);
     fitEffect();
@@ -391,7 +390,9 @@ const uniteTiles = (nowTile: any, preTile: any) => {
     } else {
       config.groupTiles[nowIndex][1] = config.groupTileIndex;
       config.groupTiles[preIndex][1] = config.groupTileIndex;
-      config.groupTileIndex++;
+      if (config.groupTileIndex !== null) {
+        config.groupTileIndex++;
+      }
     }
   }
 
@@ -418,7 +419,6 @@ const groupFit = (nowGroup: number) => {
   });
 
   if (groupArr.length === 1) return;
-  console.log("hihihihihihi", groupObj);
 
   groupArr.forEach((tile: any) => {
     let nowIndex = 0;
@@ -453,13 +453,6 @@ const groupFit = (nowGroup: number) => {
         groupObj[dir[0]] !== undefined &&
         index < 1
       ) {
-        console.log(
-          "tile",
-          "현재",
-          tile.index - (xTileCount * yTileCount + 1),
-          "기준",
-          dir[0]
-        );
         fitTiles(
           tile,
           groupObj[dir[0]],
