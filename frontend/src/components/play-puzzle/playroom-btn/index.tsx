@@ -35,16 +35,28 @@ interface MenuDetailType {
   show: boolean;
 }
 
+const MenuBtnLoc = {
+  right: 0.08,
+  bottom: 0.03,
+};
+
+const MenuDetailRelativeLoc = {
+  right: 75,
+  bottom: 95,
+};
+
 const MenuWrap = styled.div`
   z-index: 2;
-  position: absolute;
-  right: 5%;
-  bottom: 5%;
   display: flex;
   flex-direction: column;
   align-items: center;
 `;
 const MenuDetailWrap = styled.div<MenuDetailType>`
+  position: absolute;
+  right: ${window.innerWidth * MenuBtnLoc.right -
+  MenuDetailRelativeLoc.right}px;
+  bottom: ${window.innerHeight * MenuBtnLoc.bottom +
+  MenuDetailRelativeLoc.bottom}px;
   display: ${(props) => (props.show ? "flex" : "none")};
   margin-bottom: 20px;
   padding: 10px 40px;
@@ -57,13 +69,15 @@ const MenuDetailWrap = styled.div<MenuDetailType>`
   border-radius: 50px;
 `;
 const MenuButtonWrap = styled.div`
-  width: 250px;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
 const MenuButton = styled.button`
+  position: absolute;
+  right: ${window.innerWidth * MenuBtnLoc.right}px;
+  bottom: ${window.innerHeight * MenuBtnLoc.bottom}px;
   background: none;
   border: none;
   padding: 0px;
