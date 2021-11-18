@@ -120,13 +120,9 @@ const PuzzleCanvas = (props: any) => {
       });
       socket.emit("getPuzzleConfig", { roomID: roomID });
     }
-    socket.on(
-      "tilePosition",
-      ({ tileIndex, tilePosition, tileGroup, eventName }) => {
-        console.log(eventName);
-        Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
-      }
-    );
+    socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
+      Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
+    });
   }, []);
 
   const postDonePuzzle = async () => {
