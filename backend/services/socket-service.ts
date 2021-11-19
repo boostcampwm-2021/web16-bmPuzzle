@@ -83,6 +83,7 @@ export default (io: any) => {
         groupTileIndex: number;
       }) => {
         let config = roomPuzzleInfo.get(res.roomID);
+        if (config === undefined) return;
         if (typeof res.changedData[0] === 'number') {
           config.tiles[res.tileIndex][1].children.forEach((child: any) => {
             if (child[0] === 'Path') {

@@ -12,13 +12,15 @@ const PlayPuzzle = (props: any) => {
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
   const [puzzleInfo, setPuzzleInfo] = useState<any>({ img: "", level: 1 });
-  const [isFirstClient, setFirstClient] = useState(false);
+  const [isFirstClient, setFirstClient] = useState<boolean | undefined>(
+    undefined
+  );
   const [time, setTime] = useState({ minutes: 0, seconds: 0 });
   const imgRef = useRef(null);
-
   const onLoad = () => setLoaded(true);
   const { puzzleID, roomID } = props.match.params;
   const history = useHistory();
+  const user = window.sessionStorage.getItem("id");
 
   const getPuzzleInfo = async () => {
     const response = await fetch(
@@ -37,7 +39,9 @@ const PlayPuzzle = (props: any) => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const setPuzzle = async () => {
-    if (puzzleInfo.img === "") {
+    if (puzzleInfo.img === "" && isFirstClient !== undefined) {
+      console.log(isFirstClient);
+      console.log("getPuzzleInfo!");
       const res: any = await getPuzzleInfo();
       if (res === undefined) history.go(-1);
       res.image = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
@@ -68,37 +72,40 @@ const PlayPuzzle = (props: any) => {
         roomID={roomID}
       />
       <Body>
-        <SocketContext.Provider value={socket}>
-          <Chat chatVisible={chatVisible} roomID={roomID} />
-          <PlayroomMenuBtn
-            hintFunc={setHintShow}
-            hintState={hintShow}
-          ></PlayroomMenuBtn>
-          <ComponentImg
-            ref={imgRef}
-            id="puzzleImage"
-            src={puzzleInfo.img}
-            alt="puzzleImage"
-            onLoad={onLoad}
-            show={hintShow}
-          />
-          <ComponentImg
-            id="empty"
-            src={puzzleInfo.img}
-            alt="emptyImage"
-            show={hintShow}
-          />
-          {loaded && isFirstClient !== undefined && (
-            <PuzzleCanvas
-              puzzleImg={imgRef}
-              level={puzzleInfo.level}
-              isFirstClient={isFirstClient}
-              roomID={roomID}
-              puzzleID={puzzleID}
-              time={time}
+        {user === null && <div>로그인하고 이용해주세요</div>}
+        {user !== null && (
+          <SocketContext.Provider value={socket}>
+            <Chat chatVisible={chatVisible} roomID={roomID} />
+            <PlayroomMenuBtn
+              hintFunc={setHintShow}
+              hintState={hintShow}
+            ></PlayroomMenuBtn>
+            <ComponentImg
+              ref={imgRef}
+              id="puzzleImage"
+              src={puzzleInfo.img}
+              alt="puzzleImage"
+              onLoad={onLoad}
+              show={hintShow}
             />
-          )}
-        </SocketContext.Provider>
+            <ComponentImg
+              id="empty"
+              src={puzzleInfo.img}
+              alt="emptyImage"
+              show={hintShow}
+            />
+            {loaded && isFirstClient !== undefined && (
+              <PuzzleCanvas
+                puzzleImg={imgRef}
+                level={puzzleInfo.level}
+                isFirstClient={isFirstClient}
+                roomID={roomID}
+                puzzleID={puzzleID}
+                time={time}
+              />
+            )}
+          </SocketContext.Provider>
+        )}
       </Body>
     </Wrapper>
   );
