@@ -127,7 +127,7 @@ export default (io: any) => {
         if(res.groupTileIndex !== null){
           groupTileIndex = res.groupTileIndex;
         }
-        
+        console.log(groupTileIndex);
         socket.broadcast.to(res.roomID).emit('groupIndex', {
           groupIndex : groupTileIndex,
         });
