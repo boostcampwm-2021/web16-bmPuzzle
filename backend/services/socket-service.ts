@@ -133,7 +133,9 @@ export default (io: any) => {
       },
     );
     socket.on('setTimer', (res: { roomID: string; timer: number }) => {
-      timer.set(res.roomID, res.timer);
+      if (timer.get(res.roomID) === undefined) {
+        timer.set(res.roomID, res.timer);
+      }
     });
     socket.on('getTimer', (res: { roomID: string; timer: number }) => {
       const startTime = timer.get(res.roomID);
