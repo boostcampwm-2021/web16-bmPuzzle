@@ -30,21 +30,13 @@ const Header = (props: any) => {
     setChatVisible(toggle);
   };
 
-  const getNow = () => {
-    const today = new Date();
-    const hours = today.getHours() * 3600; // 시
-    const minutes = today.getMinutes() * 60; // 분
-    const seconds = today.getSeconds() + hours + minutes;
-    return seconds;
-  };
-
   useEffect(() => {
     if (time !== undefined) {
       if (isFirstClient) {
-        socket.emit("setTimer", { roomID: roomID, timer: getNow() });
+        socket.emit("setTimer", { roomID: roomID, timer: Date.now() });
       }
     }
-  }, [isFirstClient]);
+  }, [isFirstClient, roomID, socket, time]);
 
   useEffect(() => {
     if (time !== undefined && !isFirstClient) {
@@ -53,14 +45,14 @@ const Header = (props: any) => {
           setTime(res);
         }
       });
-      socket.emit("getTimer", { roomID: roomID, timer: getNow() });
+      socket.emit("getTimer", { roomID: roomID, timer: Date.now() });
     }
   }, []);
 
   useEffect(() => {
     if (time !== undefined) {
       const countTime = setInterval(() => {
-        if (time.seconds >= 60) {
+        if (time.seconds >= 59) {
           setTime({ minutes: time.minutes + 1, seconds: 0 });
         } else {
           setTime({ minutes: time.minutes, seconds: time.seconds + 1 });
