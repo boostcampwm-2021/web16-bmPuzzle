@@ -4,7 +4,6 @@ import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change
 
 const constant = {
   percentageTotal: 100.0,
-  imgMargin: 0.1,
   borderStrokeWidth: 5,
   tileOpacity: 1,
   maskOpacity: 0.25,
@@ -65,7 +64,10 @@ const initConfig = () => {
         cloneImg,
         new Size(config.tileWidth, config.tileWidth),
         new Point(config.tileWidth * x, config.tileWidth * y),
-        config.imgWidth / config.originWidth + constant.imgMargin
+        Math.max(
+          config.imgWidth / config.originWidth,
+          config.imgHeight / config.originHeight
+        )
       );
 
       const border = mask.clone();

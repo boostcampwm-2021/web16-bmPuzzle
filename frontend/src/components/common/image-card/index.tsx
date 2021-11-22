@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 
@@ -77,7 +77,7 @@ const ImageCard = (props: any) => {
         return (
           <Wrapper
             key={idx}
-            onClick={(e) => {
+            onClick={() => {
               props.my ? download(ele.image) : moveHandler(ele.id);
             }}
           >
@@ -98,6 +98,7 @@ const ImageCard = (props: any) => {
                 </ShareButton>
               </DetailWrap>
             </Content>
+            {props.img.length - 1 === idx && <div ref={props.viewRef}></div>}
           </Wrapper>
         );
       })}

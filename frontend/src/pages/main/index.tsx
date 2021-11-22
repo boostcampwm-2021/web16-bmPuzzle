@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
-
 import Header from "@components/common/header/index";
 import Search from "@components/main/search-bar/index";
 import ImageCard from "@components/common/image-card/index";

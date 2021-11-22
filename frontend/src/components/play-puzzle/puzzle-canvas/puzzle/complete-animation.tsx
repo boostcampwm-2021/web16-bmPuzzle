@@ -1,4 +1,5 @@
 const completeAnimation = (project: any) => {
+  new project.Layer();
   const completeLetter = new project.PointText({
     point: project.view.center,
     justification: "center",

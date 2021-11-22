@@ -68,6 +68,7 @@ interface chatState {
   chatVisible: boolean;
 }
 const ChatWrapper = styled.div<chatState>`
+  z-index: 2;
   position: absolute;
   width: 23%;
   max-width: 700px;

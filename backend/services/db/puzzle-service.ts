@@ -2,6 +2,7 @@ import db from '@models/index';
 import { Sequelize } from 'sequelize';
 import puzzle from '@models/puzzle';
 
+const limit = 10;
 const filterPuzzle = async (keyword: string) => {
   const puzzleInfo = await db.Puzzle.findAll({
     where: { title: keyword, public: 1 },
@@ -18,10 +19,13 @@ const createPuzzle = async (data: object) => {
   else return false;
 };
 
-const getPuzzle = async () => {
+const getPuzzle = async (page: number) => {
+  const offset = page > 1 ? 10 * (page - 1) : 0;
   const puzzleInfo = await db.Puzzle.findAll({
     where: { public: 1 },
     order: [['visit_time', 'DESC']],
+    offset: offset,
+    limit: limit,
   });
   if (puzzleInfo == null) return { code: 500, msg: 'no puzzle found' };
   return { code: 200, msg: 'puzzle return', info: puzzleInfo };
