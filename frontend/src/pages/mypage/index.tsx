@@ -99,7 +99,7 @@ const Wrapper = styled.div`
 
 const Container = styled.div`
   width: 80%;
-  height: 463px;
+  height: 650px;
   margin: 0% 10% 5% 10%;
   border: 1px solid ${colors["gray3"]};
   overflow-y: auto;
