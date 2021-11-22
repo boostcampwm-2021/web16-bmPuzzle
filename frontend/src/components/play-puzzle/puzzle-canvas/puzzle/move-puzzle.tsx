@@ -446,6 +446,7 @@ const groupFit = (nowGroup: number, socket: any) => {
     } else {
       nowIndex = tile.index - 1;
     }
+    console.log(nowIndex);
     const up: number | undefined =
       nowIndex - xTileCount < 0 ? undefined : nowIndex - xTileCount;
     const left: number | undefined =
@@ -472,6 +473,7 @@ const groupFit = (nowGroup: number, socket: any) => {
         groupObj[dir[0]] !== undefined &&
         index < 1
       ) {
+        console.log(dir[0], nowIndex);
         fitTiles(
           tile,
           groupObj[dir[0]],

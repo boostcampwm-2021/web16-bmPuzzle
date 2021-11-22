@@ -117,13 +117,13 @@ const PuzzleCanvas = (props: any) => {
         Puzzle.setting(getConfig(res, Paper));
         Puzzle.move(isFirstClient, socket, roomID);
       });
+      socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
+        Puzzle.groupUpdate(groupIndex);
+      });
       socket.emit("getPuzzleConfig", { roomID: roomID });
     }
     socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
       Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
-    });
-    socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
-      Puzzle.groupUpdate(groupIndex);
     });
   }, []);
 
