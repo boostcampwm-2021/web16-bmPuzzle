@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
-
+import { useInView } from "react-intersection-observer";
 import Header from "@components/common/header/index";
 import Search from "@components/main/search-bar/index";
 import ImageCard from "@components/common/image-card/index";
@@ -14,6 +14,7 @@ const Main = () => {
   let dummy_image: any[] = [];
   const [img, setImg] = useState(dummy_image);
   const [page, setPage] = useState(1);
+  const [viewRef, inView] = useInView();
   const getImgUrl = async () => {
     const response = await fetch(
       `${process.env.REACT_APP_API_URL}/search/${page}`,
@@ -35,15 +36,22 @@ const Main = () => {
   };
 
   useEffect(() => {
+    console.log(page);
     getImgUrl();
-  }, []);
+  }, [page]);
 
+  useEffect(() => {
+    // 사용자가 마지막 요소를 보고 있고, 로딩 중이 아니라면
+    if (inView) {
+      setPage((prevState) => prevState + 1);
+    }
+  }, [inView]);
   return (
     <Wrapper>
       <Header />
       <Container>
         <Search setImg={setImg} />
-        <ImageCard img={img} margin={25} />
+        <ImageCard img={img} margin={25} viewRef={viewRef} />
         <UploadBtn />
       </Container>
     </Wrapper>
