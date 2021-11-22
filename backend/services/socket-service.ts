@@ -58,7 +58,7 @@ export default (io: any) => {
     socket.on('joinRoom', (res: { roomID: string }) => {
       socket.join(res.roomID);
       const isFirstClient = checkFirstClient(io, res.roomID);
-      if (isFirstClient) socket.emit('isFirstUser');
+      socket.emit('isFirstUser', { isFirstUser: isFirstClient });
     });
     socket.on('message', (res: { roomID: string; message: object }) => {
       io.sockets.in(res.roomID).emit('message', res.message);
