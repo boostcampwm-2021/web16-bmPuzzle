@@ -183,6 +183,7 @@ const moveUpdate = (
 };
 const indexUpdate = (groupIndex: number) => {
   config.groupTileIndex = groupIndex;
+  console.log(config.groupTileIndex);
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
