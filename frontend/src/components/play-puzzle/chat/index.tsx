@@ -21,7 +21,11 @@ const Chat = (props: any) => {
       const newMsg = { name: msg.name, message: msg.message };
       setChat([...chat, newMsg]);
     });
+    return () => {
+      socket.off("message");
+    };
   }, [chat, socket]);
+
   const onMessageSubmit = (e: any) => {
     e.preventDefault();
     socket.emit("message", { roomID: roomID, message: state });
