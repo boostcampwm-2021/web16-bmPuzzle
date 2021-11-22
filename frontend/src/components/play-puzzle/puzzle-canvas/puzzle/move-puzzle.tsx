@@ -136,12 +136,27 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       gtile[0]._parent.addChild(gtile[0]);
     };
     gtile[0].onMouseDrag = (event: any) => {
+      console.log();
       if (mouseFlag === 2) return;
       mouseFlag = 1;
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(
-          gtile[0].position._x + event.delta.x,
-          gtile[0].position._y + event.delta.y
+          Math.min(
+            Math.max(
+              gtile[0].position._x + event.delta.x,
+              Math.floor(config.tileWidth / 2)
+            ),
+            config.project.view._viewSize._width -
+              Math.floor(config.tileWidth / 2)
+          ),
+          Math.min(
+            Math.max(
+              gtile[0].position._y + event.delta.y,
+              Math.floor(config.tileWidth / 2)
+            ),
+            config.project.view._viewSize._height -
+              Math.floor(config.tileWidth / 2)
+          )
         );
         socket.emit("tilePosition", {
           roomID: roomID,
