@@ -122,6 +122,9 @@ const PuzzleCanvas = (props: any) => {
       });
       socket.emit("getPuzzleConfig", { roomID: roomID });
     }
+    socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
+      Puzzle.groupUpdate(groupIndex);
+    });
     socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
       Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
     });
