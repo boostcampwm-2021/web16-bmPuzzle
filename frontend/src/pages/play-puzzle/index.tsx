@@ -51,8 +51,8 @@ const PlayPuzzle = (props: any) => {
 
   useEffect(() => {
     setPuzzle();
-    socket.on("isFirstUser", () => {
-      setFirstClient(true);
+    socket.on("isFirstUser", (res) => {
+      setFirstClient(res.isFirstUser);
     });
     socket.emit("joinRoom", { roomID: roomID });
     return () => {
