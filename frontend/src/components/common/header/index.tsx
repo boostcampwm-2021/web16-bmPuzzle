@@ -50,7 +50,7 @@ const Header = (props: any) => {
     if (time !== undefined && !isFirstClient) {
       socket.on("getTimer", (res: any) => {
         if (res !== null && res.minutes !== null) {
-          time = res;
+          setTime(res);
         }
       });
       socket.emit("getTimer", { roomID: roomID, timer: getNow() });
@@ -106,40 +106,49 @@ const Wrapper = styled.div`
   margin: 0px;
   padding: 0px;
   width: 100%;
-  height: 30px;
-  padding-top: 5px;
+  height: 50px;
   background: #000000;
   display: flex;
   justify-content: space-even;
 `;
 
 const HomeBtnWrapper = styled.div`
-  width: 50%;
+  width: 52%;
   text-align: right;
+  align-items: center;
+  display: flex;
+  justify-content: end;
 `;
 
 const RightIconWrapper = styled.div`
-  width: 50%;
+  width: 48%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   margin-right: 20px;
   & > button {
-    margin-left: 5px;
+    margin-left: 15px;
   }
 `;
 
 const ChatWrapper = styled.div`
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: 10%;
+  height: 50px;
+  margin-left: 20px;
 `;
 
 const TimerWrapper = styled.div`
+  font-size: 20px;
   color: white;
 `;
 
 const Btn = styled.button`
   padding: 0px;
-  width: 50%;
+  width: 100%;
   border: none;
   background: transparent;
   width: 30px;
@@ -152,8 +161,8 @@ const Btn = styled.button`
 `;
 
 const Img = styled.img`
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
 `;
 
 export default Header;

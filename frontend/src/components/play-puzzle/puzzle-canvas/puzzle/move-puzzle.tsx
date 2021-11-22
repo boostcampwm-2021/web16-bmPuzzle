@@ -4,7 +4,6 @@ import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change
 
 const constant = {
   percentageTotal: 100.0,
-  imgMargin: 0.1,
   borderStrokeWidth: 5,
   tileOpacity: 1,
   maskOpacity: 0.25,
@@ -65,7 +64,10 @@ const initConfig = () => {
         cloneImg,
         new Size(config.tileWidth, config.tileWidth),
         new Point(config.tileWidth * x, config.tileWidth * y),
-        config.imgWidth / config.originWidth + constant.imgMargin
+        Math.max(
+          config.imgWidth / config.originWidth,
+          config.imgHeight / config.originHeight
+        )
       );
 
       const border = mask.clone();
@@ -137,11 +139,30 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
     gtile[0].onMouseDrag = (event: any) => {
       if (mouseFlag === 2) return;
       mouseFlag = 1;
+      const newPosition = {
+        x: Math.min(
+          Math.max(
+            gtile[0].position._x + event.delta.x,
+            Math.floor(config.tileWidth / 2)
+          ),
+          config.project.view._viewSize._width -
+            Math.floor(config.tileWidth / 2)
+        ),
+        y: Math.min(
+          Math.max(
+            gtile[0].position._y + event.delta.y,
+            Math.floor(config.tileWidth / 2)
+          ),
+          config.project.view._viewSize._height -
+            Math.floor(config.tileWidth / 2)
+        ),
+      };
+      const originalPosition = {
+        x: gtile[0].position._x,
+        y: gtile[0].position._y,
+      };
       if (gtile[1] === undefined) {
-        gtile[0].position = new Point(
-          gtile[0].position._x + event.delta.x,
-          gtile[0].position._y + event.delta.y
-        );
+        gtile[0].position = new Point(newPosition.x, newPosition.y);
         socket.emit("tilePosition", {
           roomID: roomID,
           tileIndex: gtileIdx,
@@ -153,8 +174,8 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
         config.groupTiles.forEach((gtile_now, index) => {
           if (gtile[1] === gtile_now[1]) {
             gtile_now[0].position = new Point(
-              gtile_now[0].position._x + event.delta.x,
-              gtile_now[0].position._y + event.delta.y
+              gtile_now[0].position._x + newPosition.x - originalPosition.x,
+              gtile_now[0].position._y + newPosition.y - originalPosition.y
             );
             socket.emit("tilePosition", {
               roomID: roomID,

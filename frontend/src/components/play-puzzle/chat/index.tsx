@@ -41,8 +41,8 @@ const Chat = (props: any) => {
   const renderChat = () => {
     return chat.map((msg: { name: string; message: string }, index: number) => (
       <DialogUnit key={index}>
-        <div className="sender">{msg.name}</div>
-        <div className="message">{msg.message}</div>
+        <Sender>{msg.name}</Sender>
+        <Message>{msg.message}</Message>
       </DialogUnit>
     ));
   };
@@ -55,6 +55,7 @@ const Chat = (props: any) => {
         <ChatInput
           type="text"
           name="message"
+          placeholder="채팅을 입력하세요"
           onChange={(e) => onTextChange(e)}
           value={state.message}
         />
@@ -67,53 +68,59 @@ interface chatState {
   chatVisible: boolean;
 }
 const ChatWrapper = styled.div<chatState>`
+  z-index: 2;
   position: absolute;
   width: 23%;
   max-width: 700px;
-  height: calc(100% - 37px);
-  display: ${(props) => (props.chatVisible ? "block" : "none")};
+  height: calc(100% - 53px);
+  display: ${(props) => (props.chatVisible ? "flex" : "none")};
+  flex-direction: column;
   border: 1px solid #f6f3f9;
   background-color: white;
 `;
 const ChatBar = styled.div`
   display: flex;
   width: 100%;
-  height: 70px;
+  height: 50px;
   align-items: center;
   justify-content: center;
-  font-size: 40px;
+  font-size: 25px;
 `;
 const ChatLog = styled.div.attrs({ className: "chatLog" })`
   width: 100%;
-  height: calc(100% - 190px);
+  height: calc(100% - 110px);
   overflow-y: auto;
+  margin-bottom: 10px;
 `;
 
 const ChatForm = styled.form`
   display: flex;
   width: 100%;
-  height: 120px;
+  height: 50px;
 `;
 const ChatInput = styled.input`
   background-color: #f6f3f9;
   width: 100%;
+  padding: 5%;
 `;
 const DialogUnit = styled.div`
-  width: calc(100% - 20px);
-  min-height: 80px;
+  width: calc(90% - 20px);
   height: fit-content;
   margin: 10px;
   background-color: #f6f3f9;
   border-radius: 10px;
+  padding: 5%;
+`;
 
-  > .sender {
-    height: 20px;
-    color: rgba(100, 100, 100);
-  }
-  > .message {
-    font-size: 20px;
-    font-weight: 400;
-  }
+const Sender = styled.div`
+  height: 20px;
+  font-size: 14px;
+  color: rgba(100, 100, 100);
+`;
+
+const Message = styled.div`
+  font-size: 12px;
+  font-weight: 400;
 `;
 
 export default Chat;

@@ -99,8 +99,8 @@ const Wrapper = styled.div`
 
 const Container = styled.div`
   width: 80%;
-  height: 463px;
-  margin: 0% 10% 5% 10%;
+  height: 70%;
+  margin: 5% 10%;
   border: 1px solid ${colors["gray3"]};
   overflow-y: auto;
 `;
@@ -126,13 +126,16 @@ const Btn = styled.button<propsType>`
 `;
 
 const BtnWrapper = styled.div`
+  position: absolute;
   display: flex;
-  margin: 3.5% 9.8% 0% 10%;
-  justify-content: end;
+  height: fit-content;
+  width: fit-content;
+  right: 10%;
+  transform: translate(0%, -100%);
 `;
 const ContainerWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
+  width: 100%;
+  height: 100%;
 `;
 
 export default Mypage;

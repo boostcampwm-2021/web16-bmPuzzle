@@ -9,7 +9,7 @@ import { completeAnimation } from "@components/play-puzzle/puzzle-canvas/puzzle/
 
 type LevelSizeType = { 1: number; 2: number; 3: number };
 type Levels = 1 | 2 | 3;
-const levelSize: LevelSizeType = { 1: 300, 2: 500, 3: 600 };
+const levelSize: LevelSizeType = { 1: 400, 2: 500, 3: 600 };
 type Config = {
   originHeight: number;
   originWidth: number;
