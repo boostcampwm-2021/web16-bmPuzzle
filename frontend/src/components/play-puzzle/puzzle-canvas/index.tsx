@@ -120,12 +120,12 @@ const PuzzleCanvas = (props: any) => {
       });
       socket.emit("getPuzzleConfig", { roomID: roomID });
     }
-    socket.on(
-      "tilePosition",
-      ({ tileIndex, tilePosition, tileGroup, groupTileIndex }) => {
-        Puzzle.renderMove(tileIndex, tilePosition, tileGroup, groupTileIndex);
-      }
-    );
+    socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
+      Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
+    });
+    socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
+      Puzzle.groupUpdate(groupIndex);
+    });
   }, []);
 
   const postDonePuzzle = async () => {
