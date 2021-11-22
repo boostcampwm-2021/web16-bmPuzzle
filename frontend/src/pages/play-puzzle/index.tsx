@@ -53,6 +53,9 @@ const PlayPuzzle = (props: any) => {
       setFirstClient(res.isFirstUser);
     });
     socket.emit("joinRoom", { roomID: roomID });
+    socket.on("isFull", () => {
+      history.push("/warning");
+    });
     return () => {
       socket.emit("leaveRoom", { roomID: roomID });
     };
@@ -116,6 +119,7 @@ interface ComponentImgType {
 const Wrapper = styled.div`
   height: 100%;
   width: 100%;
+  overflow: hidden;
 `;
 
 const Body = styled.div`
