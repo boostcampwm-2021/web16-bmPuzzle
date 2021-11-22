@@ -83,34 +83,23 @@ export default (io: any) => {
         groupTileIndex: number;
       }) => {
         let config = roomPuzzleInfo.get(res.roomID);
-        if (config !== undefined) {
-          if (typeof res.changedData[0] === 'number') {
-            config.tiles[res.tileIndex][1].children.forEach((child: any) => {
-              if (child[0] === 'Path') {
-                child[1].segments.forEach((c: any, idx: number) => {
-                  if (idx === 0) {
-                    c[0] += res.changedData[0];
-                    c[1] += res.changedData[1];
-                  } else {
-                    c[0][0] += res.changedData[0];
-                    c[0][1] += res.changedData[1];
-                  }
-                });
-              } else {
-                child[1].matrix[4] += res.changedData[0];
-                child[1].matrix[5] += res.changedData[1];
-              }
-            });
-          } else {
-            config.tiles[res.tileIndex] = res.changedData;
-            roomPuzzleInfo.set(res.roomID, config);
-          }
-          config.groupTiles[res.tileIndex][1] = res.tileGroup;
-          socket.broadcast.to(res.roomID).emit('tilePosition', {
-            tileIndex: res.tileIndex,
-            tilePosition: res.tilePosition,
-            tileGroup: res.tileGroup,
-            groupTileIndex: ++res.groupTileIndex,
+        if (config === undefined) return;
+        if (typeof res.changedData[0] === 'number') {
+          config.tiles[res.tileIndex][1].children.forEach((child: any) => {
+            if (child[0] === 'Path') {
+              child[1].segments.forEach((c: any, idx: number) => {
+                if (idx === 0) {
+                  c[0] += res.changedData[0];
+                  c[1] += res.changedData[1];
+                } else {
+                  c[0][0] += res.changedData[0];
+                  c[0][1] += res.changedData[1];
+                }
+              });
+            } else {
+              child[1].matrix[4] += res.changedData[0];
+              child[1].matrix[5] += res.changedData[1];
+            }
           });
         }
       },
