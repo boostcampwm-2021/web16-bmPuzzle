@@ -20,11 +20,16 @@ const Chat = (props: any) => {
     socket.on("message", (msg: { name: string; message: string }) => {
       const newMsg = { name: msg.name, message: msg.message };
       setChat([...chat, newMsg]);
+      document.querySelector(".chatLog")?.scrollBy({
+        top: document.querySelector(".chatLog")?.scrollHeight,
+        behavior: "smooth",
+      });
     });
     return () => {
       socket.off("message");
     };
   }, [chat, socket]);
+
   const onMessageSubmit = (e: any) => {
     e.preventDefault();
     socket.emit("message", { roomID: roomID, message: state });
@@ -80,7 +85,7 @@ const ChatBar = styled.div`
   justify-content: center;
   font-size: 25px;
 `;
-const ChatLog = styled.div`
+const ChatLog = styled.div.attrs({ className: "chatLog" })`
   width: 100%;
   height: calc(100% - 110px);
   overflow-y: auto;

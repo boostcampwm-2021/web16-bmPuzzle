@@ -40,8 +40,6 @@ const PlayPuzzle = (props: any) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const setPuzzle = async () => {
     if (puzzleInfo.img === "" && isFirstClient !== undefined) {
-      console.log(isFirstClient);
-      console.log("getPuzzleInfo!");
       const res: any = await getPuzzleInfo();
       if (res === undefined) history.go(-1);
       res.image = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
@@ -51,8 +49,8 @@ const PlayPuzzle = (props: any) => {
 
   useEffect(() => {
     setPuzzle();
-    socket.on("isFirstUser", () => {
-      setFirstClient(true);
+    socket.on("isFirstUser", (res) => {
+      setFirstClient(res.isFirstUser);
     });
     socket.emit("joinRoom", { roomID: roomID });
     socket.on("isFull", () => {

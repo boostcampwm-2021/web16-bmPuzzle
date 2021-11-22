@@ -1,3 +1,4 @@
+import { group } from 'console';
 import { eventNames } from 'process';
 import { stringify } from 'querystring';
 import { roomURL } from './roomInfo';
@@ -27,6 +28,7 @@ type Config = {
 
 const roomPuzzleInfo = new Map<string, any>();
 const timer = new Map<string, any>();
+let groupTileIndex: number;
 
 const updateRoomURL = (io: any) => {
   const cb = (io: any) => {
@@ -63,7 +65,7 @@ export default (io: any) => {
       else {
         socket.join(res.roomID);
         const isFirstClient = checkFirstClient(io, res.roomID);
-        if (isFirstClient) socket.emit('isFirstUser');
+        socket.emit('isFirstUser', { isFirstUser: isFirstClient });
       }
     });
     socket.on('message', (res: { roomID: string; message: object }) => {
@@ -86,7 +88,6 @@ export default (io: any) => {
         tilePosition: any[];
         tileGroup: number | null;
         changedData: any;
-        groupTileIndex: number;
       }) => {
         let config = roomPuzzleInfo.get(res.roomID);
         if (config === undefined) return;
@@ -116,7 +117,19 @@ export default (io: any) => {
           tileIndex: res.tileIndex,
           tilePosition: res.tilePosition,
           tileGroup: res.tileGroup,
-          groupTileIndex: ++res.groupTileIndex,
+        });
+      },
+    );
+    
+    socket.on(
+      'groupIndex',
+      (res: { roomID: string, groupTileIndex: number }) => {
+        if(res.groupTileIndex !== null){
+          groupTileIndex = res.groupTileIndex;
+        }
+        
+        socket.broadcast.to(res.roomID).emit('groupIndex', {
+          groupIndex : groupTileIndex,
         });
       },
     );
