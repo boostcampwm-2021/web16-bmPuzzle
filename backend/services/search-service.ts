@@ -9,6 +9,7 @@ const search = (req: any, res: any, next: any) => {
 };
 
 const sendImgUrl = async (req: any, res: any) => {
+  const page = req.params.page;
   const puzzle =
     req.body.keyword !== undefined
       ? await searchService.filterPuzzle(req.body.keyword)
@@ -16,7 +17,7 @@ const sendImgUrl = async (req: any, res: any) => {
   const filterInfo: any = [];
   const fileName: any = [];
   puzzle.info.forEach((file: any) => {
-    if(req.files.includes(file.image)){
+    if (req.files.includes(file.image)) {
       filterInfo.push(file);
       fileName.push(file.image);
     }
