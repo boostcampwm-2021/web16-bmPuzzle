@@ -60,7 +60,6 @@ const initConfig = () => {
       mask.strokeColor = new config.project.Color("#fff");
 
       const cloneImg = config.puzzleImage.clone();
-      console.log(config.imgWidth / config.originWidth);
       const img = getTileRaster(
         cloneImg,
         new Size(config.tileWidth, config.tileWidth),
