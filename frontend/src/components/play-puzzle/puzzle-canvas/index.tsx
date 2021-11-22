@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext, useState } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import Paper from "paper";
 import styled from "styled-components";
 import { SocketContext } from "@context/socket";
@@ -99,7 +99,6 @@ const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
   const { puzzleImg, level, isFirstClient, roomID, puzzleID } = props;
   let time = props.time;
-  const [complete, setComplete] = useState(false);
   const socket = useContext(SocketContext);
   useEffect(() => {
     const canvas: any = canvasRef.current;
@@ -149,7 +148,6 @@ const PuzzleCanvas = (props: any) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const complete = Puzzle.completePuzzle();
-    setComplete(complete);
     if (complete) {
       completeAnimation(Puzzle.exportConfig().project);
       puzzleCompleteAudio();
