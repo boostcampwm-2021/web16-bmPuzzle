@@ -10,8 +10,8 @@ const constant = {
   tileOpacity: 1,
   maskOpacity: 0.25,
   orgTileLoc: 100,
-  tileMarginX: 50,
-  tileMarginY: -30,
+  tileMarginX: 0,
+  tileMarginY: 30,
 };
 let first = true;
 let select_idx: any;
@@ -108,7 +108,10 @@ const initConfig = () => {
 
       tile.position = new Point(
         cellPosition.x * config.tileWidth + constant.tileMarginX,
-        cellPosition.y * config.tileWidth + constant.tileMarginY
+        cellPosition.y * config.tileWidth +
+          (config.tilesPerColumn % 2 === 1
+            ? -constant.tileMarginY
+            : constant.tileMarginY)
       );
     }
   }
