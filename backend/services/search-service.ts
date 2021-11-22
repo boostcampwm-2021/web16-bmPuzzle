@@ -13,7 +13,7 @@ const sendImgUrl = async (req: any, res: any) => {
   const puzzle =
     req.body.keyword !== undefined
       ? await searchService.filterPuzzle(req.body.keyword)
-      : await searchService.getPuzzle(page);
+      : await searchService.getPuzzle();
   const filterInfo: any = [];
   const fileName: any = [];
   puzzle.info.forEach((file: any) => {
