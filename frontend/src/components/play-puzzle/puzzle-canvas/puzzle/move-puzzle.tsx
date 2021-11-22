@@ -205,6 +205,7 @@ const moveUpdate = (
   }
 };
 const indexUpdate = (groupIndex: number) => {
+  console.log(groupIndex);
   config.groupTileIndex = groupIndex;
 };
 
@@ -392,6 +393,7 @@ const fitTiles = (
   if (flag && uniteFlag) {
     uniteTiles(nowTile, preTile, socket);
     fitEffect();
+    console.log(config.groupTiles);
   }
 };
 
