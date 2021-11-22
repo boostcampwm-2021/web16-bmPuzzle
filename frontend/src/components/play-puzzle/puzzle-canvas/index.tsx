@@ -9,7 +9,7 @@ import { completeAnimation } from "@components/play-puzzle/puzzle-canvas/puzzle/
 
 type LevelSizeType = { 1: number; 2: number; 3: number };
 type Levels = 1 | 2 | 3;
-const levelSize: LevelSizeType = { 1: 300, 2: 500, 3: 800 };
+const levelSize: LevelSizeType = { 1: 300, 2: 500, 3: 600 };
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -166,15 +166,19 @@ const PuzzleCanvas = (props: any) => {
 };
 
 const Canvas = styled.canvas`
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  width: 1280px;
+  height: 765px;
+  top: ${(window.innerHeight + 35) / 2}px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  border: 2px solid #000000;
 `;
 
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  padding: 50px 0;
-  box-sizing: border-box;
 `;
 
 export default PuzzleCanvas;

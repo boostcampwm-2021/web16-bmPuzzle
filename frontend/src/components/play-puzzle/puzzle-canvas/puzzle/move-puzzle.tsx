@@ -90,10 +90,9 @@ const initConfig = () => {
       const index2 = config.tileIndexes[index1];
       const tile = config.tiles[index2];
       config.tileIndexes.splice(index1, 1);
-
       const position = new Point(
         config.project.view.center.x -
-          config.tileWidth +
+          config.tileWidth / 2 +
           config.tileWidth * (x * 2 + (y % 2)) -
           config.imgWidth,
         config.project.view.center.y -
