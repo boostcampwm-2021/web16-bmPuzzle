@@ -45,10 +45,12 @@ const move = (isFirstClient: boolean, socket: any, roomID: string) => {
 const renderMove = (
   tileIndex: number,
   tilePosition: any[],
-  tileGroup: number | null,
-  groupTileIndex: number | null
+  tileGroup: number | null
 ) => {
-  MovePuzzle.moveUpdate(tileIndex, tilePosition, tileGroup, groupTileIndex);
+  MovePuzzle.moveUpdate(tileIndex, tilePosition, tileGroup);
+};
+const groupUpdate = (groupIndex: number) => {
+  MovePuzzle.indexUpdate(groupIndex);
 };
 const completePuzzle = () => {
   return MovePuzzle.checkComplete();
@@ -61,5 +63,6 @@ const Puzzle = {
   exportConfig,
   renderMove,
   completePuzzle,
+  groupUpdate,
 };
 export default Puzzle;

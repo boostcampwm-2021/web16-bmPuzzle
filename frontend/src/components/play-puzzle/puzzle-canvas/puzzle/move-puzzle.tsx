@@ -171,8 +171,7 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
 const moveUpdate = (
   tileIndex: number,
   tilePosition: any[],
-  tileGroup: number | null,
-  groupTileIndex: number | null
+  tileGroup: number | null
 ) => {
   config = Puzzle.exportConfig();
   if (config !== undefined) {
@@ -181,8 +180,10 @@ const moveUpdate = (
       tilePosition[2]
     );
     config.groupTiles[tileIndex][1] = tileGroup;
-    config.groupTileIndex = groupTileIndex;
   }
+};
+const indexUpdate = (groupIndex: number) => {
+  config.groupTileIndex = groupIndex;
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
@@ -383,11 +384,9 @@ const uniteTiles = (nowTile: any, preTile: any, socket: any) => {
   let preIndex = preTile.index - substract;
   let nowGroup = config.groupTiles[nowIndex][1];
   let preGroup = config.groupTiles[preIndex][1];
-  socket.on("groupIndex", (groupTileIndex: number) => {
-    config.groupTileIndex = groupTileIndex;
-  });
-  if (nowGroup !== undefined) {
-    if (preGroup === undefined) {
+
+  if (nowGroup !== undefined && !Number.isNaN(nowGroup)) {
+    if (preGroup === undefined || Number.isNaN(preGroup)) {
       config.groupTiles[preIndex][1] = nowGroup;
     } else {
       config.groupTiles.forEach((gtile) => {
@@ -397,12 +396,15 @@ const uniteTiles = (nowTile: any, preTile: any, socket: any) => {
       });
     }
   } else {
-    if (preGroup !== undefined) {
+    if (preGroup !== undefined && !Number.isNaN(preGroup)) {
       config.groupTiles[nowIndex][1] = preGroup;
     } else {
       config.groupTiles[nowIndex][1] = config.groupTileIndex;
       config.groupTiles[preIndex][1] = config.groupTileIndex;
-      if (config.groupTileIndex !== null) {
+      if (
+        config.groupTileIndex !== null &&
+        !Number.isNaN(config.groupTileIndex)
+      ) {
         config.groupTileIndex++;
         socket.emit("groupIndex", {
           roomID: room,
@@ -411,6 +413,7 @@ const uniteTiles = (nowTile: any, preTile: any, socket: any) => {
       }
     }
   }
+  console.log(config.groupTiles);
 
   groupFit(config.groupTiles[preIndex][1], socket);
 };
@@ -630,5 +633,11 @@ const getTileRaster = (
   return targetRaster;
 };
 
-const MovePuzzle = { moveTile, findNearTile, moveUpdate, checkComplete };
+const MovePuzzle = {
+  moveTile,
+  findNearTile,
+  moveUpdate,
+  checkComplete,
+  indexUpdate,
+};
 export default MovePuzzle;

@@ -81,7 +81,6 @@ export default (io: any) => {
         tilePosition: any[];
         tileGroup: number | null;
         changedData: any;
-        groupTileIndex: number;
       }) => {
         let config = roomPuzzleInfo.get(res.roomID);
         if (config === undefined) return;
@@ -114,11 +113,16 @@ export default (io: any) => {
         });
       },
     );
+    
     socket.on(
       'groupIndex',
-      (res: { roomID: string; groupTileIndex: number }) => {
+      (res: { roomID: string, groupTileIndex: number }) => {
+        if(res.groupTileIndex !== null){
+          groupTileIndex = res.groupTileIndex;
+        }
+        
         socket.broadcast.to(res.roomID).emit('groupIndex', {
-          groupTileIndex : res.groupTileIndex,
+          groupIndex : groupTileIndex,
         });
       },
     );
