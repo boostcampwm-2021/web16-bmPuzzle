@@ -13,17 +13,24 @@ import getImgfile from "@js/get-img-file";
 const Main = () => {
   let dummy_image: any[] = [];
   const [img, setImg] = useState(dummy_image);
+  const [page, setPage] = useState(1);
   const getImgUrl = async () => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/search/${page}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
     if (response.ok) {
       let img = await response.json();
-      setImg(getImgfile(img.fileName, img.data));
+      setImg((prevState) => [
+        ...prevState,
+        ...getImgfile(img.fileName, img.data),
+      ]);
     }
   };
 
