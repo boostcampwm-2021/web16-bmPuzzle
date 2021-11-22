@@ -140,7 +140,7 @@ export default (io: any) => {
       const sub = res.timer - (startTime || res.timer);
       const tmp = {
         minutes: Math.floor(sub / 1000 / 60),
-        seconds: Math.floor((sub / 1000) % 60),
+        seconds: Math.round((sub / 1000) % 60),
       };
       socket.emit('getTimer', tmp);
     });
