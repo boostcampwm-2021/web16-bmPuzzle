@@ -135,7 +135,6 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       gtile[0]._parent.addChild(gtile[0]);
     };
     gtile[0].onMouseDrag = (event: any) => {
-      console.log(gtile[0]);
       if (mouseFlag === 2) return;
       mouseFlag = 1;
       const newPosition = {
