@@ -1,16 +1,4 @@
-import { Size, Point } from "paper/dist/paper-core";
 import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
-
-const constant = {
-  percentageTotal: 100.0,
-  imgMargin: 0.1,
-  borderStrokeWidth: 5,
-  tileOpacity: 1,
-  maskOpacity: 0.25,
-  orgTileLoc: 100,
-  tileMarginX: 50,
-  tileMarginY: -30,
-};
 
 type Config = {
   originHeight: number;

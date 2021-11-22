@@ -5,12 +5,11 @@ import logo_image from "@images/puzzle-icon.png";
 import ranking_image from "@images/ranking-icon.png";
 import account_image from "@images/account-icon.png";
 import chat_image from "@images/chat-icon.png";
-import { SocketContext, socket } from "@src/context/socket";
+import { SocketContext } from "@src/context/socket";
 
 const Header = (props: any) => {
   const history = useHistory();
   const ref: any = useRef(null);
-  let idx = 0;
   let {
     isPlayRoom,
     chatVisible,

@@ -1,4 +1,4 @@
-import { Howler, Howl } from "howler";
+import { Howl } from "howler";
 
 let howler_complete = new Howl({
   src: ["/audios/complete-sound.mp3"],

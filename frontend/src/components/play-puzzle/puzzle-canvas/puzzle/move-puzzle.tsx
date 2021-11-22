@@ -1,5 +1,4 @@
-import { Size, Point, settings } from "paper/dist/paper-core";
-import { Howl } from "howler";
+import { Size, Point } from "paper/dist/paper-core";
 import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
 import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
 
@@ -186,7 +185,6 @@ const moveUpdate = (
 };
 const indexUpdate = (groupIndex: number) => {
   config.groupTileIndex = groupIndex;
-  console.log(config.groupTileIndex);
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
@@ -416,7 +414,6 @@ const uniteTiles = (nowTile: any, preTile: any, socket: any) => {
       }
     }
   }
-  console.log(config.groupTiles);
 
   groupFit(config.groupTiles[preIndex][1], socket);
 };

@@ -1,5 +1,3 @@
-import Paper from "paper";
-
 const completeAnimation = (project: any) => {
   const completeLetter = new project.PointText({
     point: project.view.center,

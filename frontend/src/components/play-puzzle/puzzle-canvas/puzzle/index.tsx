@@ -24,11 +24,6 @@ type Config = {
   selectIndex: number;
 };
 
-type Timer = {
-  minutes: number;
-  seconds: number;
-};
-
 let config: Config;
 const setting = (conf: Config) => {
   config = { ...conf };
