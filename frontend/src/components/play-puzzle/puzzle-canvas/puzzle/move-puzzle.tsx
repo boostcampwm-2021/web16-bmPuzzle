@@ -39,6 +39,7 @@ type Config = {
 };
 let config: Config;
 let mouseFlag = 2; //mouseUp된 상태
+let room: string;
 
 const initConfig = () => {
   const tileRatio = config.tileWidth / constant.percentageTotal;
@@ -118,6 +119,7 @@ const initConfig = () => {
 };
 const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config = Puzzle.exportConfig();
+  room = roomID;
   if (isFirstClient) initConfig();
   config.groupTiles.forEach((gtile, index) => {
     if (gtile[1] === null) {
@@ -218,7 +220,15 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       });
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined) {
-          fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
+          fitTiles(
+            tile,
+            nowIndexTile,
+            nowShape,
+            tileShape[index],
+            index,
+            true,
+            socket
+          );
           config.groupTiles.forEach((gtile, idx) => {
             socket.emit("tilePosition", {
               roomID: roomID,
@@ -226,7 +236,6 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
               tilePosition: gtile[0].position,
               tileGroup: gtile[1],
               changedData: gtile[0],
-              groupTileIndex: config.groupTileIndex,
             });
           });
         }
@@ -288,7 +297,8 @@ const fitTiles = (
   _nowShape: any,
   _preShape: any,
   dir: number,
-  flag: boolean
+  flag: boolean,
+  socket: any
 ) => {
   const yChange = FindChange.findYChange(_nowShape, _preShape);
   const xChange = FindChange.findXChange(_nowShape, _preShape);
@@ -357,12 +367,12 @@ const fitTiles = (
       break;
   }
   if (flag && uniteFlag) {
-    uniteTiles(nowTile, preTile);
+    uniteTiles(nowTile, preTile, socket);
     fitEffect();
   }
 };
 
-const uniteTiles = (nowTile: any, preTile: any) => {
+const uniteTiles = (nowTile: any, preTile: any, socket: any) => {
   let substract = 0;
   if (first) {
     substract = config.tilesPerRow * config.tilesPerColumn + 1;
@@ -373,7 +383,9 @@ const uniteTiles = (nowTile: any, preTile: any) => {
   let preIndex = preTile.index - substract;
   let nowGroup = config.groupTiles[nowIndex][1];
   let preGroup = config.groupTiles[preIndex][1];
-
+  socket.on("groupIndex", (groupTileIndex: number) => {
+    config.groupTileIndex = groupTileIndex;
+  });
   if (nowGroup !== undefined) {
     if (preGroup === undefined) {
       config.groupTiles[preIndex][1] = nowGroup;
@@ -392,14 +404,18 @@ const uniteTiles = (nowTile: any, preTile: any) => {
       config.groupTiles[preIndex][1] = config.groupTileIndex;
       if (config.groupTileIndex !== null) {
         config.groupTileIndex++;
+        socket.emit("groupIndex", {
+          roomID: room,
+          groupTileIndex: config.groupTileIndex,
+        });
       }
     }
   }
 
-  groupFit(config.groupTiles[preIndex][1]);
+  groupFit(config.groupTiles[preIndex][1], socket);
 };
 
-const groupFit = (nowGroup: number) => {
+const groupFit = (nowGroup: number, socket: any) => {
   const xTileCount = config.tilesPerRow;
   const yTileCount = config.tilesPerColumn;
   let groupArr: any = [];
@@ -459,7 +475,8 @@ const groupFit = (nowGroup: number) => {
           config.shapes[nowIndex],
           config.shapes[dir[0]],
           dir[1],
-          false
+          false,
+          socket
         );
         index++;
       }

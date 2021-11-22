@@ -1,3 +1,4 @@
+import { group } from 'console';
 import { eventNames } from 'process';
 import { stringify } from 'querystring';
 import { roomURL } from './roomInfo';
@@ -26,7 +27,7 @@ type Config = {
 };
 
 const roomPuzzleInfo = new Map<string, any>();
-
+let groupTileIndex: number;
 const updateRoomURL = (io: any) => {
   const cb = (io: any) => {
     let mySet = new Set<string>();
@@ -110,7 +111,14 @@ export default (io: any) => {
           tileIndex: res.tileIndex,
           tilePosition: res.tilePosition,
           tileGroup: res.tileGroup,
-          groupTileIndex: ++res.groupTileIndex,
+        });
+      },
+    );
+    socket.on(
+      'groupIndex',
+      (res: { roomID: string; groupTileIndex: number }) => {
+        socket.broadcast.to(res.roomID).emit('groupIndex', {
+          groupTileIndex : res.groupTileIndex,
         });
       },
     );
