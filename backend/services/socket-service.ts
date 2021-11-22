@@ -27,7 +27,7 @@ type Config = {
 };
 
 const roomPuzzleInfo = new Map<string, any>();
-const timer = new Map<string, any>();
+const timer = new Map<string, number>();
 let groupTileIndex: number;
 
 const updateRoomURL = (io: any) => {
@@ -120,16 +120,15 @@ export default (io: any) => {
         });
       },
     );
-    
+
     socket.on(
       'groupIndex',
-      (res: { roomID: string, groupTileIndex: number }) => {
-        if(res.groupTileIndex !== null){
+      (res: { roomID: string; groupTileIndex: number }) => {
+        if (res.groupTileIndex !== null) {
           groupTileIndex = res.groupTileIndex;
         }
-        console.log(groupTileIndex);
         socket.broadcast.to(res.roomID).emit('groupIndex', {
-          groupIndex : groupTileIndex,
+          groupIndex: groupTileIndex,
         });
       },
     );
@@ -137,10 +136,11 @@ export default (io: any) => {
       timer.set(res.roomID, res.timer);
     });
     socket.on('getTimer', (res: { roomID: string; timer: number }) => {
-      const sub = res.timer - timer.get(res.roomID);
+      const startTime = timer.get(res.roomID);
+      const sub = res.timer - (startTime || res.timer);
       const tmp = {
-        minutes: Math.floor(sub / 60),
-        seconds: Math.round(sub % 60),
+        minutes: Math.floor(sub / 1000 / 60),
+        seconds: Math.floor((sub / 1000) % 60),
       };
       socket.emit('getTimer', tmp);
     });
