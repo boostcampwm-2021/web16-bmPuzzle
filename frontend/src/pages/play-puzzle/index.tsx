@@ -55,6 +55,9 @@ const PlayPuzzle = (props: any) => {
       setFirstClient(true);
     });
     socket.emit("joinRoom", { roomID: roomID });
+    socket.on("isFull", () => {
+      history.push("/warning");
+    });
     return () => {
       socket.emit("leaveRoom", { roomID: roomID });
     };

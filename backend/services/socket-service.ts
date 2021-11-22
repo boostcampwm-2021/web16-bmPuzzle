@@ -56,9 +56,14 @@ export default (io: any) => {
   io.on('connection', (socket: any) => {
     updateRoomURL(io);
     socket.on('joinRoom', (res: { roomID: string }) => {
-      socket.join(res.roomID);
-      const isFirstClient = checkFirstClient(io, res.roomID);
-      if (isFirstClient) socket.emit('isFirstUser');
+      const clients = io.sockets.adapter.rooms.get(res.roomID);
+      const numClients = clients ? clients.size : 0;
+      if (numClients > 3) socket.emit('isFull');
+      else {
+        socket.join(res.roomID);
+        const isFirstClient = checkFirstClient(io, res.roomID);
+        if (isFirstClient) socket.emit('isFirstUser');
+      }
     });
     socket.on('message', (res: { roomID: string; message: object }) => {
       io.sockets.in(res.roomID).emit('message', res.message);
