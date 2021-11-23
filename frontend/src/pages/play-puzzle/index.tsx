@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, FC } from "react";
 import styled from "styled-components";
 import Header from "@src/components/common/header/index";
 import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
@@ -7,11 +7,20 @@ import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
 import { useHistory } from "react-router";
 import { SocketContext, socket } from "@src/context/socket";
 
-const PlayPuzzle = (props: any) => {
+type puzzleInfoType = {
+  img: string;
+  level: number;
+};
+const PlayPuzzle: FC<{
+  match: { params: { puzzleID: string; roomID: string } };
+}> = (props) => {
   const [loaded, setLoaded] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
-  const [puzzleInfo, setPuzzleInfo] = useState<any>({ img: "", level: 1 });
+  const [puzzleInfo, setPuzzleInfo] = useState<puzzleInfoType>({
+    img: "",
+    level: 1,
+  });
   const [isFirstClient, setFirstClient] = useState<boolean | undefined>(
     undefined
   );
@@ -40,10 +49,13 @@ const PlayPuzzle = (props: any) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const setPuzzle = async () => {
     if (puzzleInfo.img === "" && isFirstClient !== undefined) {
-      const res: any = await getPuzzleInfo();
-      if (res === undefined) history.go(-1);
-      res.image = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
-      setPuzzleInfo({ img: res.image, level: res.level });
+      const res: puzzleInfoType | undefined = await getPuzzleInfo();
+      if (res === undefined) {
+        history.go(-1);
+        return;
+      }
+      res.img = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
+      setPuzzleInfo({ img: res.img, level: res.level });
     }
   };
 

@@ -10,15 +10,14 @@ import UploadBtn from "@components/main/upload-button/index";
 import getImgfile from "@js/get-img-file";
 
 const Main = () => {
-  let dummy_image: any[] = [];
-  const containerRef: any = useRef(null);
+  let dummy_image: object[] = [];
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [img, setImg] = useState(dummy_image);
   let prev = 0;
   const getItem = 4;
-  let cache: any[];
+  let cache: undefined | object;
 
   const getImgUrl = async () => {
-    console.log("hey");
     let ret;
     if (cache === undefined) {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
@@ -41,7 +40,7 @@ const Main = () => {
     const data = ret.data.slice(prev, prev + getItem);
 
     if (fn.length === 0) {
-      console.log("adsfjlaksjld");
+      if (containerRef.current === null) return;
       containerRef.current.removeEventListener("scroll", infiniteScroll);
       return;
     }
@@ -51,7 +50,8 @@ const Main = () => {
   };
 
   const infiniteScroll = () => {
-    const ref: any = containerRef.current;
+    if (containerRef.current === null) return;
+    const ref: HTMLDivElement = containerRef.current;
     const scrollHeight = ref.scrollHeight;
     const scrollTop = ref.scrollTop;
     const clientHeight = ref.clientHeight;
@@ -62,6 +62,7 @@ const Main = () => {
 
   useEffect(() => {
     getImgUrl();
+    if (containerRef.current === null) return;
     containerRef.current.addEventListener("scroll", infiniteScroll);
   }, []);
 

@@ -9,7 +9,7 @@ import TitleBar from "@components/common/title-bar/index";
 import RankingIcon from "@images/ranking-black-icon.png";
 
 const Ranking = () => {
-  const type: any[] = [];
+  const type: Array<Object> = [];
   const [rankInfo, setRankInfo] = useState(type);
   const [userRank, setUserRank] = useState(100);
   const getRank = async () => {
@@ -28,13 +28,12 @@ const Ranking = () => {
       );
 
       const myRank = rankInfo.rank.filter(
-        (ele: any) => ele.id === window.sessionStorage.id
+        (ele: { id: string }) => ele.id === window.sessionStorage.id
       )[0];
       setRankInfo(rankInfo.rank);
       setUserRank(myRank);
     }
   };
-
   useEffect(() => {
     getRank();
   }, []);

@@ -13,9 +13,9 @@ import accountImg from "@images/account-black-icon.png";
 import getImgfile from "@js/get-img-file";
 
 const Mypage = () => {
-  let dummy_image: any[] = [];
-  let dummy_user: any = undefined;
-  const [user, setUser] = useState(dummy_user);
+  let dummy_image: object[] = [];
+  let dummy_user: undefined = undefined;
+  const [user, setUser] = useState<undefined | string | null>(dummy_user);
   const [upload, setUpload] = useState(dummy_image);
   const [done, setDone] = useState(dummy_image);
   const [current, setCurrent] = useState(undefined);
@@ -25,10 +25,10 @@ const Mypage = () => {
     link: "",
   });
 
-  const containerRef: any = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const getItem = 4;
   let prev = 0;
-  let cache: any[];
+  let cache: undefined | object[];
 
   const handleMove = (e: any) => {
     setCurrent(e.target.id);
@@ -69,8 +69,9 @@ const Mypage = () => {
       ret.uploadName.length > ret.doneName.length ? true : false;
 
     if (
-      (condition && uploadFile.length === 0) ||
-      (!condition && doneFile.length === 0)
+      ((condition && uploadFile.length === 0) ||
+        (!condition && doneFile.length === 0)) &&
+      containerRef.current !== null
     ) {
       containerRef.current.removeEventListener("scroll", infiniteScroll);
       return;
@@ -88,7 +89,8 @@ const Mypage = () => {
   };
 
   const infiniteScroll = () => {
-    const ref: any = containerRef.current;
+    const ref: HTMLDivElement | null = containerRef.current;
+    if (ref === null) return;
     const scrollHeight = ref.scrollHeight;
     const scrollTop = ref.scrollTop;
     const clientHeight = ref.clientHeight;
@@ -99,6 +101,7 @@ const Mypage = () => {
 
   useEffect(() => {
     myPageEnter();
+    if (containerRef.current === null) return;
     containerRef.current.addEventListener("scroll", infiniteScroll);
   }, []);
 
@@ -136,9 +139,9 @@ const Mypage = () => {
 };
 
 type propsType = {
-  id: any;
-  onClick: any;
-  cur: any;
+  id: string;
+  onClick: React.MouseEventHandler;
+  cur: string | undefined;
 };
 const Wrapper = styled.div`
   width: 100%;
