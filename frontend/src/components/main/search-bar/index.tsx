@@ -8,7 +8,7 @@ import getImgfile from "@js/get-img-file";
 const SearchBar = (props: any) => {
   const [search, setSearch] = useState("");
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
 
