@@ -2,7 +2,7 @@ import * as React from "react";
 import { useHistory } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import styled from "styled-components";
-import puzzleIcon from "@images/main-icon.png";
+import puzzleIcon from "@images/main-logo.gif";
 
 const Login = () => {
   const history = useHistory();
