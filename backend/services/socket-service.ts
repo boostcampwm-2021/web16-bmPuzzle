@@ -124,12 +124,16 @@ export default (io: any) => {
     socket.on(
       'groupIndex',
       (res: { roomID: string; groupTileIndex: number }) => {
-        if (res.groupTileIndex !== null) {
-          groupTileIndex = res.groupTileIndex;
+        if(res.groupTileIndex === 200){
+          socket.emit("groupIndex", {groupIndex: groupTileIndex});
+        }else{
+          if (res.groupTileIndex !== null) {
+            groupTileIndex = res.groupTileIndex;
+          }
+          socket.broadcast.to(res.roomID).emit('groupIndex', {
+            groupIndex: groupTileIndex,
+          });
         }
-        socket.broadcast.to(res.roomID).emit('groupIndex', {
-          groupIndex: groupTileIndex,
-        });
       },
     );
     socket.on('setTimer', (res: { roomID: string; timer: number }) => {

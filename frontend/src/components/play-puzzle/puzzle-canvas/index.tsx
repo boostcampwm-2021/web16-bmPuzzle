@@ -113,17 +113,23 @@ const PuzzleCanvas = (props: any) => {
       Puzzle.move(isFirstClient, socket, roomID);
       socket.emit("setPuzzleConfig", { roomID: roomID, config: config });
     } else {
+      socket.emit("groupIndex", { roomID: roomID, groupTileIndex: 200 });
+
+      socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
+        if (!isNaN(groupIndex)) {
+          Puzzle.groupFirstUpdate(groupIndex);
+        }
+      });
       socket.on("getPuzzleConfig", (res: Config) => {
         Puzzle.setting(getConfig(res, Paper));
         Puzzle.move(isFirstClient, socket, roomID);
       });
-      socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
-        Puzzle.groupUpdate(groupIndex);
-      });
       socket.emit("getPuzzleConfig", { roomID: roomID });
     }
     socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
-      Puzzle.groupUpdate(groupIndex);
+      if (!isNaN(groupIndex)) {
+        Puzzle.groupUpdate(groupIndex);
+      }
     });
     socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
       Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
