@@ -134,7 +134,6 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       if (mouseFlag !== 2) return;
       mouseFlag = 0;
       select_idx = gtile[0].index;
-      console.log(select_idx, gtileIdx);
       gtile[0]._parent.addChild(gtile[0]);
     };
     gtile[0].onMouseDrag = (event: any) => {
@@ -395,7 +394,6 @@ const fitTiles = (
   if (flag && uniteFlag) {
     uniteTiles(nowTile, preTile, socket);
     fitEffect();
-    console.log(config.groupTiles);
   }
 };
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import { SocketContext } from "@context/socket";
 
-const Chat = (props: any) => {
+const Chat = (props: { roomID: string; chatVisible: boolean }) => {
   const { roomID, chatVisible } = props;
   const socket = useContext(SocketContext);
   interface MessageInfo {
@@ -30,12 +30,13 @@ const Chat = (props: any) => {
     };
   }, [chat, socket]);
 
-  const onMessageSubmit = (e: any) => {
+  const onMessageSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (state.message === "") return;
     socket.emit("message", { roomID: roomID, message: state });
     setState({ name: "", message: "" });
   };
-  const onTextChange = (e: any) => {
+  const onTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setState({ name: userID, message: e.target.value });
   };
   const renderChat = () => {

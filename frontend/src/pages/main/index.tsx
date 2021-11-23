@@ -16,8 +16,8 @@ const Main = () => {
   const [filterImg, setFilterImg] = useState(dummy_image);
   const [isSearched, setIsSearched] = useState(false);
   let prev = 0;
-  const getItem = 4;
-  let cache: any[];
+  const getItem = 10;
+  let cache: object[] | undefined;
 
   const getImgUrl = async () => {
     let ret;
