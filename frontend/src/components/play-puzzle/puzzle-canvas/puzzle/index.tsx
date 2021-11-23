@@ -25,8 +25,12 @@ type Config = {
 };
 
 let config: Config;
+let gIndex: number;
 const setting = (conf: Config) => {
   config = { ...conf };
+  if (!isNaN(gIndex)) {
+    config.groupTileIndex = gIndex;
+  }
 };
 const settingValue = (key: string, value: any) => {
   config[key] = value;
@@ -47,6 +51,9 @@ const renderMove = (
 const groupUpdate = (groupIndex: number) => {
   MovePuzzle.indexUpdate(groupIndex);
 };
+const groupFirstUpdate = (groupIndex: number) => {
+  gIndex = groupIndex;
+};
 const completePuzzle = () => {
   return MovePuzzle.checkComplete();
 };
@@ -59,5 +66,6 @@ const Puzzle = {
   renderMove,
   completePuzzle,
   groupUpdate,
+  groupFirstUpdate,
 };
 export default Puzzle;

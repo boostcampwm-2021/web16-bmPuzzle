@@ -205,8 +205,9 @@ const moveUpdate = (
   }
 };
 const indexUpdate = (groupIndex: number) => {
-  console.log(groupIndex);
-  config.groupTileIndex = groupIndex;
+  if (config !== undefined) {
+    config.groupTileIndex = groupIndex;
+  }
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
@@ -393,7 +394,6 @@ const fitTiles = (
   if (flag && uniteFlag) {
     uniteTiles(nowTile, preTile, socket);
     fitEffect();
-    console.log(config.groupTiles);
   }
 };
 
