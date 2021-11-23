@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import styled from "styled-components";
 import puzzleIcon from "@images/main-logo.gif";
+import LogoCanvas from "@components/logo-canvas";
 
 const Login = () => {
   const history = useHistory();
@@ -29,8 +30,7 @@ const Login = () => {
 
   return (
     <Wrapper>
-      <Title>BM PUZZLE</Title>
-      <Icon src={puzzleIcon} />
+      <LogoCanvas></LogoCanvas>
       <GoogleLogin
         clientId={google_id}
         render={(renderProps) => (
@@ -71,6 +71,11 @@ const Icon = styled.img`
 `;
 
 const GoogleButton = styled.button`
+  z-index: 2;
+  position: absolute;
+  left: 50%;
+  bottom: 15%;
+  transform: translate(-50%, 0);
   justify-content: center;
   border-radius: 50px;
   height: 45px;
