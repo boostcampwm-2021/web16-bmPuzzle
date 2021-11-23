@@ -134,6 +134,7 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       if (mouseFlag !== 2) return;
       mouseFlag = 0;
       select_idx = gtile[0].index;
+      console.log(select_idx, gtileIdx);
       gtile[0]._parent.addChild(gtile[0]);
     };
     gtile[0].onMouseDrag = (event: any) => {
@@ -394,6 +395,7 @@ const fitTiles = (
   if (flag && uniteFlag) {
     uniteTiles(nowTile, preTile, socket);
     fitEffect();
+    console.log(config.groupTiles);
   }
 };
 
@@ -437,10 +439,27 @@ const uniteTiles = (nowTile: any, preTile: any, socket: any) => {
       }
     }
   }
-
-  groupFit(config.groupTiles[preIndex][1], socket);
+  if (!dismantling(config.groupTiles[preIndex][1])) {
+    groupFit(config.groupTiles[preIndex][1], socket);
+  }
 };
-
+const dismantling = (groupIndexNow: number) => {
+  let count = 0;
+  config.groupTiles.forEach((gtile) => {
+    if (gtile[1] === groupIndexNow) {
+      count++;
+    }
+  });
+  if (count === 1) {
+    config.groupTiles.forEach((gtile) => {
+      if (gtile[1] === groupIndexNow) {
+        gtile[1] = undefined;
+        return true;
+      }
+    });
+  }
+  return false;
+};
 const groupFit = (nowGroup: number, socket: any) => {
   const xTileCount = config.tilesPerRow;
   const yTileCount = config.tilesPerColumn;
