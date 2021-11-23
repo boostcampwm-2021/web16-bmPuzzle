@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext } from "react";
+import React, { useRef, useEffect, useContext, useState } from "react";
 import Paper from "paper";
 import styled from "styled-components";
 import { SocketContext } from "@context/socket";
@@ -98,6 +98,7 @@ const getConfig = (data: Config, Paper: any) => {
 const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
   const { puzzleImg, level, isFirstClient, roomID, puzzleID } = props;
+  const [showCanvas, setShowCanvas] = useState(true);
   let time = props.time;
   const socket = useContext(SocketContext);
   useEffect(() => {
@@ -161,13 +162,18 @@ const PuzzleCanvas = (props: any) => {
       completeAnimation(Puzzle.exportConfig().project);
       puzzleCompleteAudio();
       postDonePuzzle();
+      setTimeout(() => setShowCanvas(false), 4000);
       socket.emit("deleteRoom", { roomID: roomID });
       time = undefined;
     }
   }, [time.minutes, time.seconds]);
   return (
     <Wrapper>
-      <Canvas ref={canvasRef} id="canvas" />
+      {showCanvas ? (
+        <Canvas ref={canvasRef} id="canvas" />
+      ) : (
+        <ComponentImg src={puzzleImg.current.src} alt="puzzleImage" />
+      )}
     </Wrapper>
   );
 };
@@ -187,5 +193,14 @@ const Wrapper = styled.div`
   width: 100%;
   height: 100%;
 `;
-
+const ComponentImg = styled.img`
+  z-index: 1;
+  object-fit: scale-down;
+  width: 80%;
+  height: 80%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+`;
 export default PuzzleCanvas;
