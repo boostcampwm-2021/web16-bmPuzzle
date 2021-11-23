@@ -32,6 +32,7 @@ const Chat = (props: any) => {
 
   const onMessageSubmit = (e: any) => {
     e.preventDefault();
+    if (state.message === "") return;
     socket.emit("message", { roomID: roomID, message: state });
     setState({ name: "", message: "" });
   };
