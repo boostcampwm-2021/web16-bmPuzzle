@@ -15,7 +15,7 @@ const Main = () => {
   const [img, setImg] = useState(dummy_image);
   let prev = 0;
   const getItem = 10;
-  let cache: any[];
+  let cache: object[] | undefined;
 
   const getImgUrl = async () => {
     let ret;
