@@ -9,7 +9,7 @@ import { SocketContext } from "@src/context/socket";
 
 const Header = (props: any) => {
   const history = useHistory();
-  const ref: any = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   let {
     isPlayRoom,
     chatVisible,
@@ -40,11 +40,14 @@ const Header = (props: any) => {
 
   useEffect(() => {
     if (time !== undefined && !isFirstClient) {
-      socket.on("getTimer", (res: any) => {
-        if (res !== null && res.minutes !== null) {
-          setTime(res);
+      socket.on(
+        "getTimer",
+        (res: null | { minutes: number; seconds: number }) => {
+          if (res !== null && res.minutes !== null) {
+            setTime(res);
+          }
         }
-      });
+      );
       socket.emit("getTimer", { roomID: roomID, timer: Date.now() });
     }
   }, []);

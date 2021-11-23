@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 import LogoutBtn from "@components/logout-btn/index";
 
-const AccountBar = (props: any) => {
+const AccountBar = (props: { img: string; text: string; btn?: string }) => {
   return (
     <Wrapper>
       <LeftWrapper>

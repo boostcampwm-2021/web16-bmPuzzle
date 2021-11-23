@@ -36,7 +36,7 @@ type infoType = {
 };
 
 type shareControlType = {
-  shareControl: any;
+  shareControl: (arg0: boolean, arg1: string, arg2: string) => void;
 };
 
 type shareModalType = {
