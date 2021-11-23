@@ -76,7 +76,7 @@ const PlayPuzzle: FC<{
 
   return (
     <Wrapper>
-      {user === null && <Warning user="none" />}
+      {user === null && <Warning warn="noUser" />}
       <Header
         isPlayRoom={true}
         chatVisible={chatVisible}

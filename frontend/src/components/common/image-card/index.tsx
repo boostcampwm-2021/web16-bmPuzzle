@@ -4,6 +4,8 @@ import { useHistory } from "react-router-dom";
 
 import shareBtnImg from "@images/share-btn.png";
 
+import Warning from "@pages/warning/index";
+
 type imgGroupType = {
   id: string;
   image: string;
@@ -83,39 +85,41 @@ const ImageCard = (props: any) => {
 
   return (
     <ImageGroup {...props}>
-      {props.img.map((ele: imgGroupType, idx: number) => {
-        let time;
-        if (ele.time === undefined) {
-          if (props.my === "up") time = "";
-          else time = ele.visit_time;
-        } else time = convertTime(ele.time);
-        return (
-          <Wrapper
-            key={idx}
-            onClick={() => {
-              props.my === "done" ? download(ele.image) : moveHandler(ele.id);
-            }}
-          >
-            <Img src={ele.image} />
-            <Content>
-              <div>{ele.title}</div>
-              <DetailWrap>
-                <div>{time}</div>
-                <ShareButton
-                  shareControl={props.shareControl}
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    const link = await validURL(ele.id);
-                    props.shareControl(true, ele.image, link);
-                  }}
-                >
-                  <img src={shareBtnImg} alt="공유" />
-                </ShareButton>
-              </DetailWrap>
-            </Content>
-          </Wrapper>
-        );
-      })}
+      {props.img === undefined && <Warning warn="noFile" />}
+      {props.img !== undefined &&
+        props.img.map((ele: imgGroupType, idx: number) => {
+          let time;
+          if (ele.time === undefined) {
+            if (props.my === "up") time = "";
+            else time = ele.visit_time;
+          } else time = convertTime(ele.time);
+          return (
+            <Wrapper
+              key={idx}
+              onClick={() => {
+                props.my === "done" ? download(ele.image) : moveHandler(ele.id);
+              }}
+            >
+              <Img src={ele.image} />
+              <Content>
+                <div>{ele.title}</div>
+                <DetailWrap>
+                  <div>{time}</div>
+                  <ShareButton
+                    shareControl={props.shareControl}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      const link = await validURL(ele.id);
+                      props.shareControl(true, ele.image, link);
+                    }}
+                  >
+                    <img src={shareBtnImg} alt="공유" />
+                  </ShareButton>
+                </DetailWrap>
+              </Content>
+            </Wrapper>
+          );
+        })}
     </ImageGroup>
   );
 };
