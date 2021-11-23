@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState, FC } from "react";
 import { useHistory } from "react-router";
 import { SocketContext, socket } from "@src/context/socket";
