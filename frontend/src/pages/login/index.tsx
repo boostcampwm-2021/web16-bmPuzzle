@@ -65,8 +65,8 @@ const Title = styled.div`
   margin-top: 75px;
 `;
 const Icon = styled.img`
-  width: 200px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
   margin: 80px 0;
 `;
 
