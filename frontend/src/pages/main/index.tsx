@@ -14,7 +14,7 @@ const Main = () => {
   const containerRef: any = useRef(null);
   const [img, setImg] = useState(dummy_image);
   let prev = 0;
-  const getItem = 4;
+  const getItem = 10;
   let cache: any[];
 
   const getImgUrl = async () => {

@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useHistory } from "react-router";
+import { SocketContext, socket } from "@src/context/socket";
 import styled from "styled-components";
+
 import Header from "@src/components/common/header/index";
 import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
 import Chat from "@src/components/play-puzzle/chat/index";
 import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
-import { useHistory } from "react-router";
-import { SocketContext, socket } from "@src/context/socket";
+import Warning from "@pages/warning/index";
 
 const PlayPuzzle = (props: any) => {
   const [loaded, setLoaded] = useState(false);
@@ -37,7 +39,6 @@ const PlayPuzzle = (props: any) => {
     return { img: resJSON.img, level: resJSON.level };
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const setPuzzle = async () => {
     if (puzzleInfo.img === "" && isFirstClient !== undefined) {
       const res: any = await getPuzzleInfo();
@@ -63,6 +64,7 @@ const PlayPuzzle = (props: any) => {
 
   return (
     <Wrapper>
+      {user === null && <Warning user="none" />}
       <Header
         isPlayRoom={true}
         chatVisible={chatVisible}
@@ -73,7 +75,6 @@ const PlayPuzzle = (props: any) => {
         roomID={roomID}
       />
       <Body>
-        {user === null && <div>로그인하고 이용해주세요</div>}
         {user !== null && (
           <SocketContext.Provider value={socket}>
             <Chat chatVisible={chatVisible} roomID={roomID} />

@@ -4,7 +4,11 @@ import styled from "styled-components";
 
 import WarningIcon from "@images/warning-icon.png";
 
-const Warning = () => {
+type PropsType = {
+  user: string;
+};
+
+const Warning = (props: PropsType) => {
   const history = useHistory();
 
   const goLogin = () => history.push("/");
@@ -13,8 +17,12 @@ const Warning = () => {
     <Wrapper>
       <Container>
         <Img src={WarningIcon} alt="" />
-        <span>게임룸은 정원제한에 도달하였습니다!</span>
-        <Btn onClick={goLogin}>이전 화면으로 돌아가기</Btn>
+        {props.user === "none" ? (
+          <span>로그인을 하고 이용해주세요</span>
+        ) : (
+          <span>게임룸은 정원제한에 도달하였습니다!</span>
+        )}
+        <Btn onClick={goLogin}>처음으로 돌아가기</Btn>
       </Container>
     </Wrapper>
   );
