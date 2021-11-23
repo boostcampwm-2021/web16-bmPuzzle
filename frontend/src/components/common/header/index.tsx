@@ -5,12 +5,11 @@ import logo_image from "@images/puzzle-icon.png";
 import ranking_image from "@images/ranking-icon.png";
 import account_image from "@images/account-icon.png";
 import chat_image from "@images/chat-icon.png";
-import { SocketContext, socket } from "@src/context/socket";
+import { SocketContext } from "@src/context/socket";
 
 const Header = (props: any) => {
   const history = useHistory();
   const ref: any = useRef(null);
-  let idx = 0;
   let {
     isPlayRoom,
     chatVisible,
@@ -31,37 +30,29 @@ const Header = (props: any) => {
     setChatVisible(toggle);
   };
 
-  const getNow = () => {
-    const today = new Date();
-    const hours = today.getHours() * 3600; // 시
-    const minutes = today.getMinutes() * 60; // 분
-    const seconds = today.getSeconds() + hours + minutes;
-    return seconds;
-  };
-
   useEffect(() => {
     if (time !== undefined) {
       if (isFirstClient) {
-        socket.emit("setTimer", { roomID: roomID, timer: getNow() });
+        socket.emit("setTimer", { roomID: roomID, timer: Date.now() });
       }
     }
-  }, [isFirstClient]);
+  }, [isFirstClient, roomID, socket, time]);
 
   useEffect(() => {
     if (time !== undefined && !isFirstClient) {
       socket.on("getTimer", (res: any) => {
         if (res !== null && res.minutes !== null) {
-          time = res;
+          setTime(res);
         }
       });
-      socket.emit("getTimer", { roomID: roomID, timer: getNow() });
+      socket.emit("getTimer", { roomID: roomID, timer: Date.now() });
     }
   }, []);
 
   useEffect(() => {
     if (time !== undefined) {
       const countTime = setInterval(() => {
-        if (time.seconds >= 60) {
+        if (time.seconds >= 59) {
           setTime({ minutes: time.minutes + 1, seconds: 0 });
         } else {
           setTime({ minutes: time.minutes, seconds: time.seconds + 1 });
@@ -107,40 +98,49 @@ const Wrapper = styled.div`
   margin: 0px;
   padding: 0px;
   width: 100%;
-  height: 30px;
-  padding-top: 5px;
+  height: 50px;
   background: #000000;
   display: flex;
   justify-content: space-even;
 `;
 
 const HomeBtnWrapper = styled.div`
-  width: 50%;
+  width: 52%;
   text-align: right;
+  align-items: center;
+  display: flex;
+  justify-content: end;
 `;
 
 const RightIconWrapper = styled.div`
-  width: 50%;
+  width: 48%;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   margin-right: 20px;
   & > button {
-    margin-left: 5px;
+    margin-left: 15px;
   }
 `;
 
 const ChatWrapper = styled.div`
   position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: 10%;
+  height: 50px;
+  margin-left: 20px;
 `;
 
 const TimerWrapper = styled.div`
+  font-size: 20px;
   color: white;
 `;
 
 const Btn = styled.button`
   padding: 0px;
-  width: 50%;
+  width: 100%;
   border: none;
   background: transparent;
   width: 30px;
@@ -153,8 +153,8 @@ const Btn = styled.button`
 `;
 
 const Img = styled.img`
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
 `;
 
 export default Header;

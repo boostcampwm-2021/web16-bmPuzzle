@@ -1,3 +1,4 @@
+import { group } from 'console';
 import { eventNames } from 'process';
 import { stringify } from 'querystring';
 import { roomURL } from './roomInfo';
@@ -26,6 +27,8 @@ type Config = {
 };
 
 const roomPuzzleInfo = new Map<string, any>();
+const timer = new Map<string, number>();
+let groupTileIndex: number;
 
 const updateRoomURL = (io: any) => {
   const cb = (io: any) => {
@@ -56,9 +59,14 @@ export default (io: any) => {
   io.on('connection', (socket: any) => {
     updateRoomURL(io);
     socket.on('joinRoom', (res: { roomID: string }) => {
-      socket.join(res.roomID);
-      const isFirstClient = checkFirstClient(io, res.roomID);
-      if (isFirstClient) socket.emit('isFirstUser');
+      const clients = io.sockets.adapter.rooms.get(res.roomID);
+      const numClients = clients ? clients.size : 0;
+      if (numClients > 3) socket.emit('isFull');
+      else {
+        socket.join(res.roomID);
+        const isFirstClient = checkFirstClient(io, res.roomID);
+        socket.emit('isFirstUser', { isFirstUser: isFirstClient });
+      }
     });
     socket.on('message', (res: { roomID: string; message: object }) => {
       io.sockets.in(res.roomID).emit('message', res.message);
@@ -80,7 +88,6 @@ export default (io: any) => {
         tilePosition: any[];
         tileGroup: number | null;
         changedData: any;
-        groupTileIndex: number;
       }) => {
         let config = roomPuzzleInfo.get(res.roomID);
         if (config === undefined) return;
@@ -110,10 +117,43 @@ export default (io: any) => {
           tileIndex: res.tileIndex,
           tilePosition: res.tilePosition,
           tileGroup: res.tileGroup,
-          groupTileIndex: ++res.groupTileIndex,
         });
       },
     );
+
+    socket.on(
+      'groupIndex',
+      (res: { roomID: string; groupTileIndex: number }) => {
+        if(res.groupTileIndex === 200){
+          socket.emit("groupIndex", {groupIndex: groupTileIndex});
+        }else{
+          if (res.groupTileIndex !== null) {
+            groupTileIndex = res.groupTileIndex;
+          }
+          socket.broadcast.to(res.roomID).emit('groupIndex', {
+            groupIndex: groupTileIndex,
+          });
+        }
+      },
+    );
+    socket.on('setTimer', (res: { roomID: string; timer: number }) => {
+      if (timer.get(res.roomID) === undefined) {
+        timer.set(res.roomID, res.timer);
+      }
+    });
+    socket.on('getTimer', (res: { roomID: string; timer: number }) => {
+      const startTime = timer.get(res.roomID);
+      const sub = res.timer - (startTime || res.timer);
+      const tmp = {
+        minutes: Math.floor(sub / 1000 / 60),
+        seconds: Math.round((sub / 1000) % 60),
+      };
+      socket.emit('getTimer', tmp);
+    });
+
+    socket.on('deleteRoom', (res: { roomID: string }) => {
+      timer.delete(res.roomID);
+    });
     socket.on('disconnect', () => {});
   });
 };

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useContext, useState } from "react";
+import React, { useRef, useEffect, useContext } from "react";
 import Paper from "paper";
 import styled from "styled-components";
 import { SocketContext } from "@context/socket";
@@ -9,7 +9,7 @@ import { completeAnimation } from "@components/play-puzzle/puzzle-canvas/puzzle/
 
 type LevelSizeType = { 1: number; 2: number; 3: number };
 type Levels = 1 | 2 | 3;
-const levelSize: LevelSizeType = { 1: 300, 2: 500, 3: 800 };
+const levelSize: LevelSizeType = { 1: 400, 2: 500, 3: 600 };
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -99,7 +99,6 @@ const PuzzleCanvas = (props: any) => {
   const canvasRef = useRef(null);
   const { puzzleImg, level, isFirstClient, roomID, puzzleID } = props;
   let time = props.time;
-  const [complete, setComplete] = useState(false);
   const socket = useContext(SocketContext);
   useEffect(() => {
     const canvas: any = canvasRef.current;
@@ -114,18 +113,27 @@ const PuzzleCanvas = (props: any) => {
       Puzzle.move(isFirstClient, socket, roomID);
       socket.emit("setPuzzleConfig", { roomID: roomID, config: config });
     } else {
+      socket.emit("groupIndex", { roomID: roomID, groupTileIndex: 200 });
+
+      socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
+        if (!isNaN(groupIndex)) {
+          Puzzle.groupFirstUpdate(groupIndex);
+        }
+      });
       socket.on("getPuzzleConfig", (res: Config) => {
         Puzzle.setting(getConfig(res, Paper));
         Puzzle.move(isFirstClient, socket, roomID);
       });
       socket.emit("getPuzzleConfig", { roomID: roomID });
     }
-    socket.on(
-      "tilePosition",
-      ({ tileIndex, tilePosition, tileGroup, groupTileIndex }) => {
-        Puzzle.renderMove(tileIndex, tilePosition, tileGroup, groupTileIndex);
+    socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
+      if (!isNaN(groupIndex)) {
+        Puzzle.groupUpdate(groupIndex);
       }
-    );
+    });
+    socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
+      Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
+    });
   }, []);
 
   const postDonePuzzle = async () => {
@@ -149,7 +157,6 @@ const PuzzleCanvas = (props: any) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const complete = Puzzle.completePuzzle();
-    setComplete(complete);
     if (complete) {
       completeAnimation(Puzzle.exportConfig().project);
       puzzleCompleteAudio();
@@ -166,15 +173,19 @@ const PuzzleCanvas = (props: any) => {
 };
 
 const Canvas = styled.canvas`
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  width: 1280px;
+  height: 765px;
+  top: ${(window.innerHeight + 35) / 2}px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  border: 2px solid #000000;
 `;
 
 const Wrapper = styled.div`
   width: 100%;
   height: 100%;
-  padding: 50px 0;
-  box-sizing: border-box;
 `;
 
 export default PuzzleCanvas;

@@ -11,6 +11,7 @@ import Main from "@pages/main/index";
 import Mypage from "@pages/mypage/index";
 import PlayPuzzle from "@pages/play-puzzle/index";
 import Ranking from "@pages/ranking/index";
+import Warning from "@pages/warning/index";
 
 const App = () => {
   return (
@@ -27,6 +28,12 @@ const App = () => {
           exact={true}
         />
         <PrivateRoute path="/ranking" component={Ranking} exact={true} />
+        <PublicRoute
+          restricted={false}
+          path="/warning"
+          component={Warning}
+          exact
+        />
       </Switch>
     </Router>
   );

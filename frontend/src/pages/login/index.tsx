@@ -2,7 +2,7 @@ import * as React from "react";
 import { useHistory } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import styled from "styled-components";
-import puzzleIcon from "@images/main-icon.png";
+import puzzleIcon from "@images/main-logo.gif";
 
 const Login = () => {
   const history = useHistory();
@@ -65,8 +65,8 @@ const Title = styled.div`
   margin-top: 75px;
 `;
 const Icon = styled.img`
-  width: 200px;
-  height: 200px;
+  width: 300px;
+  height: 300px;
   margin: 80px 0;
 `;
 

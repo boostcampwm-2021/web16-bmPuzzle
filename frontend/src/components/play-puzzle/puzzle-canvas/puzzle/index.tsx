@@ -24,14 +24,13 @@ type Config = {
   selectIndex: number;
 };
 
-type Timer = {
-  minutes: number;
-  seconds: number;
-};
-
 let config: Config;
+let gIndex: number;
 const setting = (conf: Config) => {
   config = { ...conf };
+  if (!isNaN(gIndex)) {
+    config.groupTileIndex = gIndex;
+  }
 };
 const settingValue = (key: string, value: any) => {
   config[key] = value;
@@ -45,10 +44,15 @@ const move = (isFirstClient: boolean, socket: any, roomID: string) => {
 const renderMove = (
   tileIndex: number,
   tilePosition: any[],
-  tileGroup: number | null,
-  groupTileIndex: number | null
+  tileGroup: number | null
 ) => {
-  MovePuzzle.moveUpdate(tileIndex, tilePosition, tileGroup, groupTileIndex);
+  MovePuzzle.moveUpdate(tileIndex, tilePosition, tileGroup);
+};
+const groupUpdate = (groupIndex: number) => {
+  MovePuzzle.indexUpdate(groupIndex);
+};
+const groupFirstUpdate = (groupIndex: number) => {
+  gIndex = groupIndex;
 };
 const completePuzzle = () => {
   return MovePuzzle.checkComplete();
@@ -61,5 +65,7 @@ const Puzzle = {
   exportConfig,
   renderMove,
   completePuzzle,
+  groupUpdate,
+  groupFirstUpdate,
 };
 export default Puzzle;

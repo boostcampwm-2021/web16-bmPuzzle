@@ -1,17 +1,15 @@
-import { Size, Point, settings } from "paper/dist/paper-core";
-import { Howl } from "howler";
+import { Size, Point } from "paper/dist/paper-core";
 import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
 import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
 
 const constant = {
   percentageTotal: 100.0,
-  imgMargin: 0.1,
   borderStrokeWidth: 5,
   tileOpacity: 1,
   maskOpacity: 0.25,
   orgTileLoc: 100,
-  tileMarginX: 50,
-  tileMarginY: -30,
+  tileMarginX: 0,
+  tileMarginY: 30,
 };
 let first = true;
 let select_idx: any;
@@ -39,6 +37,7 @@ type Config = {
 };
 let config: Config;
 let mouseFlag = 2; //mouseUp된 상태
+let room: string;
 
 const initConfig = () => {
   const tileRatio = config.tileWidth / constant.percentageTotal;
@@ -65,7 +64,10 @@ const initConfig = () => {
         cloneImg,
         new Size(config.tileWidth, config.tileWidth),
         new Point(config.tileWidth * x, config.tileWidth * y),
-        config.imgWidth / config.originWidth + constant.imgMargin
+        Math.max(
+          config.imgWidth / config.originWidth,
+          config.imgHeight / config.originHeight
+        )
       );
 
       const border = mask.clone();
@@ -89,10 +91,9 @@ const initConfig = () => {
       const index2 = config.tileIndexes[index1];
       const tile = config.tiles[index2];
       config.tileIndexes.splice(index1, 1);
-
       const position = new Point(
         config.project.view.center.x -
-          config.tileWidth +
+          config.tileWidth / 2 +
           config.tileWidth * (x * 2 + (y % 2)) -
           config.imgWidth,
         config.project.view.center.y -
@@ -108,7 +109,10 @@ const initConfig = () => {
 
       tile.position = new Point(
         cellPosition.x * config.tileWidth + constant.tileMarginX,
-        cellPosition.y * config.tileWidth + constant.tileMarginY
+        cellPosition.y * config.tileWidth +
+          (config.tilesPerColumn % 2 === 1
+            ? -constant.tileMarginY
+            : constant.tileMarginY)
       );
     }
   }
@@ -118,6 +122,7 @@ const initConfig = () => {
 };
 const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config = Puzzle.exportConfig();
+  room = roomID;
   if (isFirstClient) initConfig();
   config.groupTiles.forEach((gtile, index) => {
     if (gtile[1] === null) {
@@ -129,16 +134,36 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       if (mouseFlag !== 2) return;
       mouseFlag = 0;
       select_idx = gtile[0].index;
+      console.log(select_idx, gtileIdx);
       gtile[0]._parent.addChild(gtile[0]);
     };
     gtile[0].onMouseDrag = (event: any) => {
       if (mouseFlag === 2) return;
       mouseFlag = 1;
+      const newPosition = {
+        x: Math.min(
+          Math.max(
+            gtile[0].position._x + event.delta.x,
+            Math.floor(config.tileWidth / 2)
+          ),
+          config.project.view._viewSize._width -
+            Math.floor(config.tileWidth / 2)
+        ),
+        y: Math.min(
+          Math.max(
+            gtile[0].position._y + event.delta.y,
+            Math.floor(config.tileWidth / 2)
+          ),
+          config.project.view._viewSize._height -
+            Math.floor(config.tileWidth / 2)
+        ),
+      };
+      const originalPosition = {
+        x: gtile[0].position._x,
+        y: gtile[0].position._y,
+      };
       if (gtile[1] === undefined) {
-        gtile[0].position = new Point(
-          gtile[0].position._x + event.delta.x,
-          gtile[0].position._y + event.delta.y
-        );
+        gtile[0].position = new Point(newPosition.x, newPosition.y);
         socket.emit("tilePosition", {
           roomID: roomID,
           tileIndex: gtileIdx,
@@ -150,8 +175,8 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
         config.groupTiles.forEach((gtile_now, index) => {
           if (gtile[1] === gtile_now[1]) {
             gtile_now[0].position = new Point(
-              gtile_now[0].position._x + event.delta.x,
-              gtile_now[0].position._y + event.delta.y
+              gtile_now[0].position._x + newPosition.x - originalPosition.x,
+              gtile_now[0].position._y + newPosition.y - originalPosition.y
             );
             socket.emit("tilePosition", {
               roomID: roomID,
@@ -169,8 +194,7 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
 const moveUpdate = (
   tileIndex: number,
   tilePosition: any[],
-  tileGroup: number | null,
-  groupTileIndex: number | null
+  tileGroup: number | null
 ) => {
   config = Puzzle.exportConfig();
   if (config !== undefined) {
@@ -179,7 +203,11 @@ const moveUpdate = (
       tilePosition[2]
     );
     config.groupTiles[tileIndex][1] = tileGroup;
-    config.groupTileIndex = groupTileIndex;
+  }
+};
+const indexUpdate = (groupIndex: number) => {
+  if (config !== undefined) {
+    config.groupTileIndex = groupIndex;
   }
 };
 
@@ -218,7 +246,15 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       });
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined) {
-          fitTiles(tile, nowIndexTile, nowShape, tileShape[index], index, true);
+          fitTiles(
+            tile,
+            nowIndexTile,
+            nowShape,
+            tileShape[index],
+            index,
+            true,
+            socket
+          );
           config.groupTiles.forEach((gtile, idx) => {
             socket.emit("tilePosition", {
               roomID: roomID,
@@ -226,7 +262,6 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
               tilePosition: gtile[0].position,
               tileGroup: gtile[1],
               changedData: gtile[0],
-              groupTileIndex: config.groupTileIndex,
             });
           });
         }
@@ -288,7 +323,8 @@ const fitTiles = (
   _nowShape: any,
   _preShape: any,
   dir: number,
-  flag: boolean
+  flag: boolean,
+  socket: any
 ) => {
   const yChange = FindChange.findYChange(_nowShape, _preShape);
   const xChange = FindChange.findXChange(_nowShape, _preShape);
@@ -357,12 +393,13 @@ const fitTiles = (
       break;
   }
   if (flag && uniteFlag) {
-    uniteTiles(nowTile, preTile);
+    uniteTiles(nowTile, preTile, socket);
     fitEffect();
+    console.log(config.groupTiles);
   }
 };
 
-const uniteTiles = (nowTile: any, preTile: any) => {
+const uniteTiles = (nowTile: any, preTile: any, socket: any) => {
   let substract = 0;
   if (first) {
     substract = config.tilesPerRow * config.tilesPerColumn + 1;
@@ -374,8 +411,8 @@ const uniteTiles = (nowTile: any, preTile: any) => {
   let nowGroup = config.groupTiles[nowIndex][1];
   let preGroup = config.groupTiles[preIndex][1];
 
-  if (nowGroup !== undefined) {
-    if (preGroup === undefined) {
+  if (nowGroup !== undefined && !Number.isNaN(nowGroup)) {
+    if (preGroup === undefined || Number.isNaN(preGroup)) {
       config.groupTiles[preIndex][1] = nowGroup;
     } else {
       config.groupTiles.forEach((gtile) => {
@@ -385,21 +422,45 @@ const uniteTiles = (nowTile: any, preTile: any) => {
       });
     }
   } else {
-    if (preGroup !== undefined) {
+    if (preGroup !== undefined && !Number.isNaN(preGroup)) {
       config.groupTiles[nowIndex][1] = preGroup;
     } else {
       config.groupTiles[nowIndex][1] = config.groupTileIndex;
       config.groupTiles[preIndex][1] = config.groupTileIndex;
-      if (config.groupTileIndex !== null) {
+      if (
+        config.groupTileIndex !== null &&
+        !Number.isNaN(config.groupTileIndex)
+      ) {
         config.groupTileIndex++;
+        socket.emit("groupIndex", {
+          roomID: room,
+          groupTileIndex: config.groupTileIndex,
+        });
       }
     }
   }
-
-  groupFit(config.groupTiles[preIndex][1]);
+  if (!dismantling(config.groupTiles[preIndex][1])) {
+    groupFit(config.groupTiles[preIndex][1], socket);
+  }
 };
-
-const groupFit = (nowGroup: number) => {
+const dismantling = (groupIndexNow: number) => {
+  let count = 0;
+  config.groupTiles.forEach((gtile) => {
+    if (gtile[1] === groupIndexNow) {
+      count++;
+    }
+  });
+  if (count === 1) {
+    config.groupTiles.forEach((gtile) => {
+      if (gtile[1] === groupIndexNow) {
+        gtile[1] = undefined;
+        return true;
+      }
+    });
+  }
+  return false;
+};
+const groupFit = (nowGroup: number, socket: any) => {
   const xTileCount = config.tilesPerRow;
   const yTileCount = config.tilesPerColumn;
   let groupArr: any = [];
@@ -459,7 +520,8 @@ const groupFit = (nowGroup: number) => {
           config.shapes[nowIndex],
           config.shapes[dir[0]],
           dir[1],
-          false
+          false,
+          socket
         );
         index++;
       }
@@ -613,5 +675,11 @@ const getTileRaster = (
   return targetRaster;
 };
 
-const MovePuzzle = { moveTile, findNearTile, moveUpdate, checkComplete };
+const MovePuzzle = {
+  moveTile,
+  findNearTile,
+  moveUpdate,
+  checkComplete,
+  indexUpdate,
+};
 export default MovePuzzle;

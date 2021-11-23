@@ -30,5 +30,27 @@ div {
     font-family: "roboto slab";
     font-weight: bold;
 }
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 100%;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: #D7D7D7;
+    border-radius: 10px;
+    opacity: 0.5;
+}
+*::-webkit-scrollbar-track {
+    background-color: white;
+}
+
+* input[type="file"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+}
 `;
 export default globalStyles;
