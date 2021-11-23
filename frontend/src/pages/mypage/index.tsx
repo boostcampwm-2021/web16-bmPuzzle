@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
 
@@ -25,6 +25,11 @@ const Mypage = () => {
     link: "",
   });
 
+  const containerRef: any = useRef(null);
+  const getItem = 4;
+  let prev = 0;
+  let cache: any[];
+
   const handleMove = (e: any) => {
     setCurrent(e.target.id);
   };
@@ -35,23 +40,66 @@ const Mypage = () => {
 
   const myPageEnter = async () => {
     setUser(window.sessionStorage.getItem("id"));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/my`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: window.sessionStorage.getItem("id"),
-      }),
-    });
-    if (response.ok) {
-      let img = await response.json();
-      setUpload(await getImgfile(img.uploadName, img.uploadData));
-      setDone(await getImgfile(img.doneName, img.doneData));
+
+    let ret;
+    if (cache === undefined) {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/my`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: window.sessionStorage.getItem("id"),
+        }),
+      });
+      if (response.ok) {
+        ret = await response.json();
+        cache = ret;
+      }
     }
+
+    ret = ret === undefined ? cache : ret;
+
+    const uploadFile = ret.uploadName.slice(prev, prev + getItem);
+    const uploadFileInfo = ret.uploadData.slice(prev, prev + getItem);
+    const doneFile = ret.doneName.slice(prev, prev + getItem);
+    const doneFileInfo = ret.doneData.slice(prev, prev + getItem);
+
+    const condition =
+      ret.uploadName.length > ret.doneName.length ? true : false;
+
+    if (
+      (condition && uploadFile.length === 0) ||
+      (!condition && doneFile.length === 0)
+    ) {
+      containerRef.current.removeEventListener("scroll", infiniteScroll);
+      return;
+    }
+
+    prev += getItem;
+    setUpload((prevState) => [
+      ...prevState,
+      ...getImgfile(uploadFile, uploadFileInfo),
+    ]);
+    setDone((prevState) => [
+      ...prevState,
+      ...getImgfile(doneFile, doneFileInfo),
+    ]);
   };
+
+  const infiniteScroll = () => {
+    const ref: any = containerRef.current;
+    const scrollHeight = ref.scrollHeight;
+    const scrollTop = ref.scrollTop;
+    const clientHeight = ref.clientHeight;
+
+    const ret = Math.floor(scrollTop) + clientHeight;
+    if (ret === scrollHeight || ret === scrollHeight - 1) myPageEnter();
+  };
+
   useEffect(() => {
     myPageEnter();
+    containerRef.current.addEventListener("scroll", infiniteScroll);
   }, []);
 
   return (
@@ -66,7 +114,7 @@ const Mypage = () => {
             퍼즐 저장소
           </Btn>
         </BtnWrapper>
-        <Container>
+        <Container ref={containerRef}>
           <TitleBar
             text={`Hello, ${user} :)`}
             img={accountImg}

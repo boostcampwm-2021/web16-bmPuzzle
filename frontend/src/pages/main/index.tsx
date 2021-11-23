@@ -11,25 +11,43 @@ import getImgfile from "@js/get-img-file";
 
 const Main = () => {
   let dummy_image: any[] = [];
-  let containerRef: any = useRef(null);
+  const containerRef: any = useRef(null);
+  const [img, setImg] = useState(dummy_image);
   let prev = 0;
   const getItem = 4;
-  const [img, setImg] = useState(dummy_image);
+  let cache: any[];
+
   const getImgUrl = async () => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
-    if (response.ok) {
-      let ret = await response.json();
-      const fn = ret.fileName.slice(prev, prev + getItem);
-      const data = ret.data.slice(prev, prev + getItem);
-      prev += getItem;
-      setImg((prevState) => [...prevState, ...getImgfile(fn, data)]);
+    console.log("hey");
+    let ret;
+    if (cache === undefined) {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      if (response.ok) {
+        ret = await response.json();
+        cache = ret;
+      }
     }
+
+    ret = ret === undefined ? cache : ret;
+
+    const fn = ret.fileName.slice(prev, prev + getItem);
+    const data = ret.data.slice(prev, prev + getItem);
+
+    if (fn.length === 0) {
+      console.log("adsfjlaksjld");
+      containerRef.current.removeEventListener("scroll", infiniteScroll);
+      return;
+    }
+
+    prev += getItem;
+    setImg((prevState) => [...prevState, ...getImgfile(fn, data)]);
   };
 
   const infiniteScroll = () => {
@@ -37,16 +55,14 @@ const Main = () => {
     const scrollHeight = ref.scrollHeight;
     const scrollTop = ref.scrollTop;
     const clientHeight = ref.clientHeight;
-    const arr = [scrollHeight - 1, scrollHeight, scrollHeight + 1];
 
-    if (arr.includes(Math.floor(scrollTop) + clientHeight)) {
-      getImgUrl();
-    }
+    const ret = Math.floor(scrollTop) + clientHeight;
+    if (ret === scrollHeight || ret === scrollHeight - 1) getImgUrl();
   };
 
   useEffect(() => {
     getImgUrl();
-    containerRef.current.addEventListener("scroll", infiniteScroll, true);
+    containerRef.current.addEventListener("scroll", infiniteScroll);
   }, []);
 
   return (
