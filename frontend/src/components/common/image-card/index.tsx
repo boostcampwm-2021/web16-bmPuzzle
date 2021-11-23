@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 
@@ -72,13 +72,17 @@ const ImageCard = (props: any) => {
   return (
     <ImageGroup {...props}>
       {props.img.map((ele: any, idx: any) => {
-        const time =
-          ele.time === undefined ? ele.visit_time : convertTime(ele.time);
+        let time;
+        if (ele.time === undefined) {
+          if (props.my === "up") time = "";
+          else time = ele.visit_time;
+        } else time = convertTime(ele.time);
+
         return (
           <Wrapper
             key={idx}
             onClick={() => {
-              props.my ? download(ele.image) : moveHandler(ele.id);
+              props.my === "done" ? download(ele.image) : moveHandler(ele.id);
             }}
           >
             <Img src={ele.image} />

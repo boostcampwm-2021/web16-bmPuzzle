@@ -14,11 +14,10 @@ const Main = () => {
   const containerRef: any = useRef(null);
   const [img, setImg] = useState(dummy_image);
   let prev = 0;
-  const getItem = 4;
+  const getItem = 10;
   let cache: any[];
 
   const getImgUrl = async () => {
-    console.log("hey");
     let ret;
     if (cache === undefined) {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
@@ -41,7 +40,6 @@ const Main = () => {
     const data = ret.data.slice(prev, prev + getItem);
 
     if (fn.length === 0) {
-      console.log("adsfjlaksjld");
       containerRef.current.removeEventListener("scroll", infiniteScroll);
       return;
     }

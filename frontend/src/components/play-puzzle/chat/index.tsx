@@ -110,6 +110,7 @@ const DialogUnit = styled.div`
   background-color: #f6f3f9;
   border-radius: 10px;
   padding: 5%;
+  word-break: break-word;
 `;
 
 const Sender = styled.div`

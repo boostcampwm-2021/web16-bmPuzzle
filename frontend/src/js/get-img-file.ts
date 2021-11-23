@@ -3,7 +3,7 @@ const getImgfile = (imgurl: any, imgInfo: any) => {
     (ele: any) => `${process.env.REACT_APP_STATIC_URL}/${ele}`
   );
 
-  imgInfo.map((ele: any, idx: number) => {
+  imgInfo.forEach((ele: any, idx: number) => {
     ele.image = img[idx];
   });
 
