@@ -34,7 +34,6 @@ type Config = {
 };
 
 const setConfig = (img: any, level: Levels, Paper: any) => {
-  console.log(typeof img);
   const originHeight = img.current.height;
   const originWidth = img.current.width;
   const imgWidth =
