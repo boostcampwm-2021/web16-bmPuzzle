@@ -125,7 +125,7 @@ const Mypage = () => {
           />
           <ImageCard
             img={current === "upload" ? upload : done}
-            my={current === "upload" ? false : true}
+            my={current === "upload" ? "up" : "done"}
             shareControl={setShareModal}
           />
         </Container>

@@ -1,11 +1,14 @@
+
 import React, { useEffect, useRef, useState, FC } from "react";
+import { useHistory } from "react-router";
+import { SocketContext, socket } from "@src/context/socket";
 import styled from "styled-components";
+
 import Header from "@src/components/common/header/index";
 import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
 import Chat from "@src/components/play-puzzle/chat/index";
 import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
-import { useHistory } from "react-router";
-import { SocketContext, socket } from "@src/context/socket";
+import Warning from "@pages/warning/index";
 
 type puzzleInfoType = {
   img: string;
@@ -46,7 +49,6 @@ const PlayPuzzle: FC<{
     return { img: resJSON.img, level: resJSON.level };
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const setPuzzle = async () => {
     if (puzzleInfo.img === "" && isFirstClient !== undefined) {
       const res: puzzleInfoType | undefined = await getPuzzleInfo();
@@ -75,6 +77,7 @@ const PlayPuzzle: FC<{
 
   return (
     <Wrapper>
+      {user === null && <Warning user="none" />}
       <Header
         isPlayRoom={true}
         chatVisible={chatVisible}
@@ -85,7 +88,6 @@ const PlayPuzzle: FC<{
         roomID={roomID}
       />
       <Body>
-        {user === null && <div>로그인하고 이용해주세요</div>}
         {user !== null && (
           <SocketContext.Provider value={socket}>
             <Chat chatVisible={chatVisible} roomID={roomID} />

@@ -84,13 +84,16 @@ const ImageCard = (props: any) => {
   return (
     <ImageGroup {...props}>
       {props.img.map((ele: imgGroupType, idx: number) => {
-        const time =
-          ele.time === undefined ? ele.visit_time : convertTime(ele.time);
+        let time;
+        if (ele.time === undefined) {
+          if (props.my === "up") time = "";
+          else time = ele.visit_time;
+        } else time = convertTime(ele.time);
         return (
           <Wrapper
             key={idx}
             onClick={() => {
-              props.my ? download(ele.image) : moveHandler(ele.id);
+              props.my === "done" ? download(ele.image) : moveHandler(ele.id);
             }}
           >
             <Img src={ele.image} />

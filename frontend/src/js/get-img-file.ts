@@ -11,8 +11,7 @@ const getImgfile = (imgurl: string[], imgInfo: rawPuzzleInfo[]) => {
   const img = imgurl.map(
     (ele: string) => `${process.env.REACT_APP_STATIC_URL}/${ele}`
   );
-  // eslint-disable-next-line array-callback-return
-  imgInfo.map((ele: any, idx: number) => {
+  imgInfo.forEach((ele: any, idx: number) => {
     ele.image = img[idx];
   });
 

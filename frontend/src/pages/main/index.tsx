@@ -14,8 +14,8 @@ const Main = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [img, setImg] = useState(dummy_image);
   let prev = 0;
-  const getItem = 4;
-  let cache: undefined | object;
+  const getItem = 10;
+  let cache: any[];
 
   const getImgUrl = async () => {
     let ret;

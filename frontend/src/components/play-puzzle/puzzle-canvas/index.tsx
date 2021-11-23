@@ -154,7 +154,7 @@ const PuzzleCanvas = (props: any) => {
       throw Error;
     }
   };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     const complete = Puzzle.completePuzzle();
     if (complete) {

@@ -29,6 +29,7 @@ const puzzle = (sequelize: any, DataTypes: any) => {
       visit_time: {
         type: DataTypes.INTEGER,
         allowNull: true,
+        defaultValue: 0,
       },
       user_id: {
         type: DataTypes.STRING(500),

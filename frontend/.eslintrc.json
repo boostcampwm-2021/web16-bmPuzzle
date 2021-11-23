@@ -1,5 +1,6 @@
 {
   "extends": ["react-app", "plugin:prettier/recommended"],
+  "plugins": ["prettier", "react-hooks"],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -16,6 +17,8 @@
         "ts": "never",
         "tsx": "never"
       }
-    ]
+    ],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "off"
   }
 }
