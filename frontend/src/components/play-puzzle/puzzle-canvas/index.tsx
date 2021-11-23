@@ -26,14 +26,15 @@ type Config = {
   tiles: any[];
   complete: boolean;
   groupTileIndex: number | null;
-  project: any;
-  puzzleImage: any;
+  project: typeof Paper;
+  puzzleImage: typeof Paper.Raster;
   tileIndexes: any[];
   groupArr: any[];
   selectIndex: number;
 };
 
 const setConfig = (img: any, level: Levels, Paper: any) => {
+  console.log(typeof img);
   const originHeight = img.current.height;
   const originWidth = img.current.width;
   const imgWidth =
@@ -84,7 +85,7 @@ const getConfig = (data: Config, Paper: any) => {
     const p1 = new config.project.Path(tile[1].children[0][1]);
     const r1 = new config.project.Raster(tile[1].children[1][1]);
     const p2 = new config.project.Path(tile[1].children[2][1]);
-    const res = new config.project.Group(p1, r1, p2);
+    const res = new config.project.Group([p1, r1, p2]);
     return res;
   });
   config.shapes = data.shapes;

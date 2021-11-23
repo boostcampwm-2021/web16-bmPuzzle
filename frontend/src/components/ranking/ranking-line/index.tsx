@@ -1,7 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 
-const RankingLine = (props: any) => {
+type propsType = {
+  background: string;
+  first: number;
+  second: string;
+  third: number;
+};
+const RankingLine = (props: propsType) => {
   return (
     <Line background={props.background}>
       <span>{props.first}</span>
