@@ -297,7 +297,6 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
             });
           }
         }
-
       });
     };
   });
