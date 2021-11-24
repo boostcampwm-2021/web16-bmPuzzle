@@ -74,15 +74,6 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       };
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(newPosition.x, newPosition.y);
-        setTimeout(() => {
-          socket.emit("tilePosition", {
-            roomID: roomID,
-            tileIndex: gtileIdx,
-            tilePosition: gtile[0].position,
-            tileGroup: gtile[1],
-            changedData: [event.delta.x, event.delta.y],
-          });
-        }, 500);
       } else {
         config.groupTiles.forEach((gtile_now, index) => {
           if (gtile[1] === gtile_now[1]) {
@@ -90,15 +81,6 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
               gtile_now[0].position._x + newPosition.x - originalPosition.x,
               gtile_now[0].position._y + newPosition.y - originalPosition.y
             );
-            setTimeout(() => {
-              socket.emit("tilePosition", {
-                roomID: roomID,
-                tileIndex: index,
-                tilePosition: gtile_now[0].position,
-                tileGroup: gtile_now[1],
-                changedData: [event.delta.x, event.delta.y],
-              });
-            }, 500);
           }
         });
       }
