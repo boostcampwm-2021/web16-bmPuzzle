@@ -74,6 +74,7 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       };
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(newPosition.x, newPosition.y);
+
       } else {
         config.groupTiles.forEach((gtile_now, index) => {
           if (gtile[1] === gtile_now[1]) {
