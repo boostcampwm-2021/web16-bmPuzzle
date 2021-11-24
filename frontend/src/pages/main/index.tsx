@@ -13,12 +13,15 @@ const Main = () => {
   let dummy_image: object[] = [];
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [img, setImg] = useState(dummy_image);
+  const [filterImg, setFilterImg] = useState(dummy_image);
+  const [isSearched, setIsSearched] = useState(false);
   let prev = 0;
   const getItem = 10;
   let cache: object[] | undefined;
 
   const getImgUrl = async () => {
     let ret;
+    if (img === undefined) return;
     if (cache === undefined) {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
         method: "GET",
@@ -33,7 +36,6 @@ const Main = () => {
         cache = ret;
       }
     }
-
     ret = ret === undefined ? cache : ret;
 
     const fn = ret.fileName.slice(prev, prev + getItem);
@@ -57,7 +59,8 @@ const Main = () => {
     const clientHeight = ref.clientHeight;
 
     const ret = Math.floor(scrollTop) + clientHeight;
-    if (ret === scrollHeight || ret === scrollHeight - 1) getImgUrl();
+    console.log(isSearched);
+    if (Math.abs(ret - scrollHeight) <= 2) getImgUrl();
   };
 
   useEffect(() => {
@@ -70,8 +73,16 @@ const Main = () => {
     <Wrapper>
       <Header />
       <Container ref={containerRef}>
-        <Search setImg={setImg} />
-        <ImageCard img={img} margin={25} />
+        <Search setImg={setFilterImg} setIsSearched={setIsSearched} />
+        <ImageCard
+          img={
+            (filterImg !== undefined && filterImg.length > 0) ||
+            filterImg === undefined
+              ? filterImg
+              : img
+          }
+          margin={25}
+        />
         <UploadBtn />
       </Container>
     </Wrapper>

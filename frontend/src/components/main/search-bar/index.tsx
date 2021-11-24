@@ -1,18 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import searchIcon from "@images/search-icon.png";
+import refreshIcon from "@images/refresh-icon.png";
 import colors from "@styles/theme";
 
 import getImgfile from "@js/get-img-file";
 
 const SearchBar = (props: any) => {
+  const history = useHistory();
   const [search, setSearch] = useState("");
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
 
-  const handleSubmit = async () => {
+  const handleGo = () => history.push("/");
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
       method: "POST",
       headers: {
@@ -25,21 +33,29 @@ const SearchBar = (props: any) => {
 
     if (response.ok) {
       let img = await response.json();
-      props.setImg(await getImgfile(img.fileName, img.data));
+      console.log(img, "이전 이미지 세팅");
+      if (img.data.length === 0) props.setImg(undefined);
+      else {
+        props.setImg(getImgfile(img.fileName, img.data));
+        props.setIsSearched(true);
+      }
     }
   };
 
   return (
     <Wrapper>
-      <Input placeholder="Search" onChange={handleChange} />
+      <Input ref={inputRef} placeholder="Search" onChange={handleChange} />
       <Btn onClick={handleSubmit}>
         <Img src={searchIcon} />
+      </Btn>
+      <Btn onClick={handleGo}>
+        <Img src={refreshIcon} style={{ width: "20px", opacity: "0.5" }} />
       </Btn>
     </Wrapper>
   );
 };
 
-const Wrapper = styled.div`
+const Wrapper = styled.form`
   width: 77%;
   margin: auto;
   border: 1px solid ${colors["gray3"]};

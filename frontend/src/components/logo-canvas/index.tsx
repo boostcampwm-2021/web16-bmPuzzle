@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from "react";
 import styled from "styled-components";
 import Paper from "paper";
 import puzzlePieceImg from "@images/puzzle-piece.png";
+import { project } from "paper/dist/paper-core";
 
 const LogoCanvas = () => {
   const logoCanvasRef = useRef(null);
@@ -39,11 +40,24 @@ const LogoCanvas = () => {
     };
   };
 
+  const nameWrite = ({ name, x, y }: any) => {
+    return new Paper.PointText({
+      point: new Paper.Point(x, y),
+      justification: "center",
+      content: name,
+      fontFamily: "Roboto slap",
+      fontWeight: 900,
+      fillColor: "#000000",
+      fontSize: 20,
+    });
+  };
+
   const puzzlePiecesShow = (project: any) => {
     const center = {
       x: Math.round(project.view.center._x),
       y: Math.round(project.view.center._y),
     };
+
     const puzzlePieceRaster = new Paper.Raster({
       source: puzzlePieceImg,
       position: project.view.center,
@@ -155,26 +169,32 @@ const LogoCanvas = () => {
       if (!selectFlag) {
         const nowX = movablePiece.position._x;
         const nowY = movablePiece.position._y;
+        const xChange = initialPosition.movable.x - nowX;
+        const yChange = initialPosition.movable.y - nowY;
         if (
           Math.floor(nowX) !== initialPosition.movable.x ||
           Math.floor(nowY) !== initialPosition.movable.y
         ) {
-          let xSign = initialPosition.movable.x - nowX < 0 ? -1 : 1;
-          let ySign = initialPosition.movable.y - nowY < 0 ? -1 : 1;
-          if (initialPosition.movable.x - nowX === 0) {
+          let xSign, ySign;
+
+          if (xChange < 0) {
+            xSign = -1;
+          } else if (xChange === 0) {
             xSign = 0;
+          } else {
+            xSign = 1;
           }
-          if (initialPosition.movable.y - nowY === 0) {
+          if (yChange < 0) {
+            ySign = -1;
+          } else if (yChange === 0) {
             ySign = 0;
+          } else {
+            ySign = 1;
           }
 
-          const ratio = Math.abs(
-            (initialPosition.movable.x - nowX) /
-              (initialPosition.movable.y - nowY)
-          );
           movablePiece.position = new Paper.Point(
-            nowX + xSign * ratio,
-            nowY + ySign
+            Math.round(nowX + xSign),
+            Math.round(nowY + ySign)
           );
         }
       }
@@ -192,10 +212,10 @@ const LogoCanvas = () => {
             }, 5000);
           }, 1200);
         }
-        if (Math.floor(event.count / 25) % 2 === 0) {
-          movablePiece.rotation += 1;
+        if (Math.floor(event.count / 10) % 2 === 0) {
+          movablePiece.rotation += 3;
         } else {
-          movablePiece.rotation -= 1;
+          movablePiece.rotation -= 3;
         }
       }
     };
@@ -246,6 +266,15 @@ const LogoCanvas = () => {
         }
       }
     };
+
+    const namesInfo = [
+      { name: "김하정", x: 50, y: 50 },
+      { name: "유진", x: window.innerWidth - 50, y: 50 },
+      { name: "이재영", x: 50, y: window.innerHeight - 50 },
+      { name: "장진희", x: window.innerWidth - 50, y: window.innerHeight - 50 },
+    ];
+
+    const names = namesInfo.map((data) => nameWrite(data));
   };
 
   return <IconCanvas ref={logoCanvasRef} id="logo_canvas" />;
