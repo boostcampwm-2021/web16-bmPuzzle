@@ -264,13 +264,29 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
         }
       });
       config.groupTiles.forEach((gtile, idx) => {
-        socket.emit("tilePosition", {
-          roomID: roomID,
-          tileIndex: idx,
-          tilePosition: gtile[0].position,
-          tileGroup: gtile[1],
-          changedData: gtile[0],
-        });
+        if (gtile[0] === tile) {
+          if (idx === undefined) {
+            socket.emit("tilePosition", {
+              roomID: roomID,
+              tileIndex: idx,
+              tilePosition: gtile[0].position,
+              tileGroup: gtile[1],
+              changedData: gtile[0],
+            });
+          } else {
+            config.groupTiles.forEach((tile, group) => {
+              if (idx === group) {
+                socket.emit("tilePosition", {
+                  roomID: roomID,
+                  tileIndex: idx,
+                  tilePosition: gtile[0].position,
+                  tileGroup: gtile[1],
+                  changedData: gtile[0],
+                });
+              }
+            });
+          }
+        }
       });
     };
   });
