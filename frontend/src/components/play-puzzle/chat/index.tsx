@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import styled from "styled-components";
 import { SocketContext } from "@context/socket";
 
@@ -15,6 +15,8 @@ const Chat = (props: { roomID: string; chatVisible: boolean }) => {
   });
   const [chat, setChat] = useState<MessageInfo[]>([]);
   const userID = window.sessionStorage.getItem("id");
+  const inputRef = useRef<HTMLInputElement>(null);
+  let debounce: ReturnType<typeof setTimeout>;
 
   useEffect(() => {
     socket.on("message", (msg: { name: string; message: string }) => {
@@ -34,10 +36,14 @@ const Chat = (props: { roomID: string; chatVisible: boolean }) => {
     e.preventDefault();
     if (state.message === "") return;
     socket.emit("message", { roomID: roomID, message: state });
+    if (inputRef.current) inputRef.current.value = "";
     setState({ name: "", message: "" });
   };
   const onTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setState({ name: userID, message: e.target.value });
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+      setState({ name: userID, message: e.target.value });
+    }, 100);
   };
   const renderChat = () => {
     return chat.map((msg: { name: string; message: string }, index: number) => (
@@ -58,7 +64,7 @@ const Chat = (props: { roomID: string; chatVisible: boolean }) => {
           name="message"
           placeholder="채팅을 입력하세요"
           onChange={(e) => onTextChange(e)}
-          value={state.message}
+          ref={inputRef}
         />
       </ChatForm>
     </ChatWrapper>
