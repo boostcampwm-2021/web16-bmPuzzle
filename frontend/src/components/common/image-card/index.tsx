@@ -83,6 +83,9 @@ const ImageCard = (props: any) => {
     return str.join("");
   };
 
+  if (props.img === undefined)
+    history.push({ pathname: "/warning", state: { warn: "noFile" } });
+
   return (
     <ImageGroup {...props}>
       {props.img === undefined && <Warning warn="noFile" />}
