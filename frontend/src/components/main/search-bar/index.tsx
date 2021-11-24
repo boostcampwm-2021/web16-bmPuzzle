@@ -11,9 +11,13 @@ const SearchBar = (props: any) => {
   const history = useHistory();
   const [search, setSearch] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
+  let debounce: ReturnType<typeof setTimeout>;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
+    clearTimeout(debounce);
+    debounce = setTimeout(() => {
+      setSearch(e.target.value);
+    }, 100);
   };
 
   const handleGo = () => history.push("/");
@@ -33,12 +37,8 @@ const SearchBar = (props: any) => {
 
     if (response.ok) {
       let img = await response.json();
-      console.log(img, "이전 이미지 세팅");
       if (img.data.length === 0) props.setImg(undefined);
-      else {
-        props.setImg(getImgfile(img.fileName, img.data));
-        props.setIsSearched(true);
-      }
+      else props.setImg(getImgfile(img.fileName, img.data));
     }
   };
 

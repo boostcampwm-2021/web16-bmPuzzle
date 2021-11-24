@@ -14,9 +14,8 @@ const Main = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [img, setImg] = useState(dummy_image);
   const [filterImg, setFilterImg] = useState(dummy_image);
-  const [isSearched, setIsSearched] = useState(false);
   let prev = 0;
-  const getItem = 10;
+  const getItem = 4;
   let cache: object[] | undefined;
 
   const getImgUrl = async () => {
@@ -59,7 +58,6 @@ const Main = () => {
     const clientHeight = ref.clientHeight;
 
     const ret = Math.floor(scrollTop) + clientHeight;
-    console.log(isSearched);
     if (Math.abs(ret - scrollHeight) <= 2) getImgUrl();
   };
 
@@ -73,7 +71,7 @@ const Main = () => {
     <Wrapper>
       <Header />
       <Container ref={containerRef}>
-        <Search setImg={setFilterImg} setIsSearched={setIsSearched} />
+        <Search setImg={setFilterImg} />
         <ImageCard
           img={
             (filterImg !== undefined && filterImg.length > 0) ||
