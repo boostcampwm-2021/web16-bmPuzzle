@@ -110,8 +110,8 @@ export default (io: any) => {
           });
         } else {
           config.tiles[res.tileIndex] = res.changedData;
-          roomPuzzleInfo.set(res.roomID, config);
         }
+        roomPuzzleInfo.set(res.roomID, config);
         config.groupTiles[res.tileIndex][1] = res.tileGroup;
         socket.broadcast.to(res.roomID).emit('tilePosition', {
           tileIndex: res.tileIndex,
@@ -124,9 +124,9 @@ export default (io: any) => {
     socket.on(
       'groupIndex',
       (res: { roomID: string; groupTileIndex: number }) => {
-        if(res.groupTileIndex === 200){
-          socket.emit("groupIndex", {groupIndex: groupTileIndex});
-        }else{
+        if (res.groupTileIndex === 200) {
+          socket.emit('groupIndex', { groupIndex: groupTileIndex });
+        } else {
           if (res.groupTileIndex !== null) {
             groupTileIndex = res.groupTileIndex;
           }
@@ -134,16 +134,7 @@ export default (io: any) => {
             groupIndex: groupTileIndex,
           });
         }
-      }
-    );
-    socket.on(
-      'dragThrottle',
-      (res:{ roomID: string; xArray: number[]; yArray: number[] })=>{
-        socket.broadcast.to(res.roomID).emit('dragThrottle', {
-          xArray:res.xArray,
-          yArray:res.yArray,
-        });
-      }
+      },
     );
     socket.on('setTimer', (res: { roomID: string; timer: number }) => {
       if (timer.get(res.roomID) === undefined) {
