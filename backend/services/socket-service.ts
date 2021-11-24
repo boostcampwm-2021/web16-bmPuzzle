@@ -134,7 +134,16 @@ export default (io: any) => {
             groupIndex: groupTileIndex,
           });
         }
-      },
+      }
+    );
+    socket.on(
+      'dragThrottle',
+      (res:{ roomID: string; xArray: number[]; yArray: number[] })=>{
+        socket.broadcast.to(res.roomID).emit('dragThrottle', {
+          xArray:res.xArray,
+          yArray:res.yArray,
+        });
+      }
     );
     socket.on('setTimer', (res: { roomID: string; timer: number }) => {
       if (timer.get(res.roomID) === undefined) {

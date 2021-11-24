@@ -57,7 +57,9 @@ const groupFirstUpdate = (groupIndex: number) => {
 const completePuzzle = () => {
   return MovePuzzle.checkComplete();
 };
-
+const dragUpdate = (xArray: number[], yArray: number[]) => {
+  MovePuzzle.dragUpdate(xArray, yArray);
+};
 const Puzzle = {
   setting,
   settingValue,
@@ -67,5 +69,6 @@ const Puzzle = {
   completePuzzle,
   groupUpdate,
   groupFirstUpdate,
+  dragUpdate,
 };
 export default Puzzle;
