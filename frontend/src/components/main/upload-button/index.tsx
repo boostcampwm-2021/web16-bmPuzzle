@@ -2,7 +2,7 @@ import React from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
-const UploadButton = (props: any) => {
+const UploadButton = () => {
   const history = useHistory();
   const handleMove = () => {
     history.push("/register");

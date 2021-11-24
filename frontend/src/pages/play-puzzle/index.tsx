@@ -1,17 +1,28 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, FC } from "react";
+import { useHistory } from "react-router";
+import { SocketContext, socket } from "@src/context/socket";
 import styled from "styled-components";
+
 import Header from "@src/components/common/header/index";
 import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
 import Chat from "@src/components/play-puzzle/chat/index";
 import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
-import { useHistory } from "react-router";
-import { SocketContext, socket } from "@src/context/socket";
+import Warning from "@pages/warning/index";
 
-const PlayPuzzle = (props: any) => {
+type puzzleInfoType = {
+  img: string;
+  level: number;
+};
+const PlayPuzzle: FC<{
+  match: { params: { puzzleID: string; roomID: string } };
+}> = (props) => {
   const [loaded, setLoaded] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
-  const [puzzleInfo, setPuzzleInfo] = useState<any>({ img: "", level: 1 });
+  const [puzzleInfo, setPuzzleInfo] = useState<puzzleInfoType>({
+    img: "",
+    level: 1,
+  });
   const [isFirstClient, setFirstClient] = useState<boolean | undefined>(
     undefined
   );
@@ -37,13 +48,15 @@ const PlayPuzzle = (props: any) => {
     return { img: resJSON.img, level: resJSON.level };
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const setPuzzle = async () => {
     if (puzzleInfo.img === "" && isFirstClient !== undefined) {
-      const res: any = await getPuzzleInfo();
-      if (res === undefined) history.go(-1);
-      res.image = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
-      setPuzzleInfo({ img: res.image, level: res.level });
+      const res: puzzleInfoType | undefined = await getPuzzleInfo();
+      if (res === undefined) {
+        history.go(-1);
+        return;
+      }
+      res.img = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
+      setPuzzleInfo({ img: res.img, level: res.level });
     }
   };
 
@@ -63,6 +76,7 @@ const PlayPuzzle = (props: any) => {
 
   return (
     <Wrapper>
+      {user === null && <Warning warn="noUser" />}
       <Header
         isPlayRoom={true}
         chatVisible={chatVisible}
@@ -73,7 +87,6 @@ const PlayPuzzle = (props: any) => {
         roomID={roomID}
       />
       <Body>
-        {user === null && <div>로그인하고 이용해주세요</div>}
         {user !== null && (
           <SocketContext.Provider value={socket}>
             <Chat chatVisible={chatVisible} roomID={roomID} />

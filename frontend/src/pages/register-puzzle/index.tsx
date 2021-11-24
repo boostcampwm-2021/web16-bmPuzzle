@@ -8,15 +8,16 @@ import { useHistory } from "react-router-dom";
 const RegPuz = () => {
   const [checkedLevel, setLevel] = useState(1);
   const [title, setTitle] = useState("");
-  const [selectedImg, setSelectedcImg] = useState(null);
+  const [selectedImg, setSelectedcImg] = useState<null | File>(null);
   const [url, setUrl] = useState("");
   const [name, setName] = useState("");
   const history = useHistory();
 
-  const titleHandler = (event: any) => {
+  const titleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event?.target.value);
   };
-  const fileHandler = (event: any) => {
+  const fileHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files === null) return;
     const img = event.target.files[0];
     const imgUrl = URL.createObjectURL(img);
     setName(event.target.files[0].name);
@@ -25,7 +26,10 @@ const RegPuz = () => {
   };
   const submitHandler = async () => {
     const formData = new FormData();
-    const id: any = window.sessionStorage.getItem("id");
+    const id: string | null =
+      window.sessionStorage.getItem("id") === null
+        ? ""
+        : String(window.sessionStorage.getItem("id"));
     if (selectedImg === null || title === "") {
       alert("양식을 다 채우세요");
       return false;

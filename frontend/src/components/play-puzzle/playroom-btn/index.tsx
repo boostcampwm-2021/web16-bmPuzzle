@@ -7,7 +7,7 @@ import HintBtn from "@components/play-puzzle/playroom-btn/hint-btn";
 import playroomMenuBtnImg from "@images/playroom-menu-button.png";
 
 interface PlayerRoomMenuProps {
-  hintFunc: any;
+  hintFunc: (arg0: boolean) => void;
   hintState: boolean;
 }
 

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import hintBtnImg from "@images/hint-button.png";
 
 interface HintBtnProps {
-  hintFunc: any;
+  hintFunc: (arg0: boolean) => void;
   hintState: boolean;
 }
 

@@ -9,7 +9,7 @@ import { SocketContext } from "@src/context/socket";
 
 const Header = (props: any) => {
   const history = useHistory();
-  const ref: any = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   let {
     isPlayRoom,
     chatVisible,
@@ -40,11 +40,14 @@ const Header = (props: any) => {
 
   useEffect(() => {
     if (time !== undefined && !isFirstClient) {
-      socket.on("getTimer", (res: any) => {
-        if (res !== null && res.minutes !== null) {
-          setTime(res);
+      socket.on(
+        "getTimer",
+        (res: null | { minutes: number; seconds: number }) => {
+          if (res !== null && res.minutes !== null) {
+            setTime(res);
+          }
         }
-      });
+      );
       socket.emit("getTimer", { roomID: roomID, timer: Date.now() });
     }
   }, []);
@@ -64,14 +67,12 @@ const Header = (props: any) => {
 
   return (
     <Wrapper>
-      {isPlayRoom && (
-        <ChatWrapper>
+      <HomeBtnWrapper isPlayRoom={isPlayRoom}>
+        {isPlayRoom && (
           <Btn id="chat" onClick={toggleChat}>
             <Img src={chat_image} alt="chat" />
           </Btn>
-        </ChatWrapper>
-      )}
-      <HomeBtnWrapper>
+        )}
         <Btn id="main" onClick={handleMove}>
           <Img src={logo_image} alt="logo" />
         </Btn>
@@ -94,6 +95,10 @@ const Header = (props: any) => {
   );
 };
 
+interface playRoomState {
+  isPlayRoom: boolean;
+}
+
 const Wrapper = styled.div`
   margin: 0px;
   padding: 0px;
@@ -102,14 +107,21 @@ const Wrapper = styled.div`
   background: #000000;
   display: flex;
   justify-content: space-even;
+  z-index: 3;
+  & > * {
+    z-index: 4;
+  }
 `;
 
-const HomeBtnWrapper = styled.div`
+const HomeBtnWrapper = styled.div<playRoomState>`
   width: 52%;
   text-align: right;
   align-items: center;
   display: flex;
-  justify-content: end;
+  justify-content: ${(props) => (props.isPlayRoom ? "space-between" : "end")};
+  &: first-child > button {
+    margin-left: 20px;
+  }
 `;
 
 const RightIconWrapper = styled.div`
@@ -121,16 +133,6 @@ const RightIconWrapper = styled.div`
   & > button {
     margin-left: 15px;
   }
-`;
-
-const ChatWrapper = styled.div`
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: start;
-  width: 10%;
-  height: 50px;
-  margin-left: 20px;
 `;
 
 const TimerWrapper = styled.div`

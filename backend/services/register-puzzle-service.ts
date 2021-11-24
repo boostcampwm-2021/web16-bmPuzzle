@@ -1,7 +1,7 @@
 import multer from 'multer';
 import puzzleService from '@services/db/puzzle-service';
 import userService from '@services/db/user-service';
-const newPuzzle = { user_id: '', image: '', title: '', level: 1 };
+const newPuzzle = { user_id: '', image: '', title: '', keyword: '', level: 1 };
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -20,6 +20,7 @@ const registerPuzzle = (req: any, res: any) => {
   newPuzzle.user_id = req.body.userId;
   newPuzzle.title = req.body.title;
   newPuzzle.level = Number(req.body.level);
+  newPuzzle.keyword = req.body.title;
   puzzleService.createPuzzle(newPuzzle).then(result => {
     if (result) res.status(200).send();
     else res.status(500).send();

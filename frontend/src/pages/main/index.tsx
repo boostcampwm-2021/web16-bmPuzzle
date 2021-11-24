@@ -10,15 +10,18 @@ import UploadBtn from "@components/main/upload-button/index";
 import getImgfile from "@js/get-img-file";
 
 const Main = () => {
-  let dummy_image: any[] = [];
-  const containerRef: any = useRef(null);
+  let dummy_image: object[] = [];
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [img, setImg] = useState(dummy_image);
+  const [filterImg, setFilterImg] = useState(dummy_image);
+  const [isSearched, setIsSearched] = useState(false);
   let prev = 0;
-  const getItem = 4;
-  let cache: any[];
+  const getItem = 10;
+  let cache: object[] | undefined;
 
   const getImgUrl = async () => {
     let ret;
+    if (img === undefined) return;
     if (cache === undefined) {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
         method: "GET",
@@ -33,13 +36,13 @@ const Main = () => {
         cache = ret;
       }
     }
-
     ret = ret === undefined ? cache : ret;
 
     const fn = ret.fileName.slice(prev, prev + getItem);
     const data = ret.data.slice(prev, prev + getItem);
 
     if (fn.length === 0) {
+      if (containerRef.current === null) return;
       containerRef.current.removeEventListener("scroll", infiniteScroll);
       return;
     }
@@ -49,17 +52,20 @@ const Main = () => {
   };
 
   const infiniteScroll = () => {
-    const ref: any = containerRef.current;
+    if (containerRef.current === null) return;
+    const ref: HTMLDivElement = containerRef.current;
     const scrollHeight = ref.scrollHeight;
     const scrollTop = ref.scrollTop;
     const clientHeight = ref.clientHeight;
 
     const ret = Math.floor(scrollTop) + clientHeight;
-    if (ret === scrollHeight || ret === scrollHeight - 1) getImgUrl();
+    console.log(isSearched);
+    if (Math.abs(ret - scrollHeight) <= 2) getImgUrl();
   };
 
   useEffect(() => {
     getImgUrl();
+    if (containerRef.current === null) return;
     containerRef.current.addEventListener("scroll", infiniteScroll);
   }, []);
 
@@ -67,8 +73,16 @@ const Main = () => {
     <Wrapper>
       <Header />
       <Container ref={containerRef}>
-        <Search setImg={setImg} />
-        <ImageCard img={img} margin={25} />
+        <Search setImg={setFilterImg} setIsSearched={setIsSearched} />
+        <ImageCard
+          img={
+            (filterImg !== undefined && filterImg.length > 0) ||
+            filterImg === undefined
+              ? filterImg
+              : img
+          }
+          margin={25}
+        />
         <UploadBtn />
       </Container>
     </Wrapper>

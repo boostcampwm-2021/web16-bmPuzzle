@@ -1,8 +1,22 @@
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
 
 import shareBtnImg from "@images/share-btn.png";
+
+import Warning from "@pages/warning/index";
+
+type imgGroupType = {
+  id: string;
+  image: string;
+  keyword: string;
+  level: number;
+  public: boolean;
+  title: string;
+  user_id: string;
+  visit_time: number;
+  time: number | undefined;
+};
 
 const ImageCard = (props: any) => {
   const history = useHistory();
@@ -20,16 +34,16 @@ const ImageCard = (props: any) => {
     return resJSON.validURL;
   };
 
-  const validURL = async (imgID: any) => {
+  const validURL = async (imgID: string) => {
     const urlHash = await getValidURL();
     return `/room/${imgID}/${urlHash}`;
   };
 
-  const moveHandler = async (imgID: any) => {
+  const moveHandler = async (imgID: string) => {
     history.push(await validURL(imgID));
   };
 
-  const download = async (image: any) => {
+  const download = async (image: string) => {
     const fileName = image.split("/static/")[1];
     fetch(image)
       .then((res) => res.blob())
@@ -71,37 +85,41 @@ const ImageCard = (props: any) => {
 
   return (
     <ImageGroup {...props}>
-      {props.img.map((ele: any, idx: any) => {
-        const time =
-          ele.time === undefined ? ele.visit_time : convertTime(ele.time);
-        return (
-          <Wrapper
-            key={idx}
-            onClick={() => {
-              props.my ? download(ele.image) : moveHandler(ele.id);
-            }}
-          >
-            <Img src={ele.image} />
-            <Content>
-              <div>{ele.title}</div>
-              <DetailWrap>
-                <div>{time}</div>
-                <ShareButton
-                  shareControl={props.shareControl}
-                  onClick={async (e) => {
-                    e.stopPropagation();
-                    const link = await validURL(ele.id);
-                    props.shareControl(true, ele.image, link);
-                  }}
-                >
-                  <img src={shareBtnImg} alt="공유" />
-                </ShareButton>
-              </DetailWrap>
-            </Content>
-            {props.img.length - 1 === idx && <div ref={props.viewRef}></div>}
-          </Wrapper>
-        );
-      })}
+      {props.img === undefined && <Warning warn="noFile" />}
+      {props.img !== undefined &&
+        props.img.map((ele: imgGroupType, idx: number) => {
+          let time;
+          if (ele.time === undefined) {
+            if (props.my === "up") time = "";
+            else time = ele.visit_time;
+          } else time = convertTime(ele.time);
+          return (
+            <Wrapper
+              key={idx}
+              onClick={() => {
+                props.my === "done" ? download(ele.image) : moveHandler(ele.id);
+              }}
+            >
+              <Img src={ele.image} />
+              <Content>
+                <div>{ele.title}</div>
+                <DetailWrap>
+                  <div>{time}</div>
+                  <ShareButton
+                    shareControl={props.shareControl}
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      const link = await validURL(ele.id);
+                      props.shareControl(true, ele.image, link);
+                    }}
+                  >
+                    <img src={shareBtnImg} alt="공유" />
+                  </ShareButton>
+                </DetailWrap>
+              </Content>
+            </Wrapper>
+          );
+        })}
     </ImageGroup>
   );
 };
@@ -111,7 +129,7 @@ type marginType = {
 };
 
 type shareBtnType = {
-  shareControl: any;
+  shareControl: (arg0: boolean, arg1: string, arg2: string) => void;
 };
 
 const ImageGroup = styled.div<marginType>`
