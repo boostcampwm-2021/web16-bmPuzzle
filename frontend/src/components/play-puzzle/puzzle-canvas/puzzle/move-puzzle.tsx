@@ -261,23 +261,16 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
             true,
             socket
           );
-          config.groupTiles.forEach((gtile, idx) => {
-            socket.emit("tilePosition", {
-              roomID: roomID,
-              tileIndex: idx,
-              tilePosition: gtile[0].position,
-              tileGroup: gtile[1],
-              changedData: gtile[0],
-            });
-          });
         }
       });
-      socket.emit("tilePosition", {
-        roomID: roomID,
-        tileIndex: nowIndex,
-        tilePosition: config.groupTiles[nowIndex][0].position,
-        tileGroup: config.groupTiles[nowIndex][1],
-        changedData: [event.delta.x, event.delta.y],
+      config.groupTiles.forEach((gtile, idx) => {
+        socket.emit("tilePosition", {
+          roomID: roomID,
+          tileIndex: idx,
+          tilePosition: gtile[0].position,
+          tileGroup: gtile[1],
+          changedData: gtile[0],
+        });
       });
     };
   });
