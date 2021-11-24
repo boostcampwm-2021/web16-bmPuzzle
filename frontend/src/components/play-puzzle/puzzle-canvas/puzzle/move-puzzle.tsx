@@ -1,8 +1,16 @@
-import { Point } from "paper/dist/paper-core";
+import { Size, Point } from "paper/dist/paper-core";
 import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
-import initPuzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/config-init";
 import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
 
+const constant = {
+  percentageTotal: 100.0,
+  borderStrokeWidth: 5,
+  tileOpacity: 1,
+  maskOpacity: 0.25,
+  orgTileLoc: 100,
+  tileMarginX: 0,
+  tileMarginY: 30,
+};
 let first = true;
 let select_idx: any;
 type Config = {
@@ -31,26 +39,99 @@ let config: Config;
 let mouseFlag = 2; //mouseUp된 상태
 let room: string;
 
-const tilePositionMessage: {
-  roomID: string;
-  tileIndex: any;
-  tilePosition: any;
-  tileGroup: any;
-  changedData: number[];
-} = {
-  roomID: "",
-  tileIndex: null,
-  tilePosition: null,
-  tileGroup: null,
-  changedData: [0, 0],
+const initConfig = () => {
+  const tileRatio = config.tileWidth / constant.percentageTotal;
+  for (let y = 0; y < config.tilesPerColumn; y++) {
+    for (let x = 0; x < config.tilesPerRow; x++) {
+      const shape = config.shapes[y * config.tilesPerRow + x];
+      const mask = getMask(
+        tileRatio,
+        shape.topTab,
+        shape.rightTab,
+        shape.bottomTab,
+        shape.leftTab,
+        config.tileWidth,
+        config.project,
+        config.imgWidth,
+        config.imgHeight
+      );
+      if (mask === undefined) continue;
+      mask.opacity = constant.maskOpacity;
+      mask.strokeColor = new config.project.Color("#fff");
+
+      const cloneImg = config.puzzleImage.clone();
+      const img = getTileRaster(
+        cloneImg,
+        new Size(config.tileWidth, config.tileWidth),
+        new Point(config.tileWidth * x, config.tileWidth * y),
+        Math.max(
+          config.imgWidth / config.originWidth,
+          config.imgHeight / config.originHeight
+        )
+      );
+
+      const border = mask.clone();
+      border.strokeColor = new config.project.Color("#ddd");
+      border.strokeWidth = constant.borderStrokeWidth;
+
+      const tile = new config.project.Group([mask, img, border]);
+      tile.clipped = true;
+      tile.opacity = constant.tileOpacity;
+      tile.position = new Point(constant.orgTileLoc, constant.orgTileLoc);
+      config.tiles.push(tile);
+      config.groupTiles.push([tile, undefined]);
+      config.groupArr.push(undefined);
+      config.tileIndexes.push(config.tileIndexes.length);
+    }
+  }
+
+  for (let y = 0; y < config.tilesPerColumn; y++) {
+    for (let x = 0; x < config.tilesPerRow; x++) {
+      const index1 = Math.floor(Math.random() * config.tileIndexes.length);
+      const index2 = config.tileIndexes[index1];
+      const tile = config.tiles[index2];
+      config.tileIndexes.splice(index1, 1);
+      const position = new Point(
+        config.project.view.center.x -
+          config.tileWidth / 2 +
+          config.tileWidth * (x * 2 + (y % 2)) -
+          config.imgWidth,
+        config.project.view.center.y -
+          config.tileWidth / 2 +
+          config.tileWidth * y -
+          config.imgHeight / 2
+      );
+
+      const cellPosition = new Point(
+        Math.round(position.x / config.tileWidth) + 1,
+        Math.round(position.y / config.tileWidth) + 1
+      );
+
+      tile.position = new Point(
+        cellPosition.x * config.tileWidth + constant.tileMarginX,
+        cellPosition.y * config.tileWidth +
+          (config.tilesPerColumn % 2 === 1
+            ? -constant.tileMarginY
+            : constant.tileMarginY)
+      );
+    }
+  }
+  Puzzle.setting({
+    ...config,
+  });
+};
+
+const dragUpdate = (xArray: number[], yArray: number[]) => {
+  /*
+  config.groupTiles.forEach((tile_now, index) => {
+    tile_now[0].position = new Point(xArray[index], yArray[index]);
+  });*/
 };
 
 const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config = Puzzle.exportConfig();
   room = roomID;
-  tilePositionMessage.roomID = roomID;
-  let isTilePositionMessagedSetted = false;
-  if (isFirstClient) initPuzzle.initConfig();
+  if (isFirstClient) initConfig();
   config.groupTiles.forEach((gtile, index) => {
     if (gtile[1] === null) {
       gtile[1] = undefined;
@@ -90,38 +171,31 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       };
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(newPosition.x, newPosition.y);
-        if (!isTilePositionMessagedSetted) {
-          tilePositionMessage.tileIndex = gtileIdx;
-          tilePositionMessage.tilePosition = gtile[0].position;
-          tilePositionMessage.tileGroup = gtile[1];
-          isTilePositionMessagedSetted = true;
-        }
-
-        tilePositionMessage.changedData[0] += event.delta.x;
-        tilePositionMessage.changedData[1] += event.delta.y;
       } else {
-        config.groupTiles.forEach((gtile_now, index) => {
+        config.groupTiles.forEach((gtile_now) => {
           if (gtile[1] === gtile_now[1]) {
-            if (!isTilePositionMessagedSetted) {
-              tilePositionMessage.tileIndex = [index];
-              tilePositionMessage.tilePosition = [gtile_now[0].position];
-              tilePositionMessage.tileGroup = [gtile_now[1]];
-              isTilePositionMessagedSetted = true;
-            }
             gtile_now[0].position = new Point(
               gtile_now[0].position._x + newPosition.x - originalPosition.x,
               gtile_now[0].position._y + newPosition.y - originalPosition.y
             );
-            tilePositionMessage.tileIndex.push(index);
-            tilePositionMessage.tilePosition.push(gtile_now[0].position);
-            tilePositionMessage.tileGroup.push(gtile_now[1]);
-            tilePositionMessage.changedData[0] += event.delta.x;
-            tilePositionMessage.changedData[1] += event.delta.y;
           }
         });
       }
     };
   });
+  setInterval(() => {
+    const xArray: number[] = [];
+    const yArray: number[] = [];
+    config.groupTiles.forEach((tile_now) => {
+      xArray.push(tile_now[0].position._x);
+      yArray.push(tile_now[0].position._y);
+    });
+    socket.emit("dragThrottle", {
+      roomID: roomID,
+      xArray: xArray,
+      yArray: yArray,
+    });
+  }, 500);
 };
 const moveUpdate = (
   tileIndex: number,
@@ -142,6 +216,7 @@ const indexUpdate = (groupIndex: number) => {
     config.groupTileIndex = groupIndex;
   }
 };
+
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   first = isFirstClient;
   config = Puzzle.exportConfig();
@@ -151,21 +226,6 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
     tile.onMouseUp = (event: any) => {
       if (mouseFlag !== 1) return;
       mouseFlag = 2;
-
-      if (Array.isArray(tilePositionMessage.tileIndex)) {
-        socket.emit("tilePosition", tilePositionMessage);
-      } else {
-        const numTiles = tilePositionMessage.tileIndex.length;
-        for (let i = 0; i < numTiles; i++) {
-          socket.emit("tilePosition", {
-            roomID: tilePositionMessage.roomID,
-            tileIndex: tilePositionMessage.tileIndex[i],
-            tilePosition: tilePositionMessage.tilePosition[i],
-            tileGroup: tilePositionMessage.tileGroup[i],
-            changedData: tilePositionMessage.changedData,
-          });
-        }
-      }
       tile._parent.insertChild(select_idx, tile);
       let nowIndex = 0;
       if (first) {
@@ -222,6 +282,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
     };
   });
 };
+
 const fitEffect = () => {
   let audio = new Audio("/audios/fit-tile.mp3");
   audio.loop = false;
@@ -234,6 +295,7 @@ const fitEffect = () => {
     console.log(err);
   }
 };
+
 const checkUndefined = (
   nowIndex: number,
   nextIndex: number,
@@ -267,6 +329,7 @@ const checkUndefined = (
 
   return flag;
 };
+
 const fitTiles = (
   nowTile: any,
   preTile: any,
@@ -347,6 +410,7 @@ const fitTiles = (
     fitEffect();
   }
 };
+
 const uniteTiles = (nowTile: any, preTile: any, socket: any) => {
   let substract = 0;
   if (first) {
@@ -476,6 +540,7 @@ const groupFit = (nowGroup: number, socket: any) => {
     });
   });
 };
+
 const checkComplete = () => {
   let flag = false;
   config = Puzzle.exportConfig();
@@ -499,6 +564,128 @@ const checkComplete = () => {
   }
   return flag;
 };
+const getMask = (
+  tileRatio: number,
+  topTab: number | undefined,
+  rightTab: number | undefined,
+  bottomTab: number | undefined,
+  leftTab: number | undefined,
+  tileWidth: number,
+  project: any,
+  imgWidth: number,
+  imgHeight: number
+) => {
+  if (
+    topTab === undefined ||
+    rightTab === undefined ||
+    bottomTab === undefined ||
+    leftTab === undefined
+  )
+    return;
+
+  const curvyCoords = [
+    0, 0, 35, 15, 37, 5, 37, 5, 40, 0, 38, -5, 38, -5, 20, -20, 50, -20, 50,
+    -20, 80, -20, 62, -5, 62, -5, 60, 0, 63, 5, 63, 5, 65, 15, 100, 0,
+  ];
+
+  const mask = new project.Path();
+  const topLeftEdge = new Point(-imgWidth / 2, -imgHeight / 2);
+
+  mask.moveTo(topLeftEdge);
+  //Top
+  for (let i = 0; i < curvyCoords.length / 6; i++) {
+    const p1 = new Point(
+      topLeftEdge.x + curvyCoords[i * 6 + 0] * tileRatio,
+      topLeftEdge.y + topTab * curvyCoords[i * 6 + 1] * tileRatio
+    );
+
+    const p2 = new Point(
+      topLeftEdge.x + curvyCoords[i * 6 + 2] * tileRatio,
+      topLeftEdge.y + topTab * curvyCoords[i * 6 + 3] * tileRatio
+    );
+
+    const p3 = new Point(
+      topLeftEdge.x + curvyCoords[i * 6 + 4] * tileRatio,
+      topLeftEdge.y + topTab * curvyCoords[i * 6 + 5] * tileRatio
+    );
+
+    mask.cubicCurveTo(p1, p2, p3); // 곡선의 첫점, 중앙점, 끝점
+  }
+
+  //Right
+  const topRightEdge = new Point(topLeftEdge.x + tileWidth, topLeftEdge.y);
+  for (let i = 0; i < curvyCoords.length / 6; i++) {
+    const p1 = new Point(
+      topRightEdge.x - rightTab * curvyCoords[i * 6 + 1] * tileRatio,
+      topRightEdge.y + curvyCoords[i * 6 + 0] * tileRatio
+    );
+    const p2 = new Point(
+      topRightEdge.x - rightTab * curvyCoords[i * 6 + 3] * tileRatio,
+      topRightEdge.y + curvyCoords[i * 6 + 2] * tileRatio
+    );
+    const p3 = new Point(
+      topRightEdge.x - rightTab * curvyCoords[i * 6 + 5] * tileRatio,
+      topRightEdge.y + curvyCoords[i * 6 + 4] * tileRatio
+    );
+
+    mask.cubicCurveTo(p1, p2, p3);
+  }
+
+  //Bottom
+  const bottomRightEdge = new Point(topRightEdge.x, topRightEdge.y + tileWidth);
+  for (let i = 0; i < curvyCoords.length / 6; i++) {
+    const p1 = new Point(
+      bottomRightEdge.x - curvyCoords[i * 6 + 0] * tileRatio,
+      bottomRightEdge.y - bottomTab * curvyCoords[i * 6 + 1] * tileRatio
+    );
+    const p2 = new Point(
+      bottomRightEdge.x - curvyCoords[i * 6 + 2] * tileRatio,
+      bottomRightEdge.y - bottomTab * curvyCoords[i * 6 + 3] * tileRatio
+    );
+    const p3 = new Point(
+      bottomRightEdge.x - curvyCoords[i * 6 + 4] * tileRatio,
+      bottomRightEdge.y - bottomTab * curvyCoords[i * 6 + 5] * tileRatio
+    );
+
+    mask.cubicCurveTo(p1, p2, p3);
+  }
+
+  //Left
+  const bottomLeftEdge = new Point(
+    bottomRightEdge.x - tileWidth,
+    bottomRightEdge.y
+  );
+  for (let i = 0; i < curvyCoords.length / 6; i++) {
+    const p1 = new Point(
+      bottomLeftEdge.x + leftTab * curvyCoords[i * 6 + 1] * tileRatio,
+      bottomLeftEdge.y - curvyCoords[i * 6 + 0] * tileRatio
+    );
+    const p2 = new Point(
+      bottomLeftEdge.x + leftTab * curvyCoords[i * 6 + 3] * tileRatio,
+      bottomLeftEdge.y - curvyCoords[i * 6 + 2] * tileRatio
+    );
+    const p3 = new Point(
+      bottomLeftEdge.x + leftTab * curvyCoords[i * 6 + 5] * tileRatio,
+      bottomLeftEdge.y - curvyCoords[i * 6 + 4] * tileRatio
+    );
+
+    mask.cubicCurveTo(p1, p2, p3);
+  }
+
+  return mask;
+};
+const getTileRaster = (
+  sourceRaster: paper.Raster,
+  size: paper.Size,
+  offset: paper.Point,
+  scaleValue: number
+) => {
+  const targetRaster = new config.project.Raster("empty");
+  targetRaster.scale(scaleValue);
+  targetRaster.position = new Point(-offset.x, -offset.y);
+
+  return targetRaster;
+};
 
 const MovePuzzle = {
   moveTile,
@@ -506,5 +693,6 @@ const MovePuzzle = {
   moveUpdate,
   checkComplete,
   indexUpdate,
+  dragUpdate,
 };
 export default MovePuzzle;
