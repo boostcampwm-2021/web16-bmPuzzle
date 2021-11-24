@@ -250,6 +250,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
           tileShape[index] = config.shapes[nextIndex];
         }
       });
+      let flag: boolean = false;
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined) {
           fitTiles(
