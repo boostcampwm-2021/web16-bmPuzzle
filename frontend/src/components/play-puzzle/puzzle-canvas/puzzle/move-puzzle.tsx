@@ -74,9 +74,8 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       };
       if (gtile[1] === undefined) {
         gtile[0].position = new Point(newPosition.x, newPosition.y);
-
       } else {
-        config.groupTiles.forEach((gtile_now, index) => {
+        config.groupTiles.forEach((gtile_now) => {
           if (gtile[1] === gtile_now[1]) {
             gtile_now[0].position = new Point(
               gtile_now[0].position._x + newPosition.x - originalPosition.x,
@@ -87,6 +86,19 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       }
     };
   });
+  setInterval(() => {
+    const xArray: number[] = [];
+    const yArray: number[] = [];
+    config.groupTiles.forEach((tile_now) => {
+      xArray.push(tile_now[0].position._x);
+      yArray.push(tile_now[0].position._y);
+    });
+    socket.emit("dragThrottle", {
+      roomID: roomID,
+      xArray: xArray,
+      yArray: yArray,
+    });
+  }, 500);
 };
 const moveUpdate = (
   tileIndex: number,
@@ -106,6 +118,12 @@ const indexUpdate = (groupIndex: number) => {
   if (config !== undefined) {
     config.groupTileIndex = groupIndex;
   }
+};
+const dragUpdate = (xArray: number[], yArray: number[]) => {
+  /*
+  config.groupTiles.forEach((tile_now, index) => {
+    tile_now[0].position = new Point(xArray[index], yArray[index]);
+  });*/
 };
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   first = isFirstClient;
@@ -161,6 +179,13 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
             });
           });
         }
+      });
+      socket.emit("tilePosition", {
+        roomID: roomID,
+        tileIndex: nowIndex,
+        tilePosition: config.groupTiles[nowIndex][0].position,
+        tileGroup: config.groupTiles[nowIndex][1],
+        changedData: [event.delta.x, event.delta.y],
       });
     };
   });
@@ -449,5 +474,6 @@ const MovePuzzle = {
   moveUpdate,
   checkComplete,
   indexUpdate,
+  dragUpdate,
 };
 export default MovePuzzle;
