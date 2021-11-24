@@ -212,6 +212,13 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
           });
         }
       });
+      socket.emit("tilePosition", {
+        roomID: roomID,
+        tileIndex: nowIndex,
+        tilePosition: config.groupTiles[nowIndex][0].position,
+        tileGroup: config.groupTiles[nowIndex][1],
+        changedData: [event.delta.x, event.delta.y],
+      });
     };
   });
 };
