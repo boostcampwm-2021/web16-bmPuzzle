@@ -120,6 +120,14 @@ const initConfig = () => {
     ...config,
   });
 };
+
+const dragUpdate = (xArray: number[], yArray: number[]) => {
+  /*
+  config.groupTiles.forEach((tile_now, index) => {
+    tile_now[0].position = new Point(xArray[index], yArray[index]);
+  });*/
+};
+
 const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config = Puzzle.exportConfig();
   room = roomID;
