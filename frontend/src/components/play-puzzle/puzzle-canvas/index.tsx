@@ -135,9 +135,6 @@ const PuzzleCanvas = (props: any) => {
     socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
       Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
     });
-    socket.on("dragThrottle", ({ xArray, yArray }) => {
-      Puzzle.dragUpdate(xArray, yArray);
-    });
   }, []);
 
   const postDonePuzzle = async () => {
