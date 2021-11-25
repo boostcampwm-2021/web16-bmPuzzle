@@ -35,7 +35,11 @@ const PlayPuzzle: FC<{
   const [isFirstClient, setFirstClient] = useState<boolean | undefined>(
     undefined
   );
-  const [time, setTime] = useState({ minutes: 0, seconds: 0 });
+  const [time, setTime] = useState({
+    minutes: 0,
+    seconds: 0,
+    startTime: Date.now(),
+  });
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
   const { puzzleID, roomID } = props.match.params;

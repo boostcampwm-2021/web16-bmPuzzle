@@ -36,34 +36,37 @@ const Header = (props: any) => {
         socket.emit("setTimer", { roomID: roomID, timer: Date.now() });
       }
     }
-  }, [isFirstClient, roomID, socket, time]);
+  }, [roomID, isFirstClient]);
 
   useEffect(() => {
-    if (time !== undefined && !isFirstClient) {
+    if (time !== undefined) {
       socket.on(
         "getTimer",
-        (res: null | { minutes: number; seconds: number }) => {
-          if (res !== null && res.minutes !== null) {
+        (res: { minutes: number; seconds: number; startTime: number }) => {
+          if (res.startTime !== undefined) {
             setTime(res);
           }
         }
       );
-      socket.emit("getTimer", { roomID: roomID, timer: Date.now() });
+      socket.emit("getTimer", { roomID: roomID });
     }
   }, []);
 
   useEffect(() => {
     if (time !== undefined) {
       const countTime = setInterval(() => {
-        if (time.seconds >= 59) {
-          setTime({ minutes: time.minutes + 1, seconds: 0 });
-        } else {
-          setTime({ minutes: time.minutes, seconds: time.seconds + 1 });
-        }
-      }, 1000);
+        const diff = Date.now() - time.startTime;
+        const seconds = Math.floor(diff / 1000) % 60;
+        const minutes = Math.floor(diff / 1000 / 60);
+        setTime({
+          minutes: minutes,
+          seconds: seconds,
+          startTime: time.startTime,
+        });
+      }, 100);
       return () => clearInterval(countTime);
     }
-  }, [time, setTime]);
+  }, [time]);
 
   return (
     <Wrapper>
