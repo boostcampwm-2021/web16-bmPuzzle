@@ -20,7 +20,7 @@ const SearchBar = (props: any) => {
     }, 100);
   };
 
-  const handleGo = () => history.push("/");
+  const handleGo = () => history.push("/main");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
@@ -8,17 +8,16 @@ import ImageCard from "@components/common/image-card/index";
 import UploadBtn from "@components/main/upload-button/index";
 
 import getImgfile from "@js/get-img-file";
+import infiniteScroll from "@src/hooks/infinite-scroll";
 
 const Main = () => {
   let dummy_image: object[] = [];
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [img, setImg] = useState(dummy_image);
   const [filterImg, setFilterImg] = useState(dummy_image);
-  let prev = 0;
   const getItem = 4;
-  let cache: object[] | undefined;
 
-  const getImgUrl = async () => {
+  const getImgUrl = async (prev: number) => {
     let ret;
     if (img === undefined) return;
     if (cache === undefined) {
@@ -32,7 +31,7 @@ const Main = () => {
 
       if (response.ok) {
         ret = await response.json();
-        cache = ret;
+        setCache(ret);
       }
     }
     ret = ret === undefined ? cache : ret;
@@ -41,30 +40,21 @@ const Main = () => {
     const data = ret.data.slice(prev, prev + getItem);
 
     if (fn.length === 0) {
-      if (containerRef.current === null) return;
-      containerRef.current.removeEventListener("scroll", infiniteScroll);
+      setIsDone(true);
       return;
     }
 
-    prev += getItem;
     setImg((prevState) => [...prevState, ...getImgfile(fn, data)]);
+    setIsSet(false);
   };
 
-  const infiniteScroll = () => {
-    if (containerRef.current === null) return;
-    const ref: HTMLDivElement = containerRef.current;
-    const scrollHeight = ref.scrollHeight;
-    const scrollTop = ref.scrollTop;
-    const clientHeight = ref.clientHeight;
-
-    const ret = Math.floor(scrollTop) + clientHeight;
-    if (Math.abs(ret - scrollHeight) <= 2) getImgUrl();
-  };
+  const [setIsSet, setIsDone, cache, setCache] = infiniteScroll(
+    getImgUrl,
+    containerRef.current
+  );
 
   useEffect(() => {
-    getImgUrl();
-    if (containerRef.current === null) return;
-    containerRef.current.addEventListener("scroll", infiniteScroll);
+    getImgUrl(0);
   }, []);
 
   return (

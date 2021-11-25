@@ -3,7 +3,8 @@ import styled from "styled-components";
 import LevelComponent from "@components/register-puzzle/level-component";
 import Header from "@components/common/header/index";
 import colors from "@styles/theme";
-import { useHistory } from "react-router-dom";
+import Submit from "@components/register-puzzle/submit-button/index";
+import { ToastContextProvider } from "@context/toast";
 
 const RegPuz = () => {
   const [checkedLevel, setLevel] = useState(1);
@@ -11,7 +12,6 @@ const RegPuz = () => {
   const [selectedImg, setSelectedcImg] = useState<null | File>(null);
   const [url, setUrl] = useState("");
   const [name, setName] = useState("");
-  const history = useHistory();
 
   const titleHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event?.target.value);
@@ -23,31 +23,6 @@ const RegPuz = () => {
     setName(event.target.files[0].name);
     setSelectedcImg(img);
     setUrl(imgUrl);
-  };
-  const submitHandler = async () => {
-    const formData = new FormData();
-    const id: string | null =
-      window.sessionStorage.getItem("id") === null
-        ? ""
-        : String(window.sessionStorage.getItem("id"));
-    if (selectedImg === null || title === "") {
-      alert("양식을 다 채우세요");
-      return false;
-    }
-    formData.append("userId", id);
-    formData.append("title", title);
-    formData.append("img", selectedImg);
-    formData.append("level", String(checkedLevel));
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/register`, {
-      method: "POST",
-      headers: {},
-      body: formData,
-    });
-    if (response.status === 200) {
-      history.push("/main");
-    } else {
-      alert("Upload Fail");
-    }
   };
 
   return (
@@ -104,11 +79,13 @@ const RegPuz = () => {
                   })}
                 </FlexDiv>
               </div>
-              <div>
-                <Btn type="submit" onClick={submitHandler}>
-                  submit
-                </Btn>
-              </div>
+              <ToastContextProvider>
+                <Submit
+                  title={title}
+                  selectedImg={selectedImg}
+                  checkedLevel={checkedLevel}
+                />
+              </ToastContextProvider>
             </FormWrapper>
             <PreviewWrapper>
               <FlexDiv> Preview Image </FlexDiv>
@@ -235,21 +212,6 @@ const Label = styled.label`
   font-weight: 900;
   align-items: center;
   justify-content: center;
-  &: hover {
-    cursor: pointer;
-    opacity: 0.5;
-  }
-`;
-
-const Btn = styled.button`
-  width: 100%;
-  background: black;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 1.5% 5%;
-  font-size: 14px;
-  font-weight: 900;
   &: hover {
     cursor: pointer;
     opacity: 0.5;
