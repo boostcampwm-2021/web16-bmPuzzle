@@ -141,14 +141,13 @@ export default (io: any) => {
         timer.set(res.roomID, res.timer);
       }
     });
-    socket.on('getTimer', (res: { roomID: string; timer: number }) => {
-      const startTime = timer.get(res.roomID);
-      const sub = res.timer - (startTime || res.timer);
-      const tmp = {
-        minutes: Math.floor(sub / 1000 / 60),
-        seconds: Math.round((sub / 1000) % 60),
+    socket.on('getTimer', (res: { roomID: string }) => {
+      const timeInfo = {
+        minutes: 0,
+        seconds: 0,
+        startTime: timer.get(res.roomID),
       };
-      socket.emit('getTimer', tmp);
+      socket.emit('getTimer', timeInfo);
     });
 
     socket.on('deleteRoom', (res: { roomID: string }) => {

@@ -138,7 +138,7 @@ const PuzzleCanvas = (props: any) => {
   }, []);
 
   const postDonePuzzle = async () => {
-    const timeToNum = time.seconds + time.minutes * 60;
+    const timeToNum = Math.floor(time.startTime - Date.now() / 1000);
     const response = await fetch(`${process.env.REACT_APP_API_URL}/complete`, {
       method: "POST",
       headers: {
@@ -166,7 +166,7 @@ const PuzzleCanvas = (props: any) => {
       socket.emit("deleteRoom", { roomID: roomID });
       time = undefined;
     }
-  }, [time.minutes, time.seconds]);
+  }, [time]);
   return (
     <Wrapper>
       {showCanvas ? (
