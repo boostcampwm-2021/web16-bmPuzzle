@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 let prev = 0;
-const getItem = 4;
+const getItem = 10;
 
 const useInfiniteScroll = (
   fetchCallback: Function,
@@ -36,13 +36,11 @@ const useInfiniteScroll = (
 
   useEffect(() => {
     if (!ref) return;
+    prev = 0;
     const scrollEvent = () => {
       throttle(handleScroll, 100);
     };
-    if (!isDone) {
-      console.log("heyhey");
-      ref.addEventListener("scroll", scrollEvent);
-    }
+    if (!isDone) ref.addEventListener("scroll", scrollEvent);
     return () => {
       ref.removeEventListener("scroll", scrollEvent);
     };

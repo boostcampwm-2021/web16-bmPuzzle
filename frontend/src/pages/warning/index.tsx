@@ -1,5 +1,4 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import WarningIcon from "@images/warning-icon.png";
 
@@ -74,6 +73,7 @@ const Btn = styled.button`
   color: white;
   font-size: 15px;
   padding: 1% 2%;
+  text-decoration: none;
   &: hover {
     opacity: 0.5;
     cursor: pointer;
