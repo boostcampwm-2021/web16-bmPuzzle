@@ -21,7 +21,11 @@ const Login = (props: any) => {
 
     if (response.ok) {
       window.sessionStorage.setItem("id", res.profileObj.name);
-      history.push("/main");
+      const goalPath =
+        props.location.state.prevPath === undefined
+          ? "/main"
+          : props.location.state.prevPath;
+      history.push(goalPath);
     }
   };
 
