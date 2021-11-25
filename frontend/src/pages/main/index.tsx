@@ -15,7 +15,7 @@ const Main = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [img, setImg] = useState(dummy_image);
   const [filterImg, setFilterImg] = useState(dummy_image);
-  const getItem = 10;
+  const getItem = 4;
 
   const getImgUrl = async (prev: number) => {
     let ret;
