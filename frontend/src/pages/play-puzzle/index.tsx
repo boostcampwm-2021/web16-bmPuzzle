@@ -7,6 +7,7 @@ import Header from "@src/components/common/header/index";
 import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
 import Chat from "@src/components/play-puzzle/chat/index";
 import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
+import Warning from "@pages/warning/index";
 
 type puzzleInfoType = {
   img: string;
@@ -19,12 +20,6 @@ const PlayPuzzle: FC<{
   const location = useLocation();
   const history = useHistory();
   const user = window.sessionStorage.getItem("id");
-  if (user === null) {
-    history.push({
-      pathname: "/warning",
-      state: { warn: "noUser", prevPath: location.pathname },
-    });
-  }
   const [loaded, setLoaded] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
@@ -88,6 +83,7 @@ const PlayPuzzle: FC<{
 
   return (
     <Wrapper>
+      {user === null && <Warning warn="noUser" prevPath={location.pathname} />}
       <Header
         isPlayRoom={true}
         chatVisible={chatVisible}

@@ -1,37 +1,36 @@
 import React from "react";
-import { RouteComponentProps, Link } from "react-router-dom";
-import { useLocation } from "react-router";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 import WarningIcon from "@images/warning-icon.png";
+
+type PropsType = {
+  warn: string;
+  prevPath?: string;
+};
 
 type ObjType = {
   [index: string]: string;
   noUser: string;
   noFile: string;
-  isFull: string;
+  undefined: string;
 };
 
 const textObj: ObjType = {
   noUser: "로그인을 하고 이용해주세요",
   noFile: "해당하는 사진이 없습니다 :(",
-  isFull: "게임룸은 정원제한에 도달하였습니다",
+  undefined: "게임룸은 정원제한에 도달하였습니다",
 };
 
-interface stateType {
-  warn: string;
-  prevPath?: string;
-}
-const Warning = (props: any) => {
-  const location = useLocation<stateType>();
-  const warningCase: any = location.state.warn;
-  const prevPath = warningCase === "noUser" ? location.state.prevPath : "/main";
+const Warning = (props: PropsType) => {
+  const prevPath = props.prevPath;
+
   return (
     <Wrapper>
       <Container>
         <Img src={WarningIcon} alt="" />
-        <span>{textObj[warningCase]}</span>
-        {warningCase !== "noFile" && (
-          // eslint-disable-next-line no-restricted-globals
+        <span>{textObj[props.warn]}</span>
+        {props.warn !== "noFile" && (
           <Link to={{ pathname: "/", state: { prevPath: prevPath } }}>
             처음으로 돌아가기
           </Link>
@@ -64,6 +63,19 @@ const Container = styled.div`
 const Img = styled.img`
   width: 250px;
   height: 250px;
+`;
+
+const Btn = styled.button`
+  border-radius: 30px;
+  border: none;
+  background: black;
+  color: white;
+  font-size: 15px;
+  padding: 1% 2%;
+  &: hover {
+    opacity: 0.5;
+    cursor: pointer;
+  }
 `;
 
 export default Warning;
