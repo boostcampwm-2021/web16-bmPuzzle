@@ -58,6 +58,7 @@ const Header = (props: any) => {
         const diff = Date.now() - time.startTime;
         const seconds = Math.floor(diff / 1000) % 60;
         const minutes = Math.floor(diff / 1000 / 60);
+        if (time.minutes === minutes && time.seconds === seconds) return;
         setTime({
           minutes: minutes,
           seconds: seconds,
