@@ -8,6 +8,7 @@ import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
 import Chat from "@src/components/play-puzzle/chat/index";
 import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
 import Warning from "@pages/warning/index";
+import { ToastContextProvider } from "@context/toast";
 
 type puzzleInfoType = {
   img: string;
@@ -97,10 +98,9 @@ const PlayPuzzle: FC<{
         {user !== null && (
           <SocketContext.Provider value={socket}>
             <Chat chatVisible={chatVisible} roomID={roomID} />
-            <PlayroomMenuBtn
-              hintFunc={setHintShow}
-              hintState={hintShow}
-            ></PlayroomMenuBtn>
+            <ToastContextProvider>
+              <PlayroomMenuBtn hintFunc={setHintShow} hintState={hintShow} />
+            </ToastContextProvider>
             <ComponentImg
               ref={imgRef}
               id="puzzleImage"

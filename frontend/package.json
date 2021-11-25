@@ -2,40 +2,11 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^26.0.15",
-    "@types/paper": "^0.12.3",
-    "@types/react-copy-to-clipboard": "^5.0.2",
-    "@types/react-dom": "^17.0.0",
-    "ansi-regex": "5.0.1",
-    "howler": "^2.2.3",
-    "paper": "^0.12.15",
-    "react": "^17.0.2",
-    "react-cookie": "^4.1.1",
-    "react-copy-to-clipboard": "^5.0.4",
-    "react-dom": "^17.0.2",
-    "react-intersection-observer": "^8.32.3",
-    "react-router-dom": "^5.3.0",
-    "react-scripts": "^4.0.3",
-    "socket.io-client": "^4.3.2",
-    "styled-components": "^5.3.3",
-    "typescript": "^4.1.2",
-    "web-vitals": "^1.0.1"
-  },
   "scripts": {
-    "start": "craco start",
     "build": "craco build",
-    "test": "craco test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "eject": "react-scripts eject",
+    "start": "craco start",
+    "test": "craco test"
   },
   "browserslist": {
     "production": [
@@ -49,20 +20,48 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {
-    "@craco/craco": "^6.4.0",
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "dependencies": {
     "@types/dotenv": "^8.2.0",
     "@types/howler": "^2.2.4",
+    "@types/paper": "^0.12.3",
+    "@types/react-copy-to-clipboard": "^5.0.2",
+    "howler": "^2.2.3",
+    "paper": "^0.12.15",
+    "react-copy-to-clipboard": "^5.0.4",
+    "react-google-login": "^5.2.2",
+    "socket.io-client": "^4.3.2"
+  },
+  "devDependencies": {
+    "@craco/craco": "^6.4.0",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
     "@types/node": "^12.20.36",
     "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.3.2",
     "@types/styled-components": "^5.1.15",
+    "ansi-regex": "5.0.1",
     "craco-alias": "^3.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.4.1",
-    "react-google-login": "^5.2.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-intersection-observer": "^8.32.3",
+    "react-router-dom": "^5.3.0",
+    "react-scripts": "^4.0.3",
+    "styled-components": "^5.3.3",
     "styled-reset": "^4.3.4",
+    "typescript": "^4.1.2",
+    "web-vitals": "^1.0.1",
     "yarn-audit-fix": "^7.1.3"
   }
 }

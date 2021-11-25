@@ -21,10 +21,7 @@ const Login = (props: any) => {
 
     if (response.ok) {
       window.sessionStorage.setItem("id", res.profileObj.name);
-      if (props.location.state === undefined) history.push("/main");
-      else history.push(props.location.state.prevPath);
-    } else {
-      window.alert("잘못된 입력입니다!");
+      history.push("/main");
     }
   };
 
