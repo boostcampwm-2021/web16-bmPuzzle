@@ -14,7 +14,6 @@ const Submit = (props: PropsType) => {
 
   const addToast: any = useToastContext();
   const submitHandler = async () => {
-    console.log(addToast);
     const formData = new FormData();
     const id: string | null =
       window.sessionStorage.getItem("id") === null

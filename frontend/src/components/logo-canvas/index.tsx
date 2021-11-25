@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from "react";
 import styled from "styled-components";
 import Paper from "paper";
 import puzzlePieceImg from "@images/puzzle-piece.png";
-import { project } from "paper/dist/paper-core";
 
 const LogoCanvas = () => {
   const logoCanvasRef = useRef(null);

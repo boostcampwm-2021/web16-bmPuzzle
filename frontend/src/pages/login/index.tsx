@@ -55,18 +55,6 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
-const Title = styled.div`
-  color: white;
-  font-size: 60px;
-  font-weight: 900;
-  margin-top: 75px;
-`;
-const Icon = styled.img`
-  width: 300px;
-  height: 300px;
-  margin: 80px 0;
-`;
-
 const GoogleButton = styled.button`
   z-index: 2;
   position: absolute;
