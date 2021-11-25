@@ -4,7 +4,7 @@ import GoogleLogin from "react-google-login";
 import styled from "styled-components";
 import LogoCanvas from "@components/logo-canvas";
 
-const Login = () => {
+const Login = (props: any) => {
   const history = useHistory();
   const google_id: string = process.env.REACT_APP_CLIENT_ID || "";
 
@@ -53,18 +53,6 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const Title = styled.div`
-  color: white;
-  font-size: 60px;
-  font-weight: 900;
-  margin-top: 75px;
-`;
-const Icon = styled.img`
-  width: 300px;
-  height: 300px;
-  margin: 80px 0;
 `;
 
 const GoogleButton = styled.button`
