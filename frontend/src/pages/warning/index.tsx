@@ -1,5 +1,4 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import WarningIcon from "@images/warning-icon.png";
@@ -31,9 +30,9 @@ const Warning = (props: PropsType) => {
         <Img src={WarningIcon} alt="" />
         <span>{textObj[props.warn]}</span>
         {props.warn !== "noFile" && (
-          <Link to={{ pathname: "/", state: { prevPath: prevPath } }}>
+          <LinkBtn to={{ pathname: "/", state: { prevPath: prevPath } }}>
             처음으로 돌아가기
-          </Link>
+          </LinkBtn>
         )}
       </Container>
     </Wrapper>
@@ -65,13 +64,14 @@ const Img = styled.img`
   height: 250px;
 `;
 
-const Btn = styled.button`
+const LinkBtn = styled(Link)`
   border-radius: 30px;
   border: none;
   background: black;
   color: white;
   font-size: 15px;
   padding: 1% 2%;
+  text-decoration: none;
   &: hover {
     opacity: 0.5;
     cursor: pointer;
