@@ -8,7 +8,7 @@ import ImageCard from "@components/common/image-card/index";
 import UploadBtn from "@components/main/upload-button/index";
 
 import getImgfile from "@js/get-img-file";
-import infiniteScroll from "@js/infinite-scroll";
+import infiniteScroll from "@src/hooks/infinite-scroll";
 
 const Main = () => {
   let dummy_image: object[] = [];

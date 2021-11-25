@@ -13,14 +13,16 @@ interface PlayerRoomMenuProps {
 
 const PlayroomMenuBtn = ({ hintFunc, hintState }: PlayerRoomMenuProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
+
   const clickMenu = () => {
     setMenuOpen(!menuOpen);
   };
+
   return (
     <MenuWrap>
       <MenuDetailWrap show={menuOpen}>
         <HintBtn hintFunc={hintFunc} hintState={hintState}></HintBtn>
-        <CopyBtn></CopyBtn>
+        <CopyBtn />
       </MenuDetailWrap>
       <MenuButtonWrap>
         <MenuButton onClick={clickMenu}>
