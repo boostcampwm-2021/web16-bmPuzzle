@@ -1,6 +1,5 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import WarningIcon from "@images/warning-icon.png";
 
 type PropsType = {
@@ -23,16 +22,19 @@ const textObj: ObjType = {
 
 const Warning = (props: PropsType) => {
   const prevPath = props.prevPath;
-
+  const history = useHistory();
+  let goLogin;
+  if (props.warn === "noUser")
+    goLogin = () =>
+      history.push({ pathname: "/", state: { prevPath: prevPath } });
+  else goLogin = () => history.push("/");
   return (
     <Wrapper>
       <Container>
         <Img src={WarningIcon} alt="" />
         <span>{textObj[props.warn]}</span>
         {props.warn !== "noFile" && (
-          <LinkBtn to={{ pathname: "/", state: { prevPath: prevPath } }}>
-            처음으로 돌아가기
-          </LinkBtn>
+          <Btn onClick={goLogin}>처음으로 돌아가기</Btn>
         )}
       </Container>
     </Wrapper>
@@ -64,7 +66,7 @@ const Img = styled.img`
   height: 250px;
 `;
 
-const LinkBtn = styled(Link)`
+const Btn = styled.button`
   border-radius: 30px;
   border: none;
   background: black;
