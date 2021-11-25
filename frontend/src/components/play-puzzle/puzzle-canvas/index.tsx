@@ -138,7 +138,7 @@ const PuzzleCanvas = (props: any) => {
   }, []);
 
   const postDonePuzzle = async () => {
-    const timeToNum = Math.floor(time.startTime - Date.now() / 1000);
+    const timeToNum = Math.floor((Date.now() - time.startTime) / 1000);
     const response = await fetch(`${process.env.REACT_APP_API_URL}/complete`, {
       method: "POST",
       headers: {
