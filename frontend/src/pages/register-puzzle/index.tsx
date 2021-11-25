@@ -3,7 +3,7 @@ import styled from "styled-components";
 import LevelComponent from "@components/register-puzzle/level-component";
 import Header from "@components/common/header/index";
 import colors from "@styles/theme";
-import Submit from "@pages/register-puzzle/submit-btn";
+import Submit from "@components/register-puzzle/submit-button/index";
 import { ToastContextProvider } from "@context/toast";
 
 const RegPuz = () => {
