@@ -17,7 +17,6 @@ type puzzleInfoType = {
 const PlayPuzzle: FC<{
   match: { params: { puzzleID: string; roomID: string } };
 }> = (props) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const location = useLocation();
   const history = useHistory();
   const user = window.sessionStorage.getItem("id");
