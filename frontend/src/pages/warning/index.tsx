@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useHistory } from "react-router-dom";
 import WarningIcon from "@images/warning-icon.png";
 
 type PropsType = {
