@@ -1,7 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import WarningIcon from "@images/warning-icon.png";
 
 type PropsType = {
@@ -24,16 +22,19 @@ const textObj: ObjType = {
 
 const Warning = (props: PropsType) => {
   const prevPath = props.prevPath;
-
+  const history = useHistory();
+  let goLogin;
+  if (props.warn === "noUser")
+    goLogin = () =>
+      history.push({ pathname: "/", state: { prevPath: prevPath } });
+  else goLogin = () => history.push("/");
   return (
     <Wrapper>
       <Container>
         <Img src={WarningIcon} alt="" />
         <span>{textObj[props.warn]}</span>
         {props.warn !== "noFile" && (
-          <Link to={{ pathname: "/", state: { prevPath: prevPath } }}>
-            처음으로 돌아가기
-          </Link>
+          <Btn onClick={goLogin}>처음으로 돌아가기</Btn>
         )}
       </Container>
     </Wrapper>
@@ -72,6 +73,7 @@ const Btn = styled.button`
   color: white;
   font-size: 15px;
   padding: 1% 2%;
+  text-decoration: none;
   &: hover {
     opacity: 0.5;
     cursor: pointer;
