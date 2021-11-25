@@ -83,7 +83,7 @@ const PlayPuzzle: FC<{
       setFirstClient(res.isFirstUser);
     });
     socket.on("isFull", () => {
-      history.push({ pathname: "/warning", state: { warn: "isFull" } });
+      history.push("/warning");
     });
     return () => {
       socket.emit("leaveRoom", { roomID: roomID });
