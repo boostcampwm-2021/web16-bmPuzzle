@@ -2,7 +2,6 @@ import * as React from "react";
 import { useHistory } from "react-router-dom";
 import GoogleLogin from "react-google-login";
 import styled from "styled-components";
-import puzzleIcon from "@images/main-logo.gif";
 import LogoCanvas from "@components/logo-canvas";
 
 const Login = () => {
@@ -23,8 +22,6 @@ const Login = () => {
     if (response.ok) {
       window.sessionStorage.setItem("id", res.profileObj.name);
       history.push("/main");
-    } else {
-      window.alert("잘못된 입력입니다!");
     }
   };
 

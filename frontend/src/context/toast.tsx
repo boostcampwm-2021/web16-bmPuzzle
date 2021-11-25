@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState, createContext } from "react";
 import styled from "styled-components";
 import ToastCheckIcon from "@images/toast-check-icon.png";
+import ToastNoIcon from "@images/toast-red-x-icon.png";
 import ToastXIcon from "@images/toast-white-x-icon.png";
 
 const ToastContext = createContext({});
@@ -8,6 +9,7 @@ const ToastContext = createContext({});
 export const ToastContextProvider = (props: any) => {
   const dummy: any[] = [];
   const [toasts, setToasts]: any[] = useState(dummy);
+  const [status, setStatus] = useState(true);
 
   useEffect(() => {
     if (toasts.length > 0) {
@@ -20,7 +22,8 @@ export const ToastContextProvider = (props: any) => {
   }, [toasts]);
 
   const addToast = useCallback(
-    function (toast) {
+    function (toast, status) {
+      status !== undefined ? setStatus(false) : setStatus(true);
       setToasts((prevState: any[]) => [...prevState, toast]);
     },
     [setToasts]
@@ -49,7 +52,7 @@ export const ToastContextProvider = (props: any) => {
               </CloseBtn>
             </Header>
             <Content>
-              <Img src={ToastCheckIcon} alt="" />
+              <Img src={status ? ToastCheckIcon : ToastNoIcon} alt="" />
               <Text>{toast}</Text>
             </Content>
           </Toast>
