@@ -4,7 +4,7 @@ import GoogleLogin from "react-google-login";
 import styled from "styled-components";
 import LogoCanvas from "@components/logo-canvas";
 
-const Login = () => {
+const Login = (props: any) => {
   const history = useHistory();
   const google_id: string = process.env.REACT_APP_CLIENT_ID || "";
 

@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState, FC } from "react";
 import { useHistory } from "react-router";
 import { SocketContext, socket } from "@src/context/socket";
 import styled from "styled-components";
-
+import { useLocation } from "react-router";
 import Header from "@src/components/common/header/index";
 import PuzzleCanvas from "@src/components/play-puzzle/puzzle-canvas/index";
 import Chat from "@src/components/play-puzzle/chat/index";
 import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
 import Warning from "@pages/warning/index";
 import { ToastContextProvider } from "@context/toast";
+
 
 type puzzleInfoType = {
   img: string;
@@ -17,6 +18,16 @@ type puzzleInfoType = {
 const PlayPuzzle: FC<{
   match: { params: { puzzleID: string; roomID: string } };
 }> = (props) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const location = useLocation();
+  const history = useHistory();
+  const user = window.sessionStorage.getItem("id");
+  if (user === null) {
+    history.push({
+      pathname: "/warning",
+      state: { warn: "noUser", prevPath: location.pathname },
+    });
+  }
   const [loaded, setLoaded] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
@@ -27,12 +38,14 @@ const PlayPuzzle: FC<{
   const [isFirstClient, setFirstClient] = useState<boolean | undefined>(
     undefined
   );
-  const [time, setTime] = useState({ minutes: 0, seconds: 0 });
+  const [time, setTime] = useState({
+    minutes: 0,
+    seconds: 0,
+    startTime: Date.now(),
+  });
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
   const { puzzleID, roomID } = props.match.params;
-  const history = useHistory();
-  const user = window.sessionStorage.getItem("id");
 
   const getPuzzleInfo = async () => {
     const response = await fetch(
@@ -50,34 +63,34 @@ const PlayPuzzle: FC<{
   };
 
   const setPuzzle = async () => {
-    if (puzzleInfo.img === "" && isFirstClient !== undefined) {
-      const res: puzzleInfoType | undefined = await getPuzzleInfo();
-      if (res === undefined) {
-        history.go(-1);
-        return;
-      }
-      res.img = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
-      setPuzzleInfo({ img: res.img, level: res.level });
+    const res: puzzleInfoType | undefined = await getPuzzleInfo();
+    if (res === undefined) {
+      history.go(-1);
+      return;
     }
+    res.img = `${process.env.REACT_APP_STATIC_URL}/${res.img}`;
+    setPuzzleInfo({ img: res.img, level: res.level });
   };
 
   useEffect(() => {
-    setPuzzle();
+    if (user === null) return;
+    if (isFirstClient === undefined) {
+      setPuzzle();
+    }
+    socket.emit("joinRoom", { roomID: roomID });
     socket.on("isFirstUser", (res) => {
       setFirstClient(res.isFirstUser);
     });
-    socket.emit("joinRoom", { roomID: roomID });
     socket.on("isFull", () => {
-      history.push("/warning");
+      history.push({ pathname: "/warning", state: { warn: "isFull" } });
     });
     return () => {
       socket.emit("leaveRoom", { roomID: roomID });
     };
-  }, [roomID, setPuzzle]);
+  }, [isFirstClient]);
 
   return (
     <Wrapper>
-      {user === null && <Warning warn="noUser" />}
       <Header
         isPlayRoom={true}
         chatVisible={chatVisible}
