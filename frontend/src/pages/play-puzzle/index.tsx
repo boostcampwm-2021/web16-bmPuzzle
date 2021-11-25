@@ -10,7 +10,6 @@ import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
 import Warning from "@pages/warning/index";
 import { ToastContextProvider } from "@context/toast";
 
-
 type puzzleInfoType = {
   img: string;
   level: number;
