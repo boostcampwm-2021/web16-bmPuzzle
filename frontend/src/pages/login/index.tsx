@@ -22,6 +22,7 @@ const Login = (props: any) => {
     if (response.ok) {
       window.sessionStorage.setItem("id", res.profileObj.name);
       const goalPath =
+        props.location.state === undefined ||
         props.location.state.prevPath === undefined
           ? "/main"
           : props.location.state.prevPath;
