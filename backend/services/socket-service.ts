@@ -149,16 +149,6 @@ export default (io: any) => {
       };
       socket.emit('getTimer', timeInfo);
     });
-    socket.on(
-      'preemption',
-      (res: {
-        roomID: string;
-        tileIndex: number;
-        tileGroup: null | number;
-      }) => {
-        roomID;
-      },
-    );
 
     socket.on('deleteRoom', (res: { roomID: string }) => {
       timer.delete(res.roomID);

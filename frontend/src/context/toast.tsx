@@ -1,12 +1,15 @@
 import React, { useCallback, useEffect, useState, createContext } from "react";
 import styled from "styled-components";
+
 import ToastCheckIcon from "@images/toast-check-icon.png";
 import ToastNoIcon from "@images/toast-exclamation-icon.png";
 import ToastXIcon from "@images/toast-x-icon.png";
 
 const ToastContext = createContext({});
 
-export const ToastContextProvider = (props: any) => {
+export const ToastContextProvider = (props: {
+  children: JSX.Element | Element;
+}) => {
   const dummy: any[] = [];
   const [toasts, setToasts]: any[] = useState(dummy);
   const [status, setStatus] = useState(true);

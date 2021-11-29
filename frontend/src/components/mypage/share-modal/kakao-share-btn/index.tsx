@@ -41,6 +41,7 @@ const KakaoShareBtn = ({ img, link }: KakaoType) => {
       });
     }
   };
+
   return (
     <div className="kakao-share-btn">
       <Button id="kakao-link-btn">

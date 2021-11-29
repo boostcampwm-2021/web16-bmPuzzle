@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import useToastContext from "@src/hooks/use-toast";
+import useToastContext from "@hooks/use-toast";
 
 type PropsType = {
   title: string;

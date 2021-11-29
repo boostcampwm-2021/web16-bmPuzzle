@@ -13,10 +13,12 @@ const HintBtn = ({ hintFunc, hintState }: HintBtnProps) => {
     if (hintState) return;
     hintFunc(true);
   };
+
   const hintHide = () => {
     if (!hintState) return;
     hintFunc(false);
   };
+
   return (
     <HintButton onMouseEnter={hintShow} onMouseLeave={hintHide}>
       <img src={hintBtnImg} alt="hint" />
