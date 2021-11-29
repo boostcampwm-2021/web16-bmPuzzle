@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { RouteComponentProps, StaticContext } from "react-router";
 import styled from "styled-components";
@@ -6,6 +6,8 @@ import styled from "styled-components";
 import GoogleLogin from "react-google-login";
 
 import LogoCanvas from "@components/logo-canvas";
+import { isLogin } from "@src/js/is-login";
+import { setCookie } from "@src/js/cookie";
 
 type LocationState = {
   prevPath: Location;
@@ -38,7 +40,7 @@ const Login = (
     }
 
     if (response.ok) {
-      window.sessionStorage.setItem("id", res.profileObj.name);
+      setCookie("id", res.profileObj.name, { maxAge: 60000 * 60 * 12 });
       const goalPath =
         props.location.state === undefined ||
         props.location.state.prevPath === undefined
@@ -47,6 +49,16 @@ const Login = (
       history.push(goalPath);
     }
   };
+
+  useEffect(() => {
+    if (
+      isLogin() &&
+      (props.location.state === undefined ||
+        props.location.state.prevPath === undefined)
+    ) {
+      history.push("/main");
+    }
+  }, []);
 
   return (
     <Wrapper>

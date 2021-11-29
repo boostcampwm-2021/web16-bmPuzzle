@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Redirect } from "react-router-dom";
-import isLogin from "@js/is-login";
+import { isLogin } from "@js/is-login";
 
 type PublicType = {
   component: Function;

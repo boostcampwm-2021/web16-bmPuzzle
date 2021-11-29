@@ -6,6 +6,7 @@ import Header from "@components/common/header/index";
 import RankingTable from "@components/ranking/ranking-table/index";
 import TitleBar from "@components/common/title-bar/index";
 import RankingIcon from "@images/ranking-black-icon.png";
+import { getID } from "@src/js/is-login";
 
 type RankingInfo = {
   num: number;
@@ -38,7 +39,7 @@ const Ranking = () => {
       );
 
       const myRank = rankInfo.rank.filter(
-        (ele: { id: string }) => ele.id === window.sessionStorage.id
+        (ele: { id: string }) => ele.id === getID()
       )[0];
       setRankInfo(rankInfo.rank);
       setUserRank(myRank);

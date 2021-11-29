@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from "react";
 import styled from "styled-components";
 
 import { SocketContext } from "@context/socket";
+import { getID } from "@src/js/is-login";
 
 interface chatState {
   chatVisible: boolean;
@@ -20,7 +21,7 @@ const Chat = (props: { roomID: string; chatVisible: boolean }) => {
     message: "",
   });
   const [chat, setChat] = useState<MessageInfo[]>([]);
-  const userID = window.sessionStorage.getItem("id");
+  const userID = getID();
   const inputRef = useRef<HTMLInputElement>(null);
   let debounce: ReturnType<typeof setTimeout>;
 

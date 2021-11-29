@@ -10,6 +10,8 @@ import getImgfile from "@js/get-img-file";
 import infiniteScroll from "@hooks/use-infinite-scroll";
 import accountImg from "@images/account-black-icon.png";
 
+import { getID } from "@src/js/is-login";
+
 const Mypage = () => {
   let dummy_image: object[] = [];
   let dummy_user: undefined = undefined;
@@ -50,7 +52,7 @@ const Mypage = () => {
   };
 
   const myPageEnter = async (prev: number) => {
-    setUser(window.sessionStorage.getItem("id"));
+    setUser(getID());
 
     let ret;
     if (cache === undefined) {

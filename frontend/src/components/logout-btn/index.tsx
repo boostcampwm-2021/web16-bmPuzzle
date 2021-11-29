@@ -1,12 +1,13 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+import { removeCookie } from "@src/js/cookie";
 
 const LogoutBtn = () => {
   const history = useHistory();
 
   const logout = () => {
-    window.sessionStorage.removeItem("id");
+    removeCookie("id");
     history.push("/");
   };
 
