@@ -28,7 +28,6 @@ type Config = {
 let first = true;
 let select_idx: any;
 let config: Config;
-let mouseFlag = 2; //mouseUp된 상태
 let room: string;
 let preemption: number[] = [];
 
@@ -44,8 +43,6 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config.groupTiles.forEach((gtile, gtileIdx) => {
     gtile[0].onMouseDown = (event: any) => {
       if (preemption.includes(gtileIdx)) return;
-      if (mouseFlag !== 2) return;
-      mouseFlag = 0;
       select_idx = gtile[0].index;
       gtile[0]._parent.addChild(gtile[0]);
       if (gtile[1] === undefined) {
@@ -70,8 +67,6 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
     };
     gtile[0].onMouseDrag = (event: any) => {
       if (preemption.includes(gtileIdx) && gtileIdx) return;
-      if (mouseFlag === 2) return;
-      mouseFlag = 1;
       const newPosition = {
         x: Math.min(
           Math.max(
@@ -136,8 +131,6 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.groupTiles.forEach((tile, tileIndex) => {
     tile[0].onMouseUp = (event: any) => {
-      if (mouseFlag !== 1) return;
-      mouseFlag = 2;
       tile[0]._parent.insertChild(select_idx, tile[0]);
       let nowIndex = 0;
       if (first) {
