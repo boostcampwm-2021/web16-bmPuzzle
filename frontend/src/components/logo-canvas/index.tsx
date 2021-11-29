@@ -1,12 +1,20 @@
 import React, { useRef, useEffect } from "react";
 import styled from "styled-components";
+
 import Paper from "paper";
+
 import puzzlePieceImg from "@images/puzzle-piece.png";
 
 const LogoCanvas = () => {
   const logoCanvasRef = useRef(null);
+  const namesInfo = [
+    { name: "김하정", x: 50, y: 50 },
+    { name: "유진", x: window.innerWidth - 50, y: 50 },
+    { name: "이재영", x: 50, y: window.innerHeight - 50 },
+    { name: "장진희", x: window.innerWidth - 50, y: window.innerHeight - 50 },
+  ];
 
-  useEffect(() => {
+  const init = () => {
     const canvas: any = logoCanvasRef.current;
     if (canvas === null) return;
     Paper.setup(canvas);
@@ -14,14 +22,9 @@ const LogoCanvas = () => {
     mainLogoShow(project);
     puzzlePiecesShow(project);
     nameShow();
-  }, []);
+  };
 
-  const namesInfo = [
-    { name: "김하정", x: 50, y: 50 },
-    { name: "유진", x: window.innerWidth - 50, y: 50 },
-    { name: "이재영", x: 50, y: window.innerHeight - 50 },
-    { name: "장진희", x: window.innerWidth - 50, y: window.innerHeight - 50 },
-  ];
+  useEffect(() => init(), []);
 
   const mainLogoShow = (project: any) => {
     const logoTextPosY = Math.round(window.innerHeight * 0.15);

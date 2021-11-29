@@ -5,10 +5,12 @@ import { removeCookie } from "@src/js/cookie";
 
 const LogoutBtn = () => {
   const history = useHistory();
+
   const logout = () => {
     removeCookie("id");
     history.push("/");
   };
+
   return <LogoutButton onClick={logout}>Logout</LogoutButton>;
 };
 

@@ -1,19 +1,22 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import styled from "styled-components";
+
 import { SocketContext } from "@context/socket";
 import { getID } from "@src/js/is-login";
+
+interface chatState {
+  chatVisible: boolean;
+}
+
+interface MessageInfo {
+  name: string;
+  message: string;
+}
 
 const Chat = (props: { roomID: string; chatVisible: boolean }) => {
   const { roomID, chatVisible } = props;
   const socket = useContext(SocketContext);
-  interface MessageInfo {
-    name: string;
-    message: string;
-  }
-  const [state, setState] = useState<{
-    name: string | null | undefined;
-    message: string;
-  }>({
+  const [state, setState] = useState<{ name: string | null; message: string }>({
     name: "",
     message: "",
   });
@@ -23,6 +26,10 @@ const Chat = (props: { roomID: string; chatVisible: boolean }) => {
   let debounce: ReturnType<typeof setTimeout>;
 
   useEffect(() => {
+    sendMsgToSocket();
+  }, [chat, socket]);
+
+  const sendMsgToSocket = () => {
     socket.on("message", (msg: { name: string; message: string }) => {
       const newMsg = { name: msg.name, message: msg.message };
       setChat([...chat, newMsg]);
@@ -34,7 +41,7 @@ const Chat = (props: { roomID: string; chatVisible: boolean }) => {
     return () => {
       socket.off("message");
     };
-  }, [chat, socket]);
+  };
 
   const onMessageSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,12 +50,14 @@ const Chat = (props: { roomID: string; chatVisible: boolean }) => {
     if (inputRef.current) inputRef.current.value = "";
     setState({ name: "", message: "" });
   };
+
   const onTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     clearTimeout(debounce);
     debounce = setTimeout(() => {
       setState({ name: userID, message: e.target.value });
     }, 100);
   };
+
   const renderChat = () => {
     return chat.map((msg: { name: string; message: string }, index: number) => (
       <DialogUnit key={index}>
@@ -75,9 +84,6 @@ const Chat = (props: { roomID: string; chatVisible: boolean }) => {
   );
 };
 
-interface chatState {
-  chatVisible: boolean;
-}
 const ChatWrapper = styled.div<chatState>`
   z-index: 2;
   position: absolute;

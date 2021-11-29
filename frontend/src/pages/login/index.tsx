@@ -1,17 +1,26 @@
 import { useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import GoogleLogin from "react-google-login";
+import { RouteComponentProps, StaticContext } from "react-router";
 import styled from "styled-components";
+
+import GoogleLogin from "react-google-login";
+
 import LogoCanvas from "@components/logo-canvas";
 import { isLogin } from "@src/js/is-login";
 import { setCookie } from "@src/js/cookie";
 
-const Login = (props: any) => {
+type LocationState = {
+  prevPath: Location;
+};
+
+const Login = (
+  props: RouteComponentProps<{}, StaticContext, LocationState>
+) => {
   const history = useHistory();
   const google_id: string = process.env.REACT_APP_CLIENT_ID || "";
 
-  const onLoginSuccess = async (res: any) => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
+  const fetchLogin = async (res: any) => {
+    return fetch(`${process.env.REACT_APP_API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -20,6 +29,15 @@ const Login = (props: any) => {
         id: res.profileObj.name,
       }),
     });
+  };
+
+  const onLoginSuccess = async (res: any) => {
+    let response;
+    try {
+      response = await fetchLogin(res);
+    } catch (error) {
+      throw error;
+    }
 
     if (response.ok) {
       setCookie("id", res.profileObj.name, { maxAge: 60000 * 60 * 12 });

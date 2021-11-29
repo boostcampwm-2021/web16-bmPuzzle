@@ -28,6 +28,7 @@ type Config = {
 
 const roomPuzzleInfo = new Map<string, any>();
 const timer = new Map<string, number>();
+const preemption = new Map<string, Map<string, number[]>>();
 let groupTileIndex: number;
 
 const updateRoomURL = (io: any) => {
@@ -149,19 +150,52 @@ export default (io: any) => {
       };
       socket.emit('getTimer', timeInfo);
     });
-    // socket.on(
-    //   'preemption',
-    //   (res: {
-    //     roomID: string;
-    //     tileIndex: number;
-    //     tileGroup: null | number;
-    //   }) => {
-    //     roomID;
-    //   },
-    // );
+
+    socket.on(
+      'setPreemption',
+      (res: { roomID: string; socketID: string; tileIndex: number[] }) => {
+        if (preemption.get(res.roomID) === undefined) {
+          preemption.set(res.roomID, new Map());
+        }
+        preemption.get(res.roomID)?.set(res.socketID, res.tileIndex);
+        const preemptionData: any[] = [];
+        preemption.get(res.roomID)?.forEach((value, key) => {
+          preemptionData.push([key, value]);
+        });
+        socket.broadcast.to(res.roomID).emit('preemption', {
+          preemption: preemptionData,
+        });
+      },
+    );
+    socket.on(
+      'deletePreemption',
+      (res: { roomID: string; socketID: string }) => {
+        if (preemption.get(res.roomID) === undefined) {
+          preemption.set(res.roomID, new Map());
+        }
+        preemption.get(res.roomID)?.set(res.socketID, []);
+        const preemptionData: any[] = [];
+        preemption.get(res.roomID)?.forEach((value, key) => {
+          preemptionData.push([key, value]);
+        });
+        socket.broadcast.to(res.roomID).emit('preemption', {
+          preemption: preemptionData,
+        });
+      },
+    );
+    socket.on('getPreemption', (res: { roomID: string }) => {
+      const preemptionData: any[] = [];
+      preemption.get(res.roomID)?.forEach((value, key) => {
+        preemptionData.push([key, value]);
+      });
+      socket.emit('preemption', {
+        preemption: preemptionData,
+      });
+    });
 
     socket.on('deleteRoom', (res: { roomID: string }) => {
       timer.delete(res.roomID);
+      preemption.delete(res.roomID);
     });
     socket.on('disconnect', () => {});
   });
