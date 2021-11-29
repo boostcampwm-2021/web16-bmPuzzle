@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renderLogin matches snapshot 1`] = `ShallowWrapper {}`;
+
+exports[`renderMain matches snapshot 1`] = `ShallowWrapper {}`;
+
+exports[`renderMypage matches snapshot 1`] = `ShallowWrapper {}`;
+
+exports[`renderRanking matches snapshot 1`] = `ShallowWrapper {}`;
+
+exports[`renderRegPuz matches snapshot 1`] = `ShallowWrapper {}`;
+
+exports[`renderWarning matches snapshot 1`] = `ShallowWrapper {}`;
