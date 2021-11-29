@@ -10,6 +10,8 @@ const useInfiniteScroll = (
   const [isSetting, setIsSetting] = useState(false);
   const [isDone, setIsDone] = useState(false);
   const [cache, setCache] = useState(undefined);
+  const underRange = 50;
+  const delayTime = 100;
 
   const handleScroll = () => {
     if (!ref || isDone) return;
@@ -18,9 +20,7 @@ const useInfiniteScroll = (
     const clientHeight = ref.clientHeight;
 
     const ret = Math.floor(scrollTop) + clientHeight;
-    if (Math.abs(ret - scrollHeight) <= 50) {
-      setIsSetting(true);
-    }
+    if (Math.abs(ret - scrollHeight) <= underRange) setIsSetting(true);
   };
 
   const throttle = (callback: Function, limit: number) => {
@@ -34,23 +34,27 @@ const useInfiniteScroll = (
     }
   };
 
-  useEffect(() => {
+  const scrollEvent = () => {
+    throttle(handleScroll, delayTime);
+  };
+
+  const registerEvent = () => {
     if (!ref) return;
     prev = 0;
-    const scrollEvent = () => {
-      throttle(handleScroll, 100);
-    };
     if (!isDone) ref.addEventListener("scroll", scrollEvent);
     return () => {
       ref.removeEventListener("scroll", scrollEvent);
     };
-  }, [ref, isDone]);
+  };
 
-  useEffect(() => {
+  const getMoreData = () => {
     if (!isSetting) return;
     prev += getItem;
     fetchCallback(prev);
-  }, [isSetting]);
+  };
+
+  useEffect(() => registerEvent(), [ref, isDone]);
+  useEffect(() => getMoreData(), [isSetting]);
 
   return [setIsSetting, setIsDone, cache, setCache] as const;
 };

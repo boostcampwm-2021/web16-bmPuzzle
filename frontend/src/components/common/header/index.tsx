@@ -1,15 +1,15 @@
 import React, { useEffect, useRef, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
+
+import { SocketContext } from "@context/socket";
+
 import logo_image from "@images/puzzle-icon.png";
 import ranking_image from "@images/ranking-icon.png";
 import account_image from "@images/account-icon.png";
 import chat_image from "@images/chat-icon.png";
-import { SocketContext } from "@src/context/socket";
 
 const Header = (props: any) => {
-  const history = useHistory();
-  const ref = useRef<HTMLDivElement>(null);
   let {
     isPlayRoom,
     chatVisible,
@@ -19,40 +19,41 @@ const Header = (props: any) => {
     isFirstClient,
     roomID,
   } = props;
+  const tenSeconds = 10;
+
+  const history = useHistory();
+  const ref = useRef<HTMLDivElement>(null);
   const socket = useContext(SocketContext);
-  const handleMove = (e: any) => {
-    const url =
-      e.target.id === "" ? e.target.closest("button").id : e.target.id;
+
+  const handleMove = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    const element = event.currentTarget as HTMLElement;
+    let url: undefined | string = element.id;
+    if (element.closest("button")) url = element.closest("button")?.id;
     history.push(`/${url}`);
   };
-  const toggleChat = (e: any) => {
-    const toggle = chatVisible === true ? false : true;
-    setChatVisible(toggle);
+
+  const toggleChat = () => setChatVisible(!chatVisible);
+
+  const setTimer = () => {
+    if (time !== undefined && isFirstClient)
+      socket.emit("setTimer", { roomID: roomID, timer: Date.now() });
   };
 
-  useEffect(() => {
-    if (time !== undefined) {
-      if (isFirstClient) {
-        socket.emit("setTimer", { roomID: roomID, timer: Date.now() });
-      }
-    }
-  }, [roomID, isFirstClient]);
-
-  useEffect(() => {
+  const getTimer = () => {
     if (time !== undefined) {
       socket.on(
         "getTimer",
         (res: { minutes: number; seconds: number; startTime: number }) => {
-          if (res.startTime !== undefined) {
-            setTime(res);
-          }
+          if (res.startTime !== undefined) setTime(res);
         }
       );
       socket.emit("getTimer", { roomID: roomID });
     }
-  }, []);
+  };
 
-  useEffect(() => {
+  const goTimer = () => {
     if (time !== undefined) {
       const countTime = setInterval(() => {
         const diff = Date.now() - time.startTime;
@@ -67,7 +68,11 @@ const Header = (props: any) => {
       }, 100);
       return () => clearInterval(countTime);
     }
-  }, [time]);
+  };
+
+  useEffect(() => setTimer(), [roomID, isFirstClient]);
+  useEffect(() => getTimer(), []);
+  useEffect(() => goTimer(), [time]);
 
   return (
     <Wrapper>
@@ -85,7 +90,7 @@ const Header = (props: any) => {
         {isPlayRoom && (
           <TimerWrapper ref={ref}>
             {time.minutes}:
-            {time.seconds < 10 ? `0${time.seconds}` : time.seconds}
+            {time.seconds < tenSeconds ? `0${time.seconds}` : time.seconds}
           </TimerWrapper>
         )}
         <Btn id="ranking" onClick={handleMove}>
