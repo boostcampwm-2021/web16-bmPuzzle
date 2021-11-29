@@ -5,22 +5,32 @@ import colors from "@styles/theme";
 import Header from "@components/common/header/index";
 import RankingTable from "@components/ranking/ranking-table/index";
 import TitleBar from "@components/common/title-bar/index";
-
 import RankingIcon from "@images/ranking-black-icon.png";
 
+type RankingInfo = {
+  num: number;
+  id: string;
+  complete: number;
+};
+
 const Ranking = () => {
-  const type: Array<Object> = [];
+  const type: Array<RankingInfo> = [];
   const [rankInfo, setRankInfo] = useState(type);
-  const [userRank, setUserRank] = useState(100);
-  const getRank = async () => {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/ranking`, {
+  const [userRank, setUserRank] = useState(0);
+
+  const fetchRank = async () => {
+    return fetch(`${process.env.REACT_APP_API_URL}/ranking`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
     });
-    if (response.ok) {
+  };
+
+  const getRank = async () => {
+    try {
+      const response = await fetchRank();
       const rankInfo = await response.json();
 
       rankInfo.rank.forEach((ele: Object, idx: number) =>
@@ -32,11 +42,15 @@ const Ranking = () => {
       )[0];
       setRankInfo(rankInfo.rank);
       setUserRank(myRank);
+    } catch (error) {
+      throw error;
     }
   };
+
   useEffect(() => {
     getRank();
   }, []);
+
   return (
     <Wrapper>
       <Header />

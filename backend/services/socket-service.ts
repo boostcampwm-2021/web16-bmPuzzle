@@ -150,6 +150,7 @@ export default (io: any) => {
       };
       socket.emit('getTimer', timeInfo);
     });
+
     socket.on(
       'setPreemption',
       (res: { roomID: string; socketID: string; tileIndex: number[] }) => {

@@ -4,10 +4,12 @@ import styled from "styled-components";
 
 const LogoutBtn = () => {
   const history = useHistory();
+
   const logout = () => {
     window.sessionStorage.removeItem("id");
     history.push("/");
   };
+
   return <LogoutButton onClick={logout}>Logout</LogoutButton>;
 };
 
