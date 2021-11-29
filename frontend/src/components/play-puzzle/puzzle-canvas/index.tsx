@@ -115,6 +115,7 @@ const PuzzleCanvas = (props: any) => {
       socket.emit("setPuzzleConfig", { roomID: roomID, config: config });
     } else {
       socket.emit("groupIndex", { roomID: roomID, groupTileIndex: 200 });
+      socket.emit("getPreemption", { roomID: roomID });
 
       socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
         if (!isNaN(groupIndex)) {
@@ -134,6 +135,16 @@ const PuzzleCanvas = (props: any) => {
     });
     socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
       Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
+    });
+    socket.on("preemption", ({ preemption }) => {
+      let preemptionList: number[] = [];
+      if (preemption === undefined) return;
+      preemption.forEach(([socketID, preemptionData]: any) => {
+        if (socketID !== socket.id) {
+          preemptionList = preemptionList.concat(preemptionData);
+        }
+      });
+      Puzzle.setPreemption(preemptionList);
     });
   }, []);
 

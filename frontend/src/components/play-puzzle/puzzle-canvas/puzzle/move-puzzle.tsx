@@ -30,6 +30,7 @@ let select_idx: any;
 let config: Config;
 let mouseFlag = 2; //mouseUp된 상태
 let room: string;
+let preemption: number[] = [];
 
 const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config = Puzzle.exportConfig();
@@ -42,12 +43,33 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   });
   config.groupTiles.forEach((gtile, gtileIdx) => {
     gtile[0].onMouseDown = (event: any) => {
+      if (preemption.includes(gtileIdx)) return;
       if (mouseFlag !== 2) return;
       mouseFlag = 0;
       select_idx = gtile[0].index;
       gtile[0]._parent.addChild(gtile[0]);
+      if (gtile[1] === undefined) {
+        socket.emit("setPreemption", {
+          roomID: roomID,
+          socketID: socket.id,
+          tileIndex: [gtileIdx],
+        });
+      } else {
+        const group: number[] = [];
+        config.groupTiles.forEach((gtileInfo, gtileIndex) => {
+          if (gtileInfo[1] === gtile[1]) {
+            group.push(gtileIndex);
+          }
+        });
+        socket.emit("setPreemption", {
+          roomID: roomID,
+          socketID: socket.id,
+          tileIndex: group,
+        });
+      }
     };
     gtile[0].onMouseDrag = (event: any) => {
+      if (preemption.includes(gtileIdx) && gtileIdx) return;
       if (mouseFlag === 2) return;
       mouseFlag = 1;
       const newPosition = {
@@ -112,16 +134,16 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config = Puzzle.exportConfig();
   const xTileCount = config.tilesPerRow;
   const yTileCount = config.tilesPerColumn;
-  config.tiles.forEach((tile) => {
-    tile.onMouseUp = (event: any) => {
+  config.groupTiles.forEach((tile, tileIndex) => {
+    tile[0].onMouseUp = (event: any) => {
       if (mouseFlag !== 1) return;
       mouseFlag = 2;
-      tile._parent.insertChild(select_idx, tile);
+      tile[0]._parent.insertChild(select_idx, tile[0]);
       let nowIndex = 0;
       if (first) {
-        nowIndex = tile.index - (xTileCount * yTileCount + 1);
+        nowIndex = tile[0].index - (xTileCount * yTileCount + 1);
       } else {
-        nowIndex = tile.index - 1;
+        nowIndex = tile[0].index - 1;
       }
       let nextIndexArr = [
         nowIndex - 1,
@@ -143,7 +165,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined) {
           fitTiles(
-            tile,
+            tile[0],
             nowIndexTile,
             nowShape,
             tileShape[index],
@@ -153,31 +175,30 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
           );
         }
       });
-
-      config.groupTiles.forEach((gtile, idx) => {
-        if (gtile[0] === tile) {
-          if (gtile[1] === undefined) {
+      if (tile[1] === undefined) {
+        socket.emit("tilePosition", {
+          roomID: roomID,
+          tileIndex: tileIndex,
+          tilePosition: tile[0].position,
+          tileGroup: tile[1],
+          changedData: tile[0],
+        });
+      } else {
+        config.groupTiles.forEach((tileNow, tileNowIndex) => {
+          if (tile[1] === tileNow[1]) {
             socket.emit("tilePosition", {
               roomID: roomID,
-              tileIndex: idx,
-              tilePosition: gtile[0].position,
-              tileGroup: gtile[1],
-              changedData: gtile[0],
-            });
-          } else {
-            config.groupTiles.forEach((tileNow, index) => {
-              if (gtile[1] === tileNow[1]) {
-                socket.emit("tilePosition", {
-                  roomID: roomID,
-                  tileIndex: index,
-                  tilePosition: tileNow[0].position,
-                  tileGroup: tileNow[1],
-                  changedData: tileNow[0],
-                });
-              }
+              tileIndex: tileNowIndex,
+              tilePosition: tileNow[0].position,
+              tileGroup: tileNow[1],
+              changedData: tileNow[0],
             });
           }
-        }
+        });
+      }
+      socket.emit("deletePreemption", {
+        roomID: roomID,
+        socketID: socket.id,
       });
     };
   });
@@ -465,11 +486,18 @@ const checkComplete = () => {
   return flag;
 };
 
+const setPreemption = (preemptionData: number[] | undefined) => {
+  if (preemptionData !== undefined) {
+    preemption = preemptionData;
+  }
+};
+
 const MovePuzzle = {
   moveTile,
   findNearTile,
   moveUpdate,
   checkComplete,
   indexUpdate,
+  setPreemption,
 };
 export default MovePuzzle;
