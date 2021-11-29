@@ -6,7 +6,6 @@ import Header from "@components/common/header/index";
 import Search from "@components/main/search-bar/index";
 import ImageCard from "@components/common/image-card/index";
 import UploadBtn from "@components/main/upload-button/index";
-
 import getImgfile from "@js/get-img-file";
 import infiniteScroll from "@src/hooks/infinite-scroll";
 

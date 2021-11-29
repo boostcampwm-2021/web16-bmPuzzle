@@ -31,11 +31,13 @@
     "@types/howler": "^2.2.4",
     "@types/paper": "^0.12.3",
     "@types/react-copy-to-clipboard": "^5.0.2",
+    "@types/throttle-debounce": "^2.1.0",
     "howler": "^2.2.3",
     "paper": "^0.12.15",
     "react-copy-to-clipboard": "^5.0.4",
     "react-google-login": "^5.2.2",
-    "socket.io-client": "^4.3.2"
+    "socket.io-client": "^4.3.2",
+    "throttle-debounce": "^3.0.1"
   },
   "devDependencies": {
     "@craco/craco": "^6.4.0",

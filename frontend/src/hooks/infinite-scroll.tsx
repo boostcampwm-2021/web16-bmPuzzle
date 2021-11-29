@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { throttle } from "throttle-debounce";
 let prev = 0;
 const getItem = 10;
 
@@ -16,7 +16,7 @@ const useInfiniteScroll = (
     const scrollHeight = ref.scrollHeight;
     const scrollTop = ref.scrollTop;
     const clientHeight = ref.clientHeight;
-
+    console.log("안녕");
     const ret = Math.floor(scrollTop) + clientHeight;
     if (Math.abs(ret - scrollHeight) <= 2) {
       setIsSetting(true);
