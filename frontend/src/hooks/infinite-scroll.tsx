@@ -18,15 +18,32 @@ const useInfiniteScroll = (
     const clientHeight = ref.clientHeight;
     console.log("안녕");
     const ret = Math.floor(scrollTop) + clientHeight;
-    if (Math.abs(ret - scrollHeight) <= 2) {
+    if (Math.abs(ret - scrollHeight) <= 50) {
       setIsSetting(true);
+    }
+  };
+
+  const throttle = (callback: Function, limit: number) => {
+    let wait = false;
+    if (!wait) {
+      callback();
+      wait = true;
+      setTimeout(() => {
+        wait = false;
+      }, limit);
     }
   };
 
   useEffect(() => {
     if (!ref) return;
-    ref.addEventListener("scroll", handleScroll);
-    return () => ref.removeEventListener("scroll", handleScroll);
+    prev = 0;
+    const scrollEvent = () => {
+      throttle(handleScroll, 100);
+    };
+    if (!isDone) ref.addEventListener("scroll", scrollEvent);
+    return () => {
+      ref.removeEventListener("scroll", scrollEvent);
+    };
   }, [ref, isDone]);
 
   useEffect(() => {

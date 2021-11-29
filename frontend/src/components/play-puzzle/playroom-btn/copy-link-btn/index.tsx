@@ -9,8 +9,7 @@ const CopyBtn = () => {
   const addToast: any = useToastContext();
 
   const handleClick = () => {
-    console.log(addToast);
-    addToast("XD 성공적으로 복사되었습니다 🧩");
+    addToast("XD 링크가 클립보드에 복사되었습니다 🧩");
   };
 
   return (

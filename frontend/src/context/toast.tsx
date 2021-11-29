@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useState, createContext } from "react";
 import styled from "styled-components";
 import ToastCheckIcon from "@images/toast-check-icon.png";
-import ToastNoIcon from "@images/toast-red-x-icon.png";
-import ToastXIcon from "@images/toast-white-x-icon.png";
+import ToastNoIcon from "@images/toast-exclamation-icon.png";
+import ToastXIcon from "@images/toast-x-icon.png";
 
 const ToastContext = createContext({});
 
@@ -15,7 +15,7 @@ export const ToastContextProvider = (props: any) => {
     if (toasts.length > 0) {
       const timer = setTimeout(
         () => setToasts((toasts: any[]) => toasts.slice(1)),
-        5000
+        3000
       );
       return () => clearTimeout(timer);
     }
@@ -41,7 +41,7 @@ export const ToastContextProvider = (props: any) => {
       {props.children}
       <ToastWrapper>
         {toasts.map((toast: string, idx: number) => (
-          <Toast key={idx}>
+          <Toast key={idx} status={status}>
             <Header>
               <CloseBtn
                 onClick={() => {
@@ -62,9 +62,13 @@ export const ToastContextProvider = (props: any) => {
   );
 };
 
+interface statusProp {
+  key: number;
+  status: boolean;
+}
+
 const ToastWrapper = styled.div`
   position: absolute;
-  width: 300px;
   left: 50%;
   top: 65px;
   z-index: 100;
@@ -73,13 +77,13 @@ const ToastWrapper = styled.div`
   font-weight: 400;
 `;
 
-const Toast = styled.div`
+const Toast = styled.div<statusProp>`
   padding: 1% 0 3% 0;
   background-color: black;
   color: white;
   display: flex;
   flex-direction: column;
-  border: 1px solid #00ba00;
+  border: 1px solid ${(props) => (props.status ? "green" : "red")};
 `;
 
 const CloseBtn = styled.button`
@@ -95,9 +99,9 @@ const CloseBtn = styled.button`
 `;
 
 const Header = styled.div`
-  width: 97%;
+  width: calc(100% - 20px);
   text-align: right;
-  margin-right: 10px;
+  margin: 0 10px;
 `;
 
 const Img = styled.img`
@@ -111,7 +115,7 @@ const XImg = styled.img`
 `;
 
 const Text = styled.span`
-  margin-left: 10px;
+  padding: 0 30px 0 10px;
   font-size: 15px;
   font-weight: 400;
 `;

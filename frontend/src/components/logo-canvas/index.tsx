@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from "react";
 import styled from "styled-components";
 import Paper from "paper";
 import puzzlePieceImg from "@images/puzzle-piece.png";
-import { project } from "paper/dist/paper-core";
 
 const LogoCanvas = () => {
   const logoCanvasRef = useRef(null);
@@ -14,7 +13,15 @@ const LogoCanvas = () => {
     const project = Paper.projects[0];
     mainLogoShow(project);
     puzzlePiecesShow(project);
+    nameShow();
   }, []);
+
+  const namesInfo = [
+    { name: "김하정", x: 50, y: 50 },
+    { name: "유진", x: window.innerWidth - 50, y: 50 },
+    { name: "이재영", x: 50, y: window.innerHeight - 50 },
+    { name: "장진희", x: window.innerWidth - 50, y: window.innerHeight - 50 },
+  ];
 
   const mainLogoShow = (project: any) => {
     const logoTextPosY = Math.round(window.innerHeight * 0.15);
@@ -38,18 +45,6 @@ const LogoCanvas = () => {
         );
       }
     };
-  };
-
-  const nameWrite = ({ name, x, y }: any) => {
-    return new Paper.PointText({
-      point: new Paper.Point(x, y),
-      justification: "center",
-      content: name,
-      fontFamily: "Roboto slap",
-      fontWeight: 900,
-      fillColor: "#000000",
-      fontSize: 20,
-    });
   };
 
   const puzzlePiecesShow = (project: any) => {
@@ -266,15 +261,22 @@ const LogoCanvas = () => {
         }
       }
     };
+  };
 
-    const namesInfo = [
-      { name: "김하정", x: 50, y: 50 },
-      { name: "유진", x: window.innerWidth - 50, y: 50 },
-      { name: "이재영", x: 50, y: window.innerHeight - 50 },
-      { name: "장진희", x: window.innerWidth - 50, y: window.innerHeight - 50 },
-    ];
+  const nameShow = () => {
+    const nameWrite = ({ name, x, y }: any) => {
+      return new Paper.PointText({
+        point: new Paper.Point(x, y),
+        justification: "center",
+        content: name,
+        fontFamily: "Roboto slap",
+        fontWeight: 900,
+        fillColor: "#000000",
+        fontSize: 20,
+      });
+    };
 
-    const names = namesInfo.map((data) => nameWrite(data));
+    namesInfo.map((data) => nameWrite(data));
   };
 
   return <IconCanvas ref={logoCanvasRef} id="logo_canvas" />;

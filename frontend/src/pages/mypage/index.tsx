@@ -11,6 +11,7 @@ import ShareModal from "@components/mypage/share-modal/index";
 import accountImg from "@images/account-black-icon.png";
 
 import getImgfile from "@js/get-img-file";
+import infiniteScroll from "@src/hooks/infinite-scroll";
 
 const Mypage = () => {
   let dummy_image: object[] = [];
@@ -26,9 +27,7 @@ const Mypage = () => {
   });
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const getItem = 4;
-  let prev = 0;
-  let cache: undefined | object[];
+  const getItem = 10;
 
   const handleMove = (e: any) => {
     setCurrent(e.target.id);
@@ -38,7 +37,7 @@ const Mypage = () => {
     setShareModalInfo({ show: show, img: img, link: link });
   };
 
-  const myPageEnter = async () => {
+  const myPageEnter = async (prev: number) => {
     setUser(window.sessionStorage.getItem("id"));
 
     let ret;
@@ -54,7 +53,7 @@ const Mypage = () => {
       });
       if (response.ok) {
         ret = await response.json();
-        cache = ret;
+        setCache(ret);
       }
     }
 
@@ -73,7 +72,7 @@ const Mypage = () => {
         (!condition && doneFile.length === 0)) &&
       containerRef.current !== null
     ) {
-      containerRef.current.removeEventListener("scroll", infiniteScroll);
+      setIsDone(true);
       return;
     }
 
@@ -86,23 +85,16 @@ const Mypage = () => {
       ...prevState,
       ...getImgfile(doneFile, doneFileInfo),
     ]);
+    setIsSet(false);
   };
 
-  const infiniteScroll = () => {
-    const ref: HTMLDivElement | null = containerRef.current;
-    if (ref === null) return;
-    const scrollHeight = ref.scrollHeight;
-    const scrollTop = ref.scrollTop;
-    const clientHeight = ref.clientHeight;
-
-    const ret = Math.floor(scrollTop) + clientHeight;
-    if (ret === scrollHeight || ret === scrollHeight - 1) myPageEnter();
-  };
+  const [setIsSet, setIsDone, cache, setCache] = infiniteScroll(
+    myPageEnter,
+    containerRef.current
+  );
 
   useEffect(() => {
-    myPageEnter();
-    if (containerRef.current === null) return;
-    containerRef.current.addEventListener("scroll", infiniteScroll);
+    myPageEnter(0);
   }, []);
 
   return (

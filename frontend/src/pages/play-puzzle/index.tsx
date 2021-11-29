@@ -17,16 +17,9 @@ type puzzleInfoType = {
 const PlayPuzzle: FC<{
   match: { params: { puzzleID: string; roomID: string } };
 }> = (props) => {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const location = useLocation();
   const history = useHistory();
   const user = window.sessionStorage.getItem("id");
-  if (user === null) {
-    history.push({
-      pathname: "/warning",
-      state: { warn: "noUser", prevPath: location.pathname },
-    });
-  }
   const [loaded, setLoaded] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);
@@ -45,22 +38,31 @@ const PlayPuzzle: FC<{
   const imgRef = useRef(null);
   const onLoad = () => setLoaded(true);
   const { puzzleID, roomID } = props.match.params;
-
+  let whileFetching = false;
+  let abortController: AbortController;
   const getPuzzleInfo = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_API_URL}/room/${puzzleID}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (response.status === 500) return undefined;
-    const resJSON = await response.json();
-    return { img: resJSON.img, level: resJSON.level };
+    try {
+      if (whileFetching) abortController.abort();
+      abortController = new AbortController();
+      whileFetching = true;
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/room/${puzzleID}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          signal: abortController.signal,
+        }
+      );
+      whileFetching = false;
+      if (response.status === 500) return undefined;
+      const resJSON = await response.json();
+      return { img: resJSON.img, level: resJSON.level };
+    } catch (e) {
+      console.log(e);
+    }
   };
-
   const setPuzzle = async () => {
     const res: puzzleInfoType | undefined = await getPuzzleInfo();
     if (res === undefined) {
@@ -81,7 +83,7 @@ const PlayPuzzle: FC<{
       setFirstClient(res.isFirstUser);
     });
     socket.on("isFull", () => {
-      history.push({ pathname: "/warning", state: { warn: "isFull" } });
+      history.push("/warning");
     });
     return () => {
       socket.emit("leaveRoom", { roomID: roomID });
@@ -90,6 +92,7 @@ const PlayPuzzle: FC<{
 
   return (
     <Wrapper>
+      {user === null && <Warning warn="noUser" prevPath={location.pathname} />}
       <Header
         isPlayRoom={true}
         chatVisible={chatVisible}
