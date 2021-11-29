@@ -105,6 +105,7 @@ const indexUpdate = (groupIndex: number) => {
   if (config !== undefined) {
     config.groupTileIndex = groupIndex;
   }
+  return config.groupTileIndex;
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
