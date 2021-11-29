@@ -13,6 +13,8 @@ import accountImg from "@images/account-black-icon.png";
 import getImgfile from "@js/get-img-file";
 import infiniteScroll from "@src/hooks/infinite-scroll";
 
+import { getID } from "@src/js/is-login";
+
 const Mypage = () => {
   let dummy_image: object[] = [];
   let dummy_user: undefined = undefined;
@@ -38,7 +40,7 @@ const Mypage = () => {
   };
 
   const myPageEnter = async (prev: number) => {
-    setUser(window.sessionStorage.getItem("id"));
+    setUser(getID());
 
     let ret;
     if (cache === undefined) {
@@ -48,7 +50,7 @@ const Mypage = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: window.sessionStorage.getItem("id"),
+          id: getID(),
         }),
       });
       if (response.ok) {

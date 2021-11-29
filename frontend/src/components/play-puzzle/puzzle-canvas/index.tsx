@@ -6,6 +6,7 @@ import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
 import { createTiles } from "@components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
 import { puzzleCompleteAudio } from "@components/play-puzzle/puzzle-canvas/puzzle/audio-effect";
 import { completeAnimation } from "@components/play-puzzle/puzzle-canvas/puzzle/complete-animation";
+import { getID } from "@js/is-login";
 
 type LevelSizeType = { 1: number; 2: number; 3: number };
 type Levels = 1 | 2 | 3;
@@ -145,7 +146,7 @@ const PuzzleCanvas = (props: any) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userID: window.sessionStorage.getItem("id"),
+        userID: getID(),
         puzzleID: Number(puzzleID),
         time: timeToNum,
       }),
