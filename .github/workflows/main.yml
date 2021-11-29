@@ -19,11 +19,18 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       # Runs a set of commands using the runners shell
-      - name: install Dependencies
+      - name: install npm dependencies
         run: npm install
+        working-directory: ${{ env.working-directory }}
+
+      - name: install yarn dependencies
+        run: yarn install
+        working-directory: ${{ env.working-directory }}
 
       - name: React rendering test
         run: npm test
+        working-directory: ${{ env.working-directory }}
 
       - name: Build test
         run: npm run build
+        working-directory: ${{ env.working-directory }}
