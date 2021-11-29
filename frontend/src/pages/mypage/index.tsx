@@ -46,7 +46,7 @@ const Mypage = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        id: window.sessionStorage.getItem("id"),
+        id: getID(),
       }),
     });
   };
