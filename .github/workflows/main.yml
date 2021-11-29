@@ -20,6 +20,5 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: React rendering test && Build test
         run: |
-          cd frontend,
-          npm test,
-          npm run build
+          npm test .frontend,
+          npm run build .frontend
