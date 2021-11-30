@@ -6,6 +6,7 @@ import Puzzle from "@components/play-puzzle/puzzle-canvas/puzzle/index";
 import { createTiles } from "@components/play-puzzle/puzzle-canvas/puzzle/create-puzzle";
 import { puzzleCompleteAudio } from "@components/play-puzzle/puzzle-canvas/puzzle/audio-effect";
 import { completeAnimation } from "@components/play-puzzle/puzzle-canvas/puzzle/complete-animation";
+import { getID } from "@js/is-login";
 
 type LevelSizeType = { 1: number; 2: number; 3: number };
 type Levels = 1 | 2 | 3;
@@ -115,6 +116,7 @@ const PuzzleCanvas = (props: any) => {
       socket.emit("setPuzzleConfig", { roomID: roomID, config: config });
     } else {
       socket.emit("groupIndex", { roomID: roomID, groupTileIndex: 200 });
+      socket.emit("getPreemption", { roomID: roomID });
 
       socket.on("groupIndex", ({ groupIndex }: { groupIndex: number }) => {
         if (!isNaN(groupIndex)) {
@@ -135,6 +137,16 @@ const PuzzleCanvas = (props: any) => {
     socket.on("tilePosition", ({ tileIndex, tilePosition, tileGroup }) => {
       Puzzle.renderMove(tileIndex, tilePosition, tileGroup);
     });
+    socket.on("preemption", ({ preemption }) => {
+      let preemptionList: number[] = [];
+      if (preemption === undefined) return;
+      preemption.forEach(([socketID, preemptionData]: any) => {
+        if (socketID !== socket.id) {
+          preemptionList = preemptionList.concat(preemptionData);
+        }
+      });
+      Puzzle.setPreemption(preemptionList);
+    });
   }, []);
 
   const postDonePuzzle = async () => {
@@ -145,7 +157,7 @@ const PuzzleCanvas = (props: any) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        userID: window.sessionStorage.getItem("id"),
+        userID: getID(),
         puzzleID: Number(puzzleID),
         time: timeToNum,
       }),

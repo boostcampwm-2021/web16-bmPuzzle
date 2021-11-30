@@ -36,6 +36,7 @@
     "howler": "^2.2.3",
     "jest-watch-typeahead": "^1.0.0",
     "paper": "^0.12.15",
+    "react-cookie": "^4.1.1",
     "react-copy-to-clipboard": "^5.0.4",
     "react-google-login": "^5.2.2",
     "socket.io-client": "^4.3.2",

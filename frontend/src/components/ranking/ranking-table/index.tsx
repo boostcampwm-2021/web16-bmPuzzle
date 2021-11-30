@@ -4,8 +4,14 @@ import styled from "styled-components";
 import Line from "@components/ranking/ranking-line/index";
 
 type TypeProps = {
-  rankInfo: Array<Object>;
+  rankInfo: Array<RankingInfo>;
   userRank: any;
+};
+
+type RankingInfo = {
+  num: number;
+  id: string;
+  complete: number;
 };
 
 const RankingTable = (props: TypeProps) => {
@@ -17,7 +23,7 @@ const RankingTable = (props: TypeProps) => {
         <span>완성</span>
       </HeadLine>
       <Content>
-        {props.rankInfo.map((ele: any, idx: number) => {
+        {props.rankInfo.map((ele: RankingInfo, idx: number) => {
           const background = idx === props.userRank.num ? "gray" : "white";
           if ((idx >= 7 && props.userRank.num >= 7) || idx >= 9) return "";
           return (

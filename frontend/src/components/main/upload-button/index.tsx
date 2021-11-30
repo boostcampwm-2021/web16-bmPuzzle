@@ -4,9 +4,9 @@ import styled from "styled-components";
 
 const UploadButton = () => {
   const history = useHistory();
-  const handleMove = () => {
-    history.push("/register");
-  };
+
+  const handleMove = () => history.push("/register");
+
   return (
     <Wrapper>
       <Btn onClick={handleMove}>+</Btn>

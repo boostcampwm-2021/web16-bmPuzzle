@@ -1,12 +1,11 @@
 import React from "react";
-import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-
-import shareBtnImg from "@images/share-btn.png";
+import styled from "styled-components";
 
 import Warning from "@pages/warning/index";
+import shareBtnImg from "@images/share-btn.png";
 
-type imgGroupType = {
+type ImgGroupType = {
   id: string;
   image: string;
   keyword: string;
@@ -18,20 +17,33 @@ type imgGroupType = {
   time: number | undefined;
 };
 
-const ImageCard = (props: any) => {
+type ImgCardType = {
+  img: any[] | undefined;
+  margin: number;
+  my: string | undefined;
+  shareControl: any;
+};
+
+const ImageCard = (props: ImgCardType) => {
   const history = useHistory();
+
+  const fetchValidImgUrl = async () => {
+    return fetch(`${process.env.REACT_APP_API_URL}/room/urlcheck`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  };
+
   const getValidURL = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_API_URL}/room/urlcheck`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const resJSON = await response.json();
-    return resJSON.validURL;
+    try {
+      const response = await fetchValidImgUrl();
+      const imgUrl = await response.json();
+      return imgUrl.validURL;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const validURL = async (imgID: string) => {
@@ -54,6 +66,9 @@ const ImageCard = (props: any) => {
         link.setAttribute("download", fileName);
         document.body.appendChild(link);
         link.click();
+      })
+      .catch((error) => {
+        throw error;
       });
   };
 
@@ -76,18 +91,18 @@ const ImageCard = (props: any) => {
       { value: minute, string: "분 " },
       { value: second, string: "초" },
     ];
-    const str = timeArr.map((ele, idx) => {
-      return ele.value === undefined ? "" : `${ele.value}${ele.string}`;
-    });
+    const str = timeArr.map((ele, idx) =>
+      ele.value === undefined ? "" : `${ele.value}${ele.string}`
+    );
 
     return str.join("");
   };
 
   return (
-    <ImageGroup {...props}>
+    <ImageGroup margin={props.margin}>
       {props.img === undefined && <Warning warn="noFile" />}
       {props.img !== undefined &&
-        props.img.map((ele: imgGroupType, idx: number) => {
+        props.img.map((ele: ImgGroupType, idx: number) => {
           let time;
           if (ele.time === undefined) {
             if (props.my === "up") time = "";

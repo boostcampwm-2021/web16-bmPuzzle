@@ -1,36 +1,43 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import colors from "@styles/theme";
+
 import Header from "@components/common/header/index";
 import Search from "@components/main/search-bar/index";
 import ImageCard from "@components/common/image-card/index";
 import UploadBtn from "@components/main/upload-button/index";
 import getImgfile from "@js/get-img-file";
-import infiniteScroll from "@src/hooks/infinite-scroll";
+import infiniteScroll from "@hooks/use-infinite-scroll";
 
 const Main = () => {
   let dummy_image: object[] = [];
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [img, setImg] = useState(dummy_image);
-  const [filterImg, setFilterImg] = useState(dummy_image);
+  const [filterImg, setFilterImg] = useState<object[] | undefined>(dummy_image);
   const getItem = 10;
+  const firstNumber = 0;
+  const margin = 25;
+
+  const fetchGetImginfo = () => {
+    return fetch(`${process.env.REACT_APP_API_URL}/search`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+  };
 
   const getImgUrl = async (prev: number) => {
     let ret;
     if (img === undefined) return;
     if (cache === undefined) {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/search`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
-
-      if (response.ok) {
+      try {
+        const response = await fetchGetImginfo();
         ret = await response.json();
         setCache(ret);
+      } catch (error) {
+        throw error;
       }
     }
     ret = ret === undefined ? cache : ret;
@@ -53,7 +60,7 @@ const Main = () => {
   );
 
   useEffect(() => {
-    getImgUrl(0);
+    getImgUrl(firstNumber);
   }, []);
 
   return (
@@ -63,12 +70,14 @@ const Main = () => {
         <Search setImg={setFilterImg} />
         <ImageCard
           img={
-            (filterImg !== undefined && filterImg.length > 0) ||
+            (filterImg !== undefined && filterImg.length > firstNumber) ||
             filterImg === undefined
               ? filterImg
               : img
           }
-          margin={25}
+          margin={margin}
+          my={undefined}
+          shareControl={undefined}
         />
         <UploadBtn />
       </Container>

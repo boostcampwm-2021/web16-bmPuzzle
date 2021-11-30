@@ -1,7 +1,9 @@
 import React from "react";
 import styled from "styled-components";
+
 import { CopyToClipboard } from "react-copy-to-clipboard";
-import useToastContext from "@src/hooks/use-toast";
+
+import useToastContext from "@hooks/use-toast";
 import copyLinkBtnImg from "@images/copy-link-button.png";
 
 const CopyBtn = () => {
@@ -36,4 +38,5 @@ const CopyButton = styled.button`
     filter: drop-shadow(3px 3px 3px #424242);
   }
 `;
+
 export default CopyBtn;
