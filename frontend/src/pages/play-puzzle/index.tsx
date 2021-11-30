@@ -9,6 +9,7 @@ import Chat from "@src/components/play-puzzle/chat/index";
 import PlayroomMenuBtn from "@src/components/play-puzzle/playroom-btn";
 import Warning from "@pages/warning/index";
 import { ToastContextProvider } from "@context/toast";
+import { getID } from "@src/js/is-login";
 
 type puzzleInfoType = {
   img: string;
@@ -19,7 +20,7 @@ const PlayPuzzle: FC<{
 }> = (props) => {
   const location = useLocation();
   const history = useHistory();
-  const user = window.sessionStorage.getItem("id");
+  const user = getID() === "" ? null : getID();
   const [loaded, setLoaded] = useState(false);
   const [chatVisible, setChatVisible] = useState(false);
   const [hintShow, setHintShow] = useState(false);

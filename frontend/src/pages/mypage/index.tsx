@@ -4,14 +4,13 @@ import colors from "@styles/theme";
 
 import Header from "@components/common/header/index";
 import ImageCard from "@components/common/image-card/index";
-
 import TitleBar from "@components/common/title-bar/index";
 import ShareModal from "@components/mypage/share-modal/index";
-
+import getImgfile from "@js/get-img-file";
+import infiniteScroll from "@hooks/use-infinite-scroll";
 import accountImg from "@images/account-black-icon.png";
 
-import getImgfile from "@js/get-img-file";
-import infiniteScroll from "@src/hooks/infinite-scroll";
+import { getID } from "@src/js/is-login";
 
 const Mypage = () => {
   let dummy_image: object[] = [];
@@ -19,7 +18,7 @@ const Mypage = () => {
   const [user, setUser] = useState<undefined | string | null>(dummy_user);
   const [upload, setUpload] = useState(dummy_image);
   const [done, setDone] = useState(dummy_image);
-  const [current, setCurrent] = useState(undefined);
+  const [current, setCurrent] = useState<string | undefined>(undefined);
   const [shareModalInfo, setShareModalInfo] = useState({
     show: false,
     img: "",
@@ -29,32 +28,37 @@ const Mypage = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const getItem = 10;
 
-  const handleMove = (e: any) => {
-    setCurrent(e.target.id);
+  const handleMove = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    const element = event.currentTarget as HTMLElement;
+    setCurrent(element.id);
   };
 
   const setShareModal = (show: boolean, img: string, link: string) => {
     setShareModalInfo({ show: show, img: img, link: link });
   };
 
+  const fetchMypage = async () => {
+    return fetch(`${process.env.REACT_APP_API_URL}/my`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        id: getID(),
+      }),
+    });
+  };
+
   const myPageEnter = async (prev: number) => {
-    setUser(window.sessionStorage.getItem("id"));
+    setUser(getID());
 
     let ret;
     if (cache === undefined) {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/my`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          id: window.sessionStorage.getItem("id"),
-        }),
-      });
-      if (response.ok) {
-        ret = await response.json();
-        setCache(ret);
-      }
+      const response = await fetchMypage();
+      ret = await response.json();
+      setCache(ret);
     }
 
     ret = ret === undefined ? cache : ret;
@@ -119,6 +123,7 @@ const Mypage = () => {
             img={current === "upload" ? upload : done}
             my={current === "upload" ? "up" : "done"}
             shareControl={setShareModal}
+            margin={0}
           />
         </Container>
       </ContainerWrapper>

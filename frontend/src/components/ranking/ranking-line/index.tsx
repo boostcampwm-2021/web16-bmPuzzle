@@ -7,6 +7,7 @@ type propsType = {
   second: string;
   third: number;
 };
+
 const RankingLine = (props: propsType) => {
   return (
     <Line background={props.background}>

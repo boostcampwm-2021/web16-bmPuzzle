@@ -1,7 +1,8 @@
 import React from "react";
 import styled from "styled-components";
 import { useHistory } from "react-router-dom";
-import useToastContext from "@src/hooks/use-toast";
+import useToastContext from "@hooks/use-toast";
+import { getID } from "@src/js/is-login";
 
 type PropsType = {
   title: string;
@@ -15,10 +16,7 @@ const Submit = (props: PropsType) => {
   const addToast: any = useToastContext();
   const submitHandler = async () => {
     const formData = new FormData();
-    const id: string | null =
-      window.sessionStorage.getItem("id") === null
-        ? ""
-        : String(window.sessionStorage.getItem("id"));
+    const id = getID();
     if (selectedImg === null || title === "") {
       addToast("양식을 다 채우세요 🧩", "X");
       return false;

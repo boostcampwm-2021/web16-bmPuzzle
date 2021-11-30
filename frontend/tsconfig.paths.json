@@ -9,7 +9,8 @@
       "@audios/*": ["./src/audios/*"],
       "@pages/*": ["./src/pages/*"],
       "@context/*": ["./src/context/*"],
-      "@js/*": ["./src/js/*"]
+      "@js/*": ["./src/js/*"],
+      "@hooks/*": ["./src/hooks/*"]
     }
   }
 }

@@ -1,6 +1,7 @@
 import React from "react";
-import styled from "styled-components";
 import { useHistory } from "react-router-dom";
+import styled from "styled-components";
+
 import WarningIcon from "@images/warning-icon.png";
 
 type PropsType = {
@@ -25,10 +26,12 @@ const Warning = (props: PropsType) => {
   const prevPath = props.prevPath;
   const history = useHistory();
   let goLogin;
+
   if (props.warn === "noUser")
     goLogin = () =>
       history.push({ pathname: "/", state: { prevPath: prevPath } });
   else goLogin = () => history.push("/");
+
   return (
     <Wrapper>
       <Container>

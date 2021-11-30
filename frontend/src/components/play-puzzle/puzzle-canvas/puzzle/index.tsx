@@ -58,6 +58,10 @@ const completePuzzle = () => {
   return MovePuzzle.checkComplete();
 };
 
+const setPreemption = (preemptionData: number[]) => {
+  MovePuzzle.setPreemption(preemptionData);
+};
+
 const Puzzle = {
   setting,
   settingValue,
@@ -65,6 +69,7 @@ const Puzzle = {
   exportConfig,
   renderMove,
   completePuzzle,
+  setPreemption,
   groupUpdate,
   groupFirstUpdate,
 };
