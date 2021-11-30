@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-
 let prev = 0;
 const getItem = 10;
 

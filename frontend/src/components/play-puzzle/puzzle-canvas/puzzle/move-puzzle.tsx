@@ -1,8 +1,7 @@
 import { Point } from "paper/dist/paper-core";
 import Puzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/index";
-import FindChange from "@components/play-puzzle/puzzle-canvas/puzzle/find-change";
 import initPuzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/config-init";
-
+import FitPuzzle from "@src/components/play-puzzle/puzzle-canvas/puzzle/fit-tile";
 type Config = {
   originHeight: number;
   originWidth: number;
@@ -26,14 +25,11 @@ type Config = {
   selectIndex: number;
 };
 let first = true;
-let select_idx: any;
 let config: Config;
-let room: string;
 let preemption: number[] = [];
 
 const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config = Puzzle.exportConfig();
-  room = roomID;
   if (isFirstClient) initPuzzle.initConfig();
   config.groupTiles.forEach((gtile, index) => {
     if (gtile[1] === null) {
@@ -43,8 +39,6 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config.groupTiles.forEach((gtile, gtileIdx) => {
     gtile[0].onMouseDown = (event: any) => {
       if (preemption.includes(gtileIdx)) return;
-      //select_idx = gtile[0].index;
-      //gtile[0]._parent.addChild(gtile[0]);
       if (gtile[1] === undefined) {
         socket.emit("setPreemption", {
           roomID: roomID,
@@ -132,7 +126,6 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config.groupTiles.forEach((tile, tileIndex) => {
     tile[0].onMouseUp = (event: any) => {
       if (preemption.includes(tileIndex)) return;
-      //tile[0]._parent.insertChild(select_idx, tile[0]);
       let nowIndex = 0;
       if (first) {
         nowIndex = tile[0].index - (xTileCount * yTileCount + 1);
@@ -158,15 +151,20 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       });
       tileArr.forEach((nowIndexTile, index) => {
         if (nowIndexTile !== undefined) {
-          fitTiles(
+          Puzzle.setting(config);
+          Puzzle.setFirst(first);
+          FitPuzzle.fitTiles(
             tile[0],
             nowIndexTile,
             nowShape,
             tileShape[index],
             index,
             true,
-            socket
+            socket,
+            roomID,
+            config
           );
+          config = Puzzle.exportConfig();
         }
       });
       if (tile[1] === undefined) {
@@ -196,19 +194,6 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       });
     };
   });
-};
-
-const fitEffect = () => {
-  let audio = new Audio("/audios/fit-tile.mp3");
-  audio.loop = false;
-  audio.crossOrigin = "anonymous";
-  audio.volume = 0.5;
-  audio.load();
-  try {
-    audio.play();
-  } catch (err: any) {
-    console.log(err);
-  }
 };
 
 const checkUndefined = (
@@ -243,217 +228,6 @@ const checkUndefined = (
   }
 
   return flag;
-};
-
-const fitTiles = (
-  nowTile: any,
-  preTile: any,
-  _nowShape: any,
-  _preShape: any,
-  dir: number,
-  flag: boolean,
-  socket: any
-) => {
-  const yChange = FindChange.findYChange(_nowShape, _preShape);
-  const xChange = FindChange.findXChange(_nowShape, _preShape);
-  const xUp = FindChange.findXUp(_nowShape, _preShape);
-  const yUp = FindChange.findYUp(_nowShape, _preShape);
-
-  const range = config.tileWidth;
-  let uniteFlag = false;
-
-  switch (dir) {
-    case 0:
-      if (
-        (nowTile.position._x - preTile.position._x < range &&
-          nowTile.position._x - preTile.position._x > -range &&
-          Math.abs(nowTile.position._y - preTile.position._y) < 10) ||
-        flag === false
-      ) {
-        nowTile.position = new Point(
-          preTile.position._x + range + xChange,
-          preTile.position._y + yChange
-        );
-        uniteFlag = true;
-      }
-      break;
-    case 1:
-      if (
-        (preTile.position._x - nowTile.position._x < range &&
-          preTile.position._x - nowTile.position._x > -range &&
-          Math.abs(nowTile.position._y - preTile.position._y) < 10) ||
-        flag === false
-      ) {
-        nowTile.position = new Point(
-          preTile.position._x - (range + xChange),
-          preTile.position._y + yChange
-        );
-        uniteFlag = true;
-      }
-      break;
-    case 2:
-      if (
-        (preTile.position._y - nowTile.position._y < range &&
-          preTile.position._y - nowTile.position._y > -range &&
-          Math.abs(nowTile.position._x - preTile.position._x) < 10) ||
-        flag === false
-      ) {
-        nowTile.position = new Point(
-          preTile.position._x + xUp,
-          preTile.position._y + range + yUp
-        );
-        uniteFlag = true;
-      }
-      break;
-    case 3:
-      if (
-        (nowTile.position._y - preTile.position._y < range &&
-          nowTile.position._y - preTile.position._y > -range &&
-          Math.abs(nowTile.position._x - preTile.position._x) < 10) ||
-        flag === false
-      ) {
-        nowTile.position = new Point(
-          preTile.position._x + xUp,
-          preTile.position._y - (range + yUp)
-        );
-        uniteFlag = true;
-      }
-      break;
-  }
-  if (flag && uniteFlag) {
-    uniteTiles(nowTile, preTile, socket);
-    fitEffect();
-  }
-};
-
-const uniteTiles = (nowTile: any, preTile: any, socket: any) => {
-  let substract = 0;
-  if (first) {
-    substract = config.tilesPerRow * config.tilesPerColumn + 1;
-  } else {
-    substract = 1;
-  }
-  let nowIndex = nowTile.index - substract;
-  let preIndex = preTile.index - substract;
-  let nowGroup = config.groupTiles[nowIndex][1];
-  let preGroup = config.groupTiles[preIndex][1];
-
-  if (nowGroup !== undefined && !Number.isNaN(nowGroup)) {
-    if (preGroup === undefined || Number.isNaN(preGroup)) {
-      config.groupTiles[preIndex][1] = nowGroup;
-    } else {
-      config.groupTiles.forEach((gtile) => {
-        if (gtile[1] === nowGroup) {
-          gtile[1] = preGroup;
-        }
-      });
-    }
-  } else {
-    if (preGroup !== undefined && !Number.isNaN(preGroup)) {
-      config.groupTiles[nowIndex][1] = preGroup;
-    } else {
-      config.groupTiles[nowIndex][1] = config.groupTileIndex;
-      config.groupTiles[preIndex][1] = config.groupTileIndex;
-      if (
-        config.groupTileIndex !== null &&
-        !Number.isNaN(config.groupTileIndex)
-      ) {
-        config.groupTileIndex++;
-        socket.emit("groupIndex", {
-          roomID: room,
-          groupTileIndex: config.groupTileIndex,
-        });
-      }
-    }
-  }
-  if (!dismantling(config.groupTiles[preIndex][1])) {
-    groupFit(config.groupTiles[preIndex][1], socket);
-  }
-};
-const dismantling = (groupIndexNow: number) => {
-  let count = 0;
-  config.groupTiles.forEach((gtile) => {
-    if (gtile[1] === groupIndexNow) {
-      count++;
-    }
-  });
-  if (count === 1) {
-    config.groupTiles.forEach((gtile) => {
-      if (gtile[1] === groupIndexNow) {
-        gtile[1] = undefined;
-        return true;
-      }
-    });
-  }
-  return false;
-};
-const groupFit = (nowGroup: number, socket: any) => {
-  const xTileCount = config.tilesPerRow;
-  const yTileCount = config.tilesPerColumn;
-  let groupArr: any = [];
-  let groupObj: any = {};
-
-  config.groupTiles.forEach((tile: any) => {
-    let nowIndex = 0;
-    if (tile[1] === nowGroup) {
-      if (first) {
-        nowIndex = tile[0].index - (xTileCount * yTileCount + 1);
-      } else {
-        nowIndex = tile[0].index - 1;
-      }
-      groupArr.push(tile[0]);
-      groupObj[nowIndex] = tile[0];
-    }
-  });
-
-  if (groupArr.length === 1) return;
-
-  groupArr.forEach((tile: any) => {
-    let nowIndex = 0;
-    if (first) {
-      nowIndex = tile.index - (xTileCount * yTileCount + 1);
-    } else {
-      nowIndex = tile.index - 1;
-    }
-    const up: number | undefined =
-      nowIndex - xTileCount < 0 ? undefined : nowIndex - xTileCount;
-    const left: number | undefined =
-      nowIndex % xTileCount === 0 ? undefined : nowIndex - 1;
-    const right: number | undefined =
-      nowIndex % xTileCount === xTileCount - 1 ? undefined : nowIndex + 1;
-    const down: number | undefined =
-      nowIndex >= xTileCount * (yTileCount - 1)
-        ? undefined
-        : nowIndex + xTileCount;
-
-    let directionArr = [
-      [up, 2],
-      [left, 0],
-      [right, 1],
-      [down, 3],
-    ];
-
-    let index = 0;
-    directionArr.forEach((dir, idx) => {
-      if (
-        dir[0] !== undefined &&
-        dir[1] !== undefined &&
-        groupObj[dir[0]] !== undefined &&
-        index < 1
-      ) {
-        fitTiles(
-          tile,
-          groupObj[dir[0]],
-          config.shapes[nowIndex],
-          config.shapes[dir[0]],
-          dir[1],
-          false,
-          socket
-        );
-        index++;
-      }
-    });
-  });
 };
 
 const checkComplete = () => {

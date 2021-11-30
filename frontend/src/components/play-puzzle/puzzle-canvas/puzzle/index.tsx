@@ -1,5 +1,5 @@
 import MovePuzzle from "@components/play-puzzle/puzzle-canvas/puzzle/move-puzzle";
-
+import FitPuzzle from "@components/play-puzzle/puzzle-canvas/puzzle/fit-tile";
 type Config = {
   [index: string]: number | any[] | boolean | any;
   originHeight: number;
@@ -26,12 +26,17 @@ type Config = {
 
 let config: Config;
 let gIndex: number;
+let first: boolean;
 const setting = (conf: Config) => {
   config = { ...conf };
   if (!isNaN(gIndex)) {
     config.groupTileIndex = gIndex;
   }
 };
+const setFirst = (firstFlag: boolean) => {
+  first = firstFlag;
+};
+const exportFirst = () => first;
 const settingValue = (key: string, value: any) => {
   config[key] = value;
 };
@@ -46,10 +51,10 @@ const renderMove = (
   tilePosition: any[],
   tileGroup: number | null
 ) => {
-  MovePuzzle.moveUpdate(tileIndex, tilePosition, tileGroup);
+  FitPuzzle.moveUpdate(tileIndex, tilePosition, tileGroup);
 };
 const groupUpdate = (groupIndex: number) => {
-  MovePuzzle.indexUpdate(groupIndex);
+  FitPuzzle.indexUpdate(groupIndex);
 };
 const groupFirstUpdate = (groupIndex: number) => {
   gIndex = groupIndex;
@@ -57,11 +62,9 @@ const groupFirstUpdate = (groupIndex: number) => {
 const completePuzzle = () => {
   return MovePuzzle.checkComplete();
 };
-
 const setPreemption = (preemptionData: number[]) => {
   MovePuzzle.setPreemption(preemptionData);
 };
-
 const Puzzle = {
   setting,
   settingValue,
@@ -69,8 +72,10 @@ const Puzzle = {
   exportConfig,
   renderMove,
   completePuzzle,
-  setPreemption,
   groupUpdate,
   groupFirstUpdate,
+  setFirst,
+  setPreemption,
+  exportFirst,
 };
 export default Puzzle;
