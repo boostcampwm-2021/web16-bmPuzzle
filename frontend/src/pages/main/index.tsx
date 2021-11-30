@@ -8,6 +8,8 @@ import ImageCard from "@components/common/image-card/index";
 import UploadBtn from "@components/main/upload-button/index";
 import getImgfile from "@js/get-img-file";
 import infiniteScroll from "@hooks/use-infinite-scroll";
+import { setCookie } from "@src/js/cookie";
+import { getID } from "@src/js/is-login";
 
 const Main = () => {
   let dummy_image: object[] = [];
@@ -61,6 +63,7 @@ const Main = () => {
 
   useEffect(() => {
     getImgUrl(firstNumber);
+    setCookie("id", getID(), { maxAge: 60 * 60 * 12 });
   }, []);
 
   return (

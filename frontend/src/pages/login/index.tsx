@@ -40,7 +40,7 @@ const Login = (
     }
 
     if (response.ok) {
-      setCookie("id", res.profileObj.name, { maxAge: 60000 * 60 * 12 });
+      setCookie("id", res.profileObj.name, { maxAge: 60 * 60 * 12 });
       const goalPath =
         props.location.state === undefined ||
         props.location.state.prevPath === undefined
