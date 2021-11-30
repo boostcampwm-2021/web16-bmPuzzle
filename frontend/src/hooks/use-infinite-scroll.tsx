@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { throttle } from "throttle-debounce";
+
 let prev = 0;
 const getItem = 10;
 
