@@ -66,7 +66,7 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
       }
     };
     gtile[0].onMouseDrag = (event: any) => {
-      if (preemption.includes(gtileIdx) && gtileIdx) return;
+      if (preemption.includes(gtileIdx)) return;
       const newPosition = {
         x: Math.min(
           Math.max(
@@ -131,6 +131,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.groupTiles.forEach((tile, tileIndex) => {
     tile[0].onMouseUp = (event: any) => {
+      if (preemption.includes(tileIndex)) return;
       //tile[0]._parent.insertChild(select_idx, tile[0]);
       let nowIndex = 0;
       if (first) {
