@@ -43,8 +43,8 @@ const moveTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   config.groupTiles.forEach((gtile, gtileIdx) => {
     gtile[0].onMouseDown = (event: any) => {
       if (preemption.includes(gtileIdx)) return;
-      select_idx = gtile[0].index;
-      gtile[0]._parent.addChild(gtile[0]);
+      //select_idx = gtile[0].index;
+      //gtile[0]._parent.addChild(gtile[0]);
       if (gtile[1] === undefined) {
         socket.emit("setPreemption", {
           roomID: roomID,
@@ -122,7 +122,6 @@ const indexUpdate = (groupIndex: number) => {
   if (config !== undefined) {
     config.groupTileIndex = groupIndex;
   }
-  return config.groupTileIndex;
 };
 
 const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
@@ -132,7 +131,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.groupTiles.forEach((tile, tileIndex) => {
     tile[0].onMouseUp = (event: any) => {
-      tile[0]._parent.insertChild(select_idx, tile[0]);
+      //tile[0]._parent.insertChild(select_idx, tile[0]);
       let nowIndex = 0;
       if (first) {
         nowIndex = tile[0].index - (xTileCount * yTileCount + 1);
