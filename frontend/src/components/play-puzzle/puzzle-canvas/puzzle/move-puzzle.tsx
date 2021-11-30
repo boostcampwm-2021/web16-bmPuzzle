@@ -131,7 +131,7 @@ const findNearTile = (isFirstClient: boolean, socket: any, roomID: string) => {
   const yTileCount = config.tilesPerColumn;
   config.groupTiles.forEach((tile, tileIndex) => {
     tile[0].onMouseUp = (event: any) => {
-      if (preemption.includes(gtileIdx)) return;
+      if (preemption.includes(tileIndex)) return;
       tile[0]._parent.insertChild(select_idx, tile[0]);
       let nowIndex = 0;
       if (first) {
