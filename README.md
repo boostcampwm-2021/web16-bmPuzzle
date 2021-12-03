@@ -4,7 +4,7 @@
 ### 🧩 BMPuzzle
 <div align="center">
 <img src="https://user-images.githubusercontent.com/42104898/139202374-554c59b2-334e-4f0f-b1de-016042da8348.png"/>
-<div><a href="http://graduate11.com:3000/">BMPuzzle 바로가기</a></div>
+<div><a href="http://graduate11.com/">BMPuzzle 바로가기</a></div>
 <div>🍀 웹에서 즐기는 퍼즐게임! 친구들과 함께 퍼즐을 완성합시다. 혼자여도 플레이할 수 있어요 :) 🍀</div>
 <div>
   <div>
