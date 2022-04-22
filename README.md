@@ -43,4 +43,4 @@
 ### 📁 WIKI
 | 📝 NOTION | 🎨 Design | 💻 BackLog | 🔥 Reference |
 |:--------:|:--------:|:--------:|:--------:|
-|  [✏️ Wiki Notion 바로가기](https://scientific-gouda-c67.notion.site/W16-f5929adfca6c4b7289d268a74dc354a3)   |   [🖌️ Figma 바로가기](https://www.figma.com/file/uggyNZBxU9frZ84k082PtI/BMPuzzle?node-id=0%3A1)  |   [💡 Backlog 바로가기 ](https://docs.google.com/spreadsheets/d/1h7RNi-NibI2GsAK15jsnJgdHnt7Y4MN4I2SjvHIS0pM/edit#gid=0)   |   [🧩 Jiasaw puzzle 바로가기 ](https://www.jigsawexplorer.com/)   |
+|  [✏️ Wiki Notion 바로가기](https://github.com/boostcampwm-2021/web16-bmPuzzle/wiki/%F0%9F%8F%A0-Home)   |   [🖌️ Figma 바로가기](https://www.figma.com/file/uggyNZBxU9frZ84k082PtI/BMPuzzle?node-id=0%3A1)  |   [💡 Backlog 바로가기 ](https://docs.google.com/spreadsheets/d/1h7RNi-NibI2GsAK15jsnJgdHnt7Y4MN4I2SjvHIS0pM/edit#gid=0)   |   [🧩 Jiasaw puzzle 바로가기 ](https://www.jigsawexplorer.com/)   |
